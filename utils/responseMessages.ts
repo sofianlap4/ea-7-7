@@ -145,3 +145,12 @@ export const PACK_MIDDLEWARE_MESSAGES = {
 export const THEME_RESPONSE_MESSAGES = {
   THEME_NOT_FOUND: "Thème introuvable.",
 };
+
+export const PDF_RESPONSE_MESSAGES = {
+  PDF_NOT_FOUND: "PDF introuvable.",
+  INVALID_PDF_FORMAT: "Format de PDF invalide.",
+};
+
+export const EXERCICE_RESPONSE_MESSAGES = {
+  EXERCISE_NOT_FOUND: "Exercice introuvable.",
+};

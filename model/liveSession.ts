@@ -7,21 +7,28 @@ export interface LiveSessionAttributes {
   date: Date;
   meetLink: string;
   createdBy: string;
-  packId: string; // <-- Add this line
+  hidden: boolean;
+  packId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export type LiveSessionCreationAttributes = Optional<LiveSessionAttributes, "id" | "createdAt" | "updatedAt">;
+export type LiveSessionCreationAttributes = Optional<
+  LiveSessionAttributes,
+  "id" | "createdAt" | "updatedAt"
+>;
 
 export default (sequelize: Sequelize) => {
-  class LiveSession extends Model<LiveSessionAttributes, LiveSessionCreationAttributes>
-    implements LiveSessionAttributes {
+  class LiveSession
+    extends Model<LiveSessionAttributes, LiveSessionCreationAttributes>
+    implements LiveSessionAttributes
+  {
     public id!: string;
     public title!: string;
     public description!: string;
     public date!: Date;
     public meetLink!: string;
+    public hidden!: boolean;
     public createdBy!: string;
     public packId!: string; // <-- Add this line
     public readonly createdAt!: Date;
@@ -55,7 +62,13 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      packId: { // <-- Add this block
+      hidden: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      packId: {
+        // <-- Add this block
         type: DataTypes.UUID,
         allowNull: false,
         references: {

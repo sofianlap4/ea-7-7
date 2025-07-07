@@ -26,7 +26,9 @@ import {
   Theme,
   PackOffer,
   UserPackReduction,
-  ReductionCode
+  ReductionCode,
+  PDF,
+  Exercise
 } from "./model";
 import sequelize from "./utils/sequelizeInit";
 
@@ -46,6 +48,8 @@ import leaderBoardRoutes from "./routes/leaderboard";
 import sqlRunner from "./routes/sqlRunner";
 import themeRoutes from "./routes/theme";
 import userPackReductionRoutes from "./routes/userPackReduction";
+import pdfRoutes from "./routes/pdf";
+import exerciceRoutes from "./routes/exercice";
 
 const PORT = 5000;
 
@@ -87,7 +91,9 @@ app.set("models", {
   Theme,
   PackOffer,
   UserPackReduction,
-  ReductionCode
+  ReductionCode,
+    PDF,
+  Exercise
 });
 
 // Routes (pass all needed models)
@@ -106,6 +112,8 @@ app.use("/api/solutions", solutionsRoutes());
 app.use("/api/leaderboard", leaderBoardRoutes());
 app.use("/api/themes", themeRoutes());
 app.use("/api/user-pack-reductions", userPackReductionRoutes());
+app.use("/api/pdfs", pdfRoutes());
+app.use("/api/exercises", exerciceRoutes());
 
 app.use((err: any, req: any, res: any, next: any) => {
   const status = err.status || 500;

@@ -107,7 +107,7 @@ const App: React.FC = () => {
             <>
               <Link to='/admin/packs/new'>Create Pack</Link> |{" "}
               <Link to='/admin/packs'>Manage Packs</Link> |{" "}
-              <Link to='/admin/practical-exercises'>Gérer les Exercices</Link> |{" "}
+              <Link to='/admin/practical-exercises'>Gérer les Exercices Pratiques</Link> |{" "}
               <Link to='/admin/credit'>Gestion des Crédits</Link> |{" "}
               <Link to='/admin/manage-ranking'>Gérer le Classement</Link>|{" "}
               <Link to='/admin/manage-themes'>Gérer les Thèmes</Link> |{" "}

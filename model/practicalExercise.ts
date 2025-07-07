@@ -15,7 +15,6 @@ export default (sequelize: Sequelize) => {
     declare starterCode: string;
     declare solution: string;
     declare testCases: TestCase[];
-    declare isFree: boolean;
     declare hidden: boolean;
   }
 
@@ -54,11 +53,6 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.JSONB, // Using JSONB for PostgreSQL
         allowNull: false,
         defaultValue: []
-      },
-      isFree: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
       },
       hidden: {
         type: DataTypes.BOOLEAN,

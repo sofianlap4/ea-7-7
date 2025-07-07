@@ -4,10 +4,8 @@ interface CourseAttributes {
   id?: string;
   title: string;
   description?: string;
-  pdfUrl?: string;
-  pdfOriginalName?: string;
-  isFree: boolean;
   isLocked: boolean;
+  hidden: boolean;
   creatorId?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -15,15 +13,7 @@ interface CourseAttributes {
 
 type CourseCreationAttributes = Optional<
   CourseAttributes,
-  | "id"
-  | "description"
-  | "pdfUrl"
-  | "pdfOriginalName"
-  | "isFree"
-  | "isLocked"
-  | "creatorId"
-  | "createdAt"
-  | "updatedAt"
+  "id" | "description" | "isLocked" | "hidden" | "creatorId" | "createdAt" | "updatedAt"
 >;
 
 export default (sequelize: Sequelize) => {
@@ -34,10 +24,8 @@ export default (sequelize: Sequelize) => {
     public id!: string;
     public title!: string;
     public description?: string;
-    public pdfUrl?: string;
-    public pdfOriginalName?: string;
-    public isFree!: boolean;
     public isLocked!: boolean;
+    public hidden!: boolean;
     public creatorId?: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -58,20 +46,13 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      pdfUrl: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      pdfOriginalName: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      isFree: {
+      isLocked: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      isLocked: {
+      hidden: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
         defaultValue: false,
       },
       creatorId: {

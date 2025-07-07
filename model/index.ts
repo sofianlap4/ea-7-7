@@ -23,6 +23,8 @@ import defineThemeModel from "./theme";
 import definePackOfferModel from "./packOffer";
 import defineUserPackReductionModel from "./userPackReduction";
 import defineReductionCodeModel from "./reductionCode";
+import definePDFModel from "./pdf";
+import defineExerciceModel from "./exercice";
 
 // Initialize models
 const User = defineUserModel(sequelize);
@@ -47,6 +49,8 @@ const Theme = defineThemeModel(sequelize);
 const PackOffer = definePackOfferModel(sequelize);
 const UserPackReduction = defineUserPackReductionModel(sequelize);
 const ReductionCode = defineReductionCodeModel(sequelize);
+const PDF = definePDFModel(sequelize);
+const Exercise = defineExerciceModel(sequelize);
 
 // Associations
 Course.hasMany(Video, { as: "videos", foreignKey: "courseId" });
@@ -68,6 +72,14 @@ Course.belongsToMany(Pack, {
   otherKey: "packId",
   as: "packs", // optional alias
 });
+
+// Course <-> PDF (One-to-Many)
+Course.hasMany(PDF, { as: "pdfs", foreignKey: "courseId" });
+PDF.belongsTo(Course, { foreignKey: "courseId", as: "course" });
+
+// Exercise <-> PDF (One-to-Many)
+Exercise.hasMany(PDF, { as: "pdfs", foreignKey: "exerciseId" });
+PDF.belongsTo(Exercise, { foreignKey: "exerciseId", as: "exercise" });
 
 // In your model/index.ts or wherever you define associations:
 User.hasMany(LiveSessionLog, { foreignKey: "userId" });
@@ -225,4 +237,6 @@ export {
   PackOffer,
   UserPackReduction,
   ReductionCode,
+  PDF,
+  Exercise
 };

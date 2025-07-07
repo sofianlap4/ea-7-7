@@ -142,12 +142,6 @@ const MyPack: React.FC = () => {
               </li>
             )}
           </ul>
-          <h4>Courses:</h4>
-          <ul>
-            {pack.courses?.map((c: any) => (
-              <li key={c.id}>{c.title}</li>
-            ))}
-          </ul>
         </div>
       ) : (
         <p>You have no active pack.</p>

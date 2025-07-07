@@ -2,10 +2,27 @@ import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { fetchCreateCourse, createQuizz, addQuizzQuestion } from '../api/courses';
 import { fetchAllPacksAdmin } from '../api/packs';
 
+// Helper for uploading a PDF to a course
+const uploadPdfToCourse = async (
+  courseId: string,
+  pdf: File,
+  title: string,
+  type: "course" | "question" | "solution"
+) => {
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('file', pdf);
+  formData.append('type', type);
+  const res = await fetch(`/api/pdfs/course/${courseId}`, {
+    method: 'POST',
+    body: formData,
+  });
+  return await res.json();
+};
+
 const CreateCourseForm: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [pdf, setPdf] = useState<File | null>(null);
   const [message, setMessage] = useState<string>('');
   const [videos, setVideos] = useState<{ title: string; url: string }[]>([]);
   const [videoTitle, setVideoTitle] = useState('');
@@ -17,9 +34,12 @@ const CreateCourseForm: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState<string>('');
   const [currentChoices, setCurrentChoices] = useState<string[]>(['', '', '', '']);
   const [currentCorrect, setCurrentCorrect] = useState<string>('');
-  const [packIds, setPackIds] = useState<string[]>([]); 
+  const [packIds, setPackIds] = useState<string[]>([]);
   const [packs, setPacks] = useState<any[]>([]);
-  const [isFree, setIsFree] = useState<boolean>(true);
+
+  // PDF state for questions and solutions
+  const [questionPdfs, setQuestionPdfs] = useState<{ file: File; title: string }[]>([]);
+  const [solutionPdfs, setSolutionPdfs] = useState<{ file: File; title: string }[]>([]);
 
   useEffect(() => {
     fetchAllPacksAdmin().then(response => {
@@ -33,22 +53,35 @@ const CreateCourseForm: React.FC = () => {
 
   const handleCreate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    if (pdf) formData.append('pdf', pdf);
-    formData.append('videos', JSON.stringify(videos));
-    formData.append('isFree', isFree ? "true" : "false");
-    packIds.forEach(id => formData.append('packIds[]', id));
 
-    const response1 = await fetchCreateCourse(formData);
+    // 1. Create the course
+    const response1 = await fetchCreateCourse({
+      title,
+      description,
+      packIds,
+      videos,
+    });
+
     if (response1.success) {
       setMessage('Cours créé !');
       setTitle('');
       setDescription('');
-      setPdf(null);
       setVideos([]);
       setPackIds([]);
+
+      // 2. Upload PDFs for questions
+      for (const { file, title: pdfTitle } of questionPdfs) {
+        await uploadPdfToCourse(response1.data.id, file, pdfTitle, "question");
+      }
+      // 3. Upload PDFs for solutions
+      for (const { file, title: pdfTitle } of solutionPdfs) {
+        await uploadPdfToCourse(response1.data.id, file, pdfTitle, "solution");
+      }
+
+      setQuestionPdfs([]);
+      setSolutionPdfs([]);
+
+      // 4. Create quizz and questions if provided
       if (quizzTitle) {
         const response = await createQuizz(response1?.data?.id, quizzTitle);
         if (response?.success) {
@@ -60,9 +93,9 @@ const CreateCourseForm: React.FC = () => {
               q.choices
             );
           }
-          setMessage('Cours , quizz et questions créés !');
+          setMessage('Cours, PDFs, quizz et questions créés !');
         } else {
-          setMessage('Cours créé, mais échec de la création du quizz : ' + response.error);
+          setMessage('Cours et PDFs créés, mais échec de la création du quizz : ' + response.error);
         }
       }
       setQuizzTitle('');
@@ -71,28 +104,25 @@ const CreateCourseForm: React.FC = () => {
       setCurrentChoices(['', '', '', '']);
       setCurrentCorrect('');
     } else {
-      console.error('Error creating course');
+      setMessage('Erreur lors de la création du cours');
     }
   };
 
-  const handleAddQuestion = () => {
-    if (
-      currentQuestion &&
-      currentChoices.every(c => c) &&
-      currentCorrect &&
-      currentChoices.includes(currentCorrect)
-    ) {
-      setQuestions([
-        ...questions,
-        {
-          question: currentQuestion,
-          choices: currentChoices,
-          correctAnswer: currentCorrect,
-        },
-      ]);
-      setCurrentQuestion('');
-      setCurrentChoices(['', '', '', '']);
-      setCurrentCorrect('');
+  const handleAddQuestionPdf = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const newArr = [...questionPdfs];
+      newArr[idx] = { ...newArr[idx], file: files[0] };
+      setQuestionPdfs(newArr);
+    }
+  };
+
+  const handleAddSolutionPdf = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const newArr = [...solutionPdfs];
+      newArr[idx] = { ...newArr[idx], file: files[0] };
+      setSolutionPdfs(newArr);
     }
   };
 
@@ -108,11 +138,6 @@ const CreateCourseForm: React.FC = () => {
         required
       />
       <br />
-      <input type="radio" name="isFree" id="isFree" value="true" checked={isFree} onChange={() => setIsFree(true)} />
-      <label htmlFor="isFree">Gratuit</label>
-      <input type="radio" name="isFree" id="isPaid" value="false" checked={!isFree} onChange={() => setIsFree(false)} />
-      <label htmlFor="isPaid">Payant</label>
-      <br />
       <label htmlFor="courseDescription">Description du cours:</label>
       <textarea
         placeholder="Description du cours"
@@ -121,12 +146,63 @@ const CreateCourseForm: React.FC = () => {
         required
       />
       <br />
-      <input
-        type="file"
-        accept="application/pdf"
-        onChange={e => setPdf(e.target.files?.[0] || null)}
-      />
+
+      <h4>Ajouter des PDFs de questions</h4>
+      {questionPdfs.map((pdf, idx) => (
+        <div key={idx}>
+          <input
+            type="text"
+            placeholder="Titre du PDF de question"
+            value={pdf.title}
+            onChange={e => {
+              const arr = [...questionPdfs];
+              arr[idx].title = e.target.value;
+              setQuestionPdfs(arr);
+            }}
+            required
+          />
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={e => handleAddQuestionPdf(e, idx)}
+            required
+          />
+          <button type="button" onClick={() => setQuestionPdfs(questionPdfs.filter((_, i) => i !== idx))}>Supprimer</button>
+        </div>
+      ))}
+      <button type="button" onClick={() => setQuestionPdfs([...questionPdfs, { file: undefined as any, title: '' }])}>
+        Ajouter un PDF de question
+      </button>
       <br />
+
+      <h4>Ajouter des PDFs de solutions</h4>
+      {solutionPdfs.map((pdf, idx) => (
+        <div key={idx}>
+          <input
+            type="text"
+            placeholder="Titre du PDF de solution"
+            value={pdf.title}
+            onChange={e => {
+              const arr = [...solutionPdfs];
+              arr[idx].title = e.target.value;
+              setSolutionPdfs(arr);
+            }}
+            required
+          />
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={e => handleAddSolutionPdf(e, idx)}
+            required
+          />
+          <button type="button" onClick={() => setSolutionPdfs(solutionPdfs.filter((_, i) => i !== idx))}>Supprimer</button>
+        </div>
+      ))}
+      <button type="button" onClick={() => setSolutionPdfs([...solutionPdfs, { file: undefined as any, title: '' }])}>
+        Ajouter un PDF de solution
+      </button>
+      <br />
+
       <h4>Ajouter des vidéos</h4>
       <input
         type="text"
@@ -195,7 +271,26 @@ const CreateCourseForm: React.FC = () => {
             value={currentCorrect}
             onChange={e => setCurrentCorrect(e.target.value)}
           />
-          <button type="button" onClick={handleAddQuestion} style={{ marginLeft: 10 }}>
+          <button type="button" onClick={() => {
+            if (
+              currentQuestion &&
+              currentChoices.every(c => c) &&
+              currentCorrect &&
+              currentChoices.includes(currentCorrect)
+            ) {
+              setQuestions([
+                ...questions,
+                {
+                  question: currentQuestion,
+                  choices: currentChoices,
+                  correctAnswer: currentCorrect,
+                },
+              ]);
+              setCurrentQuestion('');
+              setCurrentChoices(['', '', '', '']);
+              setCurrentCorrect('');
+            }
+          }} style={{ marginLeft: 10 }}>
             Ajouter une question
           </button>
           <ul>
@@ -231,7 +326,7 @@ const CreateCourseForm: React.FC = () => {
         ))}
       </select>
       <br />
-      <button type="submit">Create</button>
+      <button type="submit">Créer</button>
       {message && <p>{message}</p>}
     </form>
   );
