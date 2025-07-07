@@ -9,6 +9,7 @@ export interface UserPackAttributes {
   startDate: Date;
   endDate: Date;
   isActive: boolean;
+  offerId?: string; // Optional, can be null if no offer was used
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -19,7 +20,10 @@ export type UserPackCreationAttributes = Optional<
 >;
 
 export default (sequelize: Sequelize) => {
-  class UserPack extends Model<UserPackAttributes, UserPackCreationAttributes> implements UserPackAttributes {
+  class UserPack
+    extends Model<UserPackAttributes, UserPackCreationAttributes>
+    implements UserPackAttributes
+  {
     public id!: string;
     public userId!: string;
     public packId!: string;
@@ -28,6 +32,7 @@ export default (sequelize: Sequelize) => {
     public startDate!: Date;
     public endDate!: Date;
     public isActive!: boolean;
+    public offerId?: string; // Optional, can be null if no offer was used
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
   }
@@ -67,6 +72,14 @@ export default (sequelize: Sequelize) => {
       isActive: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
+      },
+      offerId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+          model: "PackOffers",
+          key: "id",
+        },
       },
     },
     {

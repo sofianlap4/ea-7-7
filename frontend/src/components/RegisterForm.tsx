@@ -82,7 +82,6 @@ const RegisterForm: React.FC = () => {
     const response = await register(payload);
 
     if (response.success) {
-      console.log("resssssssssssss", response.data?.message)
       setMessage(response.data?.message || "Registration successful!");
       setTimeout(() => {
         navigate("/profile");

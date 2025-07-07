@@ -45,7 +45,6 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
     setError(null);
     try {
       const response = await fetchExerciseSolutions(exerciseId as string);
-      console.log("Solutions response:", response);
       if(response?.success) {
         setSolutions(Array.isArray(response?.data) ? response?.data.sort((a: any, b: any) => (b.likes || 0) - (a.likes || 0)) : []);
       } else {

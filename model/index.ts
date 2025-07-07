@@ -124,6 +124,14 @@ Quizz.belongsTo(Course, { foreignKey: "courseId", as: "course" });
 UserPack.belongsTo(Pack, { as: "pack", foreignKey: "packId" });
 Pack.hasMany(UserPack, { as: "userPacks", foreignKey: "packId" });
 
+// UserPack belongs to User
+UserPack.belongsTo(User, { foreignKey: "userId", as: "user" });
+User.hasMany(UserPack, { foreignKey: "userId", as: "userPacks" });
+
+// UserPack belongs to PackOffer (the offer the user bought)
+UserPack.belongsTo(PackOffer, { foreignKey: "offerId", as: "offer" });
+PackOffer.hasMany(UserPack, { foreignKey: "offerId", as: "userPacks" });
+
 // PracticalExercise <-> Pack (Many-to-Many)
 PracticalExercise.belongsToMany(Pack, {
   through: "PackPracticalExercise",
@@ -170,6 +178,20 @@ Pack.belongsToMany(Theme, {
 Pack.hasMany(PackOffer, { foreignKey: "packId", as: "offers" });
 PackOffer.belongsTo(Pack, { foreignKey: "packId", as: "pack" });
 
+// In your models/index.ts or equivalent
+ReductionCode.belongsToMany(PackOffer, {
+  through: "PackOfferReductionCode",
+  as: "offers",
+  foreignKey: "reductionCodeId",
+  otherKey: "packOfferId",
+});
+PackOffer.belongsToMany(ReductionCode, {
+  through: "PackOfferReductionCode",
+  as: "reductionCodes",
+  foreignKey: "packOfferId",
+  otherKey: "reductionCodeId",
+});
+
 // UserPack can have one UserPackReduction
 UserPack.hasOne(UserPackReduction, { foreignKey: "userPackId", as: "reduction" });
 UserPackReduction.belongsTo(UserPack, { foreignKey: "userPackId", as: "userPack" });
@@ -202,5 +224,5 @@ export {
   Theme,
   PackOffer,
   UserPackReduction,
-  ReductionCode
+  ReductionCode,
 };

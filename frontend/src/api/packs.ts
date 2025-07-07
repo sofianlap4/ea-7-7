@@ -110,7 +110,7 @@ export const subscribeToPack = async (
   reductionCode?: string,
   force = false
 ) => {
-  const res = await fetchWithAuth(`/api/packs/${packId}/subscribe`, {
+  const res = await fetchWithAuth(`/api/packs/id/${packId}/subscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ offerId, reductionCode, force }),
@@ -138,10 +138,3 @@ export const fetchMyUsage = async () => {
   return await res.json();
 };
 
-export const fetchUserPackReductions = async () => {
-  // Fetch all user pack reductions
-  // This endpoint should return an array of UserPackReduction objects
-  // Each object should include user, pack, offer, and reductionCode details
-  const res = await fetchWithAuth("/api/user-pack-reductions");
-  return await res.json();
-};

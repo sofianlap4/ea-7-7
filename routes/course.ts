@@ -63,14 +63,6 @@ const courseRoutes = (): Router => {
           courses = courses.filter((c: any) => c.isFree);
         }
 
-        // Debug log
-        console.log(
-          "UserPack:",
-          userPack.pack.id,
-          "Courses:",
-          courses.map((c: any) => c.id)
-        );
-
         sendSuccess(res, courses, 200);
       } catch (err: any) {
         next(err);

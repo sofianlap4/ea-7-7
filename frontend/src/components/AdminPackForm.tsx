@@ -194,7 +194,7 @@ const AdminPackForm: React.FC<{ onSave?: () => void }> = ({ onSave }) => {
             />
           </div>
           <div>
-            Prix (€):
+            Prix (TND):
             <input
               type='number'
               value={offer.price}

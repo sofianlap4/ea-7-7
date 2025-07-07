@@ -31,6 +31,7 @@ import RankedExerciseSolutionsPage from "./pages/PracticalExerciseSolutionsPage"
 import MyRankPage from "./pages/MyRankPage";
 import ManageRankingPage from "./pages/ManageRankingPage";
 import AdminManageThemes from "./pages/AdminManageThemes";
+import AdminReductionCodeList from "./components/AdminReductionCodeList";
 
 function Home() {
   return <h2>Welcome to the Platform!</h2>;
@@ -110,6 +111,7 @@ const App: React.FC = () => {
               <Link to='/admin/credit'>Gestion des Crédits</Link> |{" "}
               <Link to='/admin/manage-ranking'>Gérer le Classement</Link>|{" "}
               <Link to='/admin/manage-themes'>Gérer les Thèmes</Link> |{" "}
+              <Link to='/admin/user-pack-reductions'>Gérer les Réductions</Link>
             </>
           )}
           {!isAuthenticated && <Link to='/request-password-reset'>Mot de passe oublié ?</Link>}
@@ -417,6 +419,18 @@ const App: React.FC = () => {
                 userRole={userRole}
               >
                 <AdminManageThemes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/admin/user-pack-reductions'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["admin", "superadmin"]}
+                userRole={userRole}
+              >
+                <AdminReductionCodeList />
               </ProtectedRoute>
             }
           />

@@ -29,7 +29,7 @@ export default () => {
               as: "pack",
               include: [
                 { model: Course, as: "courses" },
-                { model: PackOffer, as: "offers" }
+                { model: PackOffer, as: "offers" },
               ],
             },
           ],
@@ -105,7 +105,7 @@ export default () => {
           order: [["createdAt", "DESC"]],
           include: [
             { model: req.app.get("models").Course, as: "courses" },
-            { model: req.app.get("models").PackOffer, as: "offers" }
+            { model: req.app.get("models").PackOffer, as: "offers" },
           ],
         });
         sendSuccess(res, packs, 200);
@@ -175,7 +175,7 @@ export default () => {
 
   // Student: Request subscription (creates a pending request)
   router.post(
-    "/:id/subscribe",
+    "/id/:id/subscribe",
     authenticateToken,
     async (req: any, res: any, next: NextFunction) => {
       try {
@@ -201,7 +201,7 @@ export default () => {
 
         // Find the selected offer
         const offer = await req.app.get("models").PackOffer.findOne({
-          where: { id: offerId, packId: pack.id }
+          where: { id: offerId, packId: pack.id },
         });
         if (!offer) return sendError(res, "Offer not found", 404);
 
@@ -210,7 +210,7 @@ export default () => {
         let reductionCodeInstance = null;
         if (reductionCode) {
           reductionCodeInstance = await req.app.get("models").ReductionCode.findOne({
-            where: { code: reductionCode, isActive: true }
+            where: { code: reductionCode, isActive: true },
           });
           if (!reductionCodeInstance) return sendError(res, "Invalid reduction code", 400);
           finalPrice = Math.round(finalPrice * (1 - reductionCodeInstance.percentage / 100));
@@ -224,8 +224,6 @@ export default () => {
         if (activeUserPack && activeUserPack.packId !== pack.id && force) {
           activeUserPack.isActive = false;
           await activeUserPack.save();
-          await req.app.get("models").RankedExerciseLog.destroy({ where: { userId: user.id } });
-          await req.app.get("models").CodeRunLog.destroy({ where: { userId: user.id } });
         }
 
         const now = new Date();
@@ -273,7 +271,6 @@ export default () => {
       }
     }
   );
-
   // Admin: Delete pack
   router.delete(
     "/:id",
@@ -310,7 +307,7 @@ export default () => {
           include: [
             { model: req.app.get("models").Course, as: "courses" },
             { model: req.app.get("models").User, as: "students", attributes: ["id", "email"] },
-            { model: req.app.get("models").PackOffer, as: "offers" }
+            { model: req.app.get("models").PackOffer, as: "offers" },
           ],
         });
         if (!pack) return sendError(res, PACK_RESPONSE_MESSAGES.PACK_NOT_FOUND, 404);
@@ -334,7 +331,7 @@ export default () => {
           include: [
             { model: req.app.get("models").Course, as: "courses" },
             { model: req.app.get("models").User, as: "students", attributes: ["id", "email"] },
-            { model: req.app.get("models").PackOffer, as: "offers" }
+            { model: req.app.get("models").PackOffer, as: "offers" },
           ],
         });
         sendSuccess(res, packs, 200);
@@ -351,19 +348,20 @@ export default () => {
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const {
-          name,
-          description,
-          type,
-          courseIds,
-        } = req.body;
+        const { name, description, type, courseIds } = req.body;
 
         if (typeof name !== "string" || !name.trim()) {
           return sendError(res, PACK_RESPONSE_MESSAGES.NAME_REQUIRED, 400);
         }
         const allowedTypes = [
-          "2eme info", "3eme info", "Bac info", "Bac scientifique",
-          "2eme info gratuit", "3eme info gratuit", "Bac info gratuit", "Bac scientifique gratuit"
+          "2eme info",
+          "3eme info",
+          "Bac info",
+          "Bac scientifique",
+          "2eme info gratuit",
+          "3eme info gratuit",
+          "Bac info gratuit",
+          "Bac scientifique gratuit",
         ];
         if (type && !allowedTypes.includes(type)) {
           return sendError(res, PACK_RESPONSE_MESSAGES.TYPE_INVALID, 400);
@@ -455,7 +453,7 @@ export default () => {
           include: [
             { model: req.app.get("models").Course, as: "courses" },
             { model: req.app.get("models").User, as: "students", attributes: ["id", "email"] },
-            { model: req.app.get("models").PackOffer, as: "offers" }
+            { model: req.app.get("models").PackOffer, as: "offers" },
           ],
         });
         sendSuccess(res, updatedPack, 200);
@@ -510,12 +508,16 @@ export default () => {
           },
         });
 
-        sendSuccess(res, {
-          showUsage: true,
-          exercisesSubmited,
-          codeRuns,
-          liveSessionsJoined,
-        }, 200);
+        sendSuccess(
+          res,
+          {
+            showUsage: true,
+            exercisesSubmited,
+            codeRuns,
+            liveSessionsJoined,
+          },
+          200
+        );
       } catch (err: any) {
         next(err);
       }

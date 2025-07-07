@@ -64,10 +64,7 @@ const PackList: React.FC<{ userRole?: string }> = ({ userRole }) => {
     const error = res?.error;
 
     if (res.status === 401) {
-      const confirm = window.confirm(RESPONSE_MESSAGES.CONFIRMATION_PACK);
-      if (confirm) {
-        await handleSubscribe(packId, offerId, reductionCode, true);
-      }
+      await handleSubscribe(packId, offerId, reductionCode, true);
     } else if (res.status === 404) {
       setMessage(RESPONSE_MESSAGES.NO_ENOUGH_CREDIT);
     } else {

@@ -2,7 +2,6 @@ export const RESPONSE_MESSAGES = {
   CANNOT_LIKE_OWN: "Vous ne pouvez pas aimer votre propre solution.",
   PHONE_EMAIL: "Veuillez fournir votre email ou numéro de téléphone.",
   NO_ACCOUNT: "Aucun compte trouvé avec cet email ou numéro de téléphone. Veuillez contacter l'administrateur ou le support WhatsApp pour réinitialiser votre mot de passe.",
-  CONFIRMATION_PACK: "Vous êtes déjà abonné à un pack. Souscrire à un nouveau pack vous fera perdre le temps/crédit restant sur votre pack actuel. Voulez-vous continuer ?",
   NO_ENOUGH_CREDIT: "Vous n'avez pas assez de crédit pour souscrire à ce pack. Veuillez acheter du crédit avant de continuer.",
   CONGRATULATION_PACK: "Félicitations, vous venez de souscrire à un pack !",
   STUDENT_ADDED: "Étudiant ajouté avec succès !",

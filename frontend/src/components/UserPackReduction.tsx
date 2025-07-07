@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchUserPackReductions } from "../api/packs";
+import { fetchUserPackReductions } from "../api/packReduction";
 
 interface UserPackReduction {
   id: string;
@@ -38,15 +38,18 @@ const UserPackReductionList: React.FC = () => {
 
   return (
     <div>
-      <h2>Users Who Bought Packs With Reduction Codes</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Pack</th>
-            <th>Offer</th>
-            <th>Reduction Code</th>
-            <th>Reduction (%)</th>
+      <h2>Utilisateurs ayant acheté des packs avec des codes de réduction</h2>
+      {reductions.length === 0 ? (
+        <p>Aucune réduction trouvée.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Pack</th>
+            <th>Offre</th>
+            <th>Code de réduction</th>
+            <th>éduction (%)</th>
             <th>Date</th>
           </tr>
         </thead>
@@ -54,8 +57,8 @@ const UserPackReductionList: React.FC = () => {
           {reductions.map((r) => (
             <tr key={r.id}>
               <td>
-                {r.user.firstName || ""} {r.user.lastName || ""} <br />
-                <small>{r.user.email}</small>
+                {r.user?.firstName || ""} {r.user?.lastName || ""}<br />
+                <small>{r.user?.email}</small>
               </td>
               <td>{r.userPack?.pack?.name || "-"}</td>
               <td>
@@ -70,6 +73,7 @@ const UserPackReductionList: React.FC = () => {
           ))}
         </tbody>
       </table>
+      )}
     </div>
   );
 };
