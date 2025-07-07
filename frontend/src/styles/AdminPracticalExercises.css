@@ -1,0 +1,35 @@
+.test-case {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+.test-case > div {
+  margin-bottom: 10px;
+}
+
+.test-case input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+}
+
+.test-case button {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type="button"] {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}

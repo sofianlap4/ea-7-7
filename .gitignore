@@ -1,0 +1,25 @@
+# Node.js dependencies
+node_modules/
+frontend/node_modules/
+
+# React build files
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Miscellaneous
+coverage/
+.DS_Store
