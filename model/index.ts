@@ -25,6 +25,7 @@ import defineUserPackReductionModel from "./userPackReduction";
 import defineReductionCodeModel from "./reductionCode";
 import definePDFModel from "./pdf";
 import defineExerciceModel from "./exercice";
+import defineUserQuizzProgressModel from "./userQuizzProgress";
 
 // Initialize models
 const User = defineUserModel(sequelize);
@@ -51,6 +52,14 @@ const UserPackReduction = defineUserPackReductionModel(sequelize);
 const ReductionCode = defineReductionCodeModel(sequelize);
 const PDF = definePDFModel(sequelize);
 const Exercise = defineExerciceModel(sequelize);
+const UserQuizzProgress = defineUserQuizzProgressModel(sequelize);
+
+// --- Associations for UserQuizzProgress ---
+User.hasMany(UserQuizzProgress, { foreignKey: "userId", as: "quizzProgress" });
+UserQuizzProgress.belongsTo(User, { foreignKey: "userId", as: "user" });
+
+Quizz.hasMany(UserQuizzProgress, { foreignKey: "quizzId", as: "userProgress" });
+UserQuizzProgress.belongsTo(Quizz, { foreignKey: "quizzId", as: "quizz" });
 
 // Associations
 Course.hasMany(Video, { as: "videos", foreignKey: "courseId" });
@@ -238,5 +247,6 @@ export {
   UserPackReduction,
   ReductionCode,
   PDF,
-  Exercise
+  Exercise,
+  UserQuizzProgress
 };

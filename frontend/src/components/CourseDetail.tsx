@@ -1,10 +1,11 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AddVideoForm from "./AddVideoForm";
 import { fetchCourseById } from "../api/courses";
 import { fetchProfile } from "../api/profile";
-import { fetchVideosByCourse } from "../api/videos"; // <-- import here
-import { fetchQuizzByCourseId, fetchQuestionsByQuizzId, submitQuizz } from "../api/quizz"; // Add these imports
+import { fetchVideosByCourse } from "../api/videos";
+import { fetchPdfsByCourse } from "../api/pdf";
+import { fetchQuizzByCourseId, fetchQuestionsByQuizzId, submitQuizz } from "../api/quizz";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -12,8 +13,6 @@ interface Course {
   id: string | number;
   title: string;
   description?: string;
-  pdfUrl?: string;
-  pdfOriginalName?: string;
 }
 
 interface Video {
@@ -23,10 +22,18 @@ interface Video {
   url: string;
 }
 
+interface PDF {
+  id?: string;
+  title: string;
+  fileUrl: string;
+  type: "course" | "question" | "solution";
+}
+
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<Course | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [pdfs, setPdfs] = useState<PDF[]>([]);
   const [accessDenied, setAccessDenied] = useState<boolean>(false);
   const [role, setRole] = useState<string | null>(null);
   const [quizz, setQuizz] = useState<any>(null);
@@ -60,13 +67,13 @@ const CourseDetail: React.FC = () => {
       if (response.success) {
         if (response?.data.accessDenied) {
           setAccessDenied(true);
-          setVideos([]); // <-- always set to []
+          setVideos([]);
         } else if (Array.isArray(response?.data)) {
           setVideos(response?.data);
         } else if (Array.isArray(response?.data.videos)) {
           setVideos(response?.data.videos);
         } else {
-          setVideos([]); // fallback
+          setVideos([]);
         }
       } else {
         console.error("Error fetching videos:", response.error);
@@ -74,19 +81,27 @@ const CourseDetail: React.FC = () => {
       }
     });
 
+    fetchPdfsByCourse(id!).then((response) => {
+      if (response.success && Array.isArray(response.data)) {
+        setPdfs(response.data);
+      } else {
+        setPdfs([]);
+      }
+    });
+
     // Fetch quizz and questions
     if (!id) return;
     fetchQuizzByCourseId(id).then((response) => {
       if (response.success) {
-          if (response?.data && response?.data.id) {
-            setQuizz(response?.data);
-            fetchQuestionsByQuizzId(response?.data.id).then((qs: any) => {
-              setQuestions(Array.isArray(qs) ? qs : []);
-            });
-          } else {
-            setQuizz(null);
-            setQuestions([]);
-          }
+        if (response?.data && response?.data.id) {
+          setQuizz(response?.data);
+          fetchQuestionsByQuizzId(response?.data.id).then((qs: any) => {
+            setQuestions(Array.isArray(qs.data) ? qs.data : []);
+          });
+        } else {
+          setQuizz(null);
+          setQuestions([]);
+        }
       } else {
         console.error("Error fetching quizz:", response.error);
         setQuizz(null);
@@ -101,7 +116,7 @@ const CourseDetail: React.FC = () => {
         if (Array.isArray(response?.data)) {
           setVideos(response?.data);
         } else {
-          setVideos([]); // fallback
+          setVideos([]);
         }
       } else {
         console.error("Error fetching videos:", response.error);
@@ -116,7 +131,7 @@ const CourseDetail: React.FC = () => {
 
   const handleSubmitQuizz = async () => {
     const response = await submitQuizz(id!, answers);
-    
+
     if (response.success) {
       setQuizzResult(response?.data);
     } else {
@@ -135,26 +150,43 @@ const CourseDetail: React.FC = () => {
     <div>
       <h2>{course.title}</h2>
       <p>{course.description}</p>
-      {course.pdfUrl && (
-        <div>
-          {/* <p>
-            <a href={course.pdfUrl} target='_blank' rel='noopener noreferrer'>
-              Download: {course.pdfOriginalName || "Course PDF"}
-            </a>
-          </p> */}
-          <iframe
-            src={backendUrl + course.pdfUrl}
-            title={course.pdfOriginalName || "Course PDF"}
-            width='100%'
-            height='600px'
-            style={{ border: "1px solid #ccc", marginTop: "1em" }}
-          ></iframe>
-        </div>
-      )}
 
-      <h3>Videos</h3>
+      {/* PDFs */}
+      <h3>PDFs</h3>
+      {pdfs.length === 0 && <p>Pas de PDFs pour ce cours.</p>}
       <ul>
-        {(!Array.isArray(videos) || videos.length === 0) && <li>Pas de videos pour le moment.</li>}
+        {pdfs.map((pdf) => (
+          <li key={pdf.id}>
+            <b>
+              {pdf.type === "course"
+                ? "Cours"
+                : pdf.type === "question"
+                ? "Question"
+                : "Solution"}
+              :
+            </b>{" "}
+            {pdf.title}{" "}
+            {pdf.fileUrl && (
+              <a
+                href={
+                  pdf.fileUrl.startsWith("http")
+                    ? pdf.fileUrl
+                    : backendUrl + pdf.fileUrl
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ouvrir PDF
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {/* Videos */}
+      <h3>Vidéos</h3>
+      <ul>
+        {(!Array.isArray(videos) || videos.length === 0) && <li>Pas de vidéos pour le moment.</li>}
         {Array.isArray(videos) &&
           videos.map((video) => (
             <li key={video._id ?? video.id}>
@@ -165,15 +197,15 @@ const CourseDetail: React.FC = () => {
                   <iframe
                     id={`vimeo-player-${video.url.split("/").pop()}`}
                     src={`https://player.vimeo.com/video/${video.url.split("/").pop()}`}
-                    width='320'
-                    height='180'
-                    frameBorder='0'
-                    allow='autoplay; fullscreen'
+                    width="320"
+                    height="180"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen"
                     allowFullScreen
                     title={video.title}
                   ></iframe>
                 ) : (
-                  <a href={video.url} target='_blank' rel='noopener noreferrer'>
+                  <a href={video.url} target="_blank" rel="noopener noreferrer">
                     {video.url}
                   </a>
                 )}
@@ -183,7 +215,7 @@ const CourseDetail: React.FC = () => {
       </ul>
       {role !== "student" && <AddVideoForm courseId={id!} onAdd={refreshVideos} />}
 
-      {/* ...inside your return, after the videos section... */}
+      {/* Quizz and Questions */}
       {quizz && questions.length > 0 && (
         <div style={{ marginTop: 32, border: "1px solid #ccc", padding: 16 }}>
           <h3>Quizz: {quizz.title}</h3>
@@ -192,7 +224,7 @@ const CourseDetail: React.FC = () => {
             <li>Chaque réussite vous rapporte +5 points au classement.</li>
             <li>
               Vous pouvez le refaire autant de fois que vous le souhaitez, mais dès que vous
-              réussissez, il ne sera plus accessible."
+              réussissez, il ne sera plus accessible.
             </li>
           </ul>
           <form
@@ -210,17 +242,16 @@ const CourseDetail: React.FC = () => {
                   q.choices.map((choice: string, idx: number) => (
                     <label key={idx} style={{ display: "block", marginLeft: 16 }}>
                       <input
-                        type='checkbox'
+                        type="checkbox"
                         checked={answers[q.id] === choice}
                         onChange={() => handleAnswerChange(q.id, choice)}
-                        // Only allow one checkbox per question
                       />
                       {choice}
                     </label>
                   ))}
               </div>
             ))}
-            <button type='submit'>Submit Quizz</button>
+            <button type="submit">Submit Quizz</button>
           </form>
           {quizzResult && (
             <div style={{ marginTop: 16 }}>
@@ -231,9 +262,10 @@ const CourseDetail: React.FC = () => {
               ) : (
                 <div style={{ color: "red" }}>
                   Incorrect answers:
+                  
                   <ul>
                     {quizzResult.incorrectAnswers?.map((ia: any, idx: number) => (
-                      <li key={idx}>Question: {ia.question}</li>
+                      <li key={idx}> Question: {ia.question}</li>
                     ))}
                   </ul>
                 </div>

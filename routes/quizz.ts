@@ -2,6 +2,7 @@ import express, { Router, NextFunction } from 'express';
 import { authenticateToken, authorizeRoles } from '../middleware/auth';
 import { sendError, sendSuccess } from '../utils/response';
 import { QUIZZ_RESPONSE_MESSAGES } from "../utils/responseMessages";
+import { rankingPoints } from "../utils/rankUtils";
 
 const quizzRoutes = (): Router => {
   const router = express.Router();
@@ -43,9 +44,76 @@ const quizzRoutes = (): Router => {
     authenticateToken,
     async (req: any, res: any, next: NextFunction) => {
       try {
-        // Implement your quizz submission logic here
-        // Example: check answers, calculate score, save result, etc.
-        sendSuccess(res, { message: "Quizz submitted (implement logic)" }, 200);
+        const userId = req.user.id;
+        const { answers } = req.body; // { [questionId]: answer }
+        const { Quizz, QuizzQuestion, User, UserQuizzProgress } = req.app.get("models");
+
+        // Find the quizz for this course
+        const quizz = await Quizz.findOne({ where: { courseId: req.params.courseId } });
+        if (!quizz) return sendError(res, "Quizz not found", 404);
+
+        // Get all questions for this quizz
+        const questions = await QuizzQuestion.findAll({ where: { quizzId: quizz.id } });
+        // Get user's previous correct answers for this quizz
+        let userProgress = await UserQuizzProgress.findOne({
+          where: { userId, quizzId: quizz.id }
+        });
+        let alreadyCorrect: string[] = [];
+        if (userProgress && Array.isArray(userProgress.correctQuestions)) {
+          alreadyCorrect = userProgress.correctQuestions;
+        }
+
+        let pointsEarned = 0;
+        let newlyCorrect: string[] = [];
+        let incorrectAnswers: any[] = [];
+
+        for (const question of questions) {
+          const userAnswer = answers[question.id];
+          if (userAnswer === question.correctAnswer) {
+            // Only award points if not already answered correctly
+            if (!alreadyCorrect.includes(question.id)) {
+              pointsEarned += rankingPoints.QuizzQuestionPassed;
+              newlyCorrect.push(question.id);
+            }
+          } else {
+            incorrectAnswers.push({
+              question: question.question,
+              correctAnswer: question.correctAnswer,
+              userAnswer,
+            });
+          }
+        }
+
+        // Update user progress
+        if (newlyCorrect.length > 0) {
+          if (!userProgress) {
+            userProgress = await UserQuizzProgress.create({
+              userId,
+              quizzId: quizz.id,
+              correctQuestions: newlyCorrect,
+            });
+          } else {
+            userProgress.correctQuestions = [
+              ...new Set([...alreadyCorrect, ...newlyCorrect]),
+            ];
+            await userProgress.save();
+          }
+          // Add points to user
+          await User.increment(
+            { score: pointsEarned },
+            { where: { id: userId } }
+          );
+        }
+
+        sendSuccess(res, {
+          success: incorrectAnswers.length === 0,
+          pointsEarned,
+          incorrectAnswers,
+          message:
+            incorrectAnswers.length === 0
+              ? `Bravo ! Vous avez gagné ${pointsEarned} points.`
+              : "Certaines réponses sont incorrectes.",
+        }, 200);
       } catch (err: any) {
         next(err);
       }

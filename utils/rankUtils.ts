@@ -5,3 +5,12 @@ export function getRank(points: number): string {
   if (points >= 20) return "Mid Dev";
   return "Junior Dev";
 }
+
+export const rankingPoints = {
+    QuizzQuestionPassed: 5,
+    codeSolved: 15,
+    liveSessionAttended: 10,
+    weekChallenger: 20,
+    monthChallenger: 50,
+    weekdefi: 10,
+}

@@ -28,7 +28,8 @@ import {
   UserPackReduction,
   ReductionCode,
   PDF,
-  Exercise
+  Exercise,
+  UserQuizzProgress,
 } from "./model";
 import sequelize from "./utils/sequelizeInit";
 
@@ -71,7 +72,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Make the models accessible globally (for use in routes)
 app.set("models", {
-   User,
+  User,
   Pack,
   Course,
   Video,
@@ -93,15 +94,16 @@ app.set("models", {
   PackOffer,
   UserPackReduction,
   ReductionCode,
-    PDF,
-  Exercise
+  PDF,
+  Exercise,
+  UserQuizzProgress,
 });
 
 // Routes (pass all needed models)
 app.use("/api/auth", authRoutes());
 app.use("/api/videos", videoRoutes());
 app.use("/api/courses", courseRoutes());
-app.use("/api/courses", quizzRoutes())
+app.use("/api/courses", quizzRoutes());
 app.use("/api/profile", profileRoutes());
 app.use("/api/practical-exercises", rankedExerciseRoutes());
 app.use("/api/python", pythonRunner);

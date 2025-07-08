@@ -22,19 +22,19 @@ const CourseList: React.FC<{ userRole: string }> = ({ userRole }) => {
 
   return (
     <div>
-      <h2>All Courses</h2>
+      <h2>Liste des cours :</h2>
       <ul>
         {courses.length > 0 ? (
           courses.map((course) => (
             <li key={course.id}>
               <Link to={`/courses/${course.id}`}>
-                <strong>{course.title}</strong>
+                <strong>titre: {course.title}</strong>
               </Link>
-              {course.description ? `: ${course.description}` : ""}
+              description: {course.description ? `: ${course.description}` : ""}
             </li>
           ))
         ) : (
-          <li>No courses found.</li>
+          <li>Pas de cours trouvés.</li>
         )}
       </ul>
     </div>
