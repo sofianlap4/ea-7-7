@@ -47,6 +47,7 @@ const CourseDetail: React.FC = () => {
   });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [quizzResult, setQuizzResult] = useState<any>(null);
+  const [openPdfId, setOpenPdfId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProfile().then((response) => {
@@ -165,17 +166,35 @@ const CourseDetail: React.FC = () => {
         {pdfs.map((pdf) => (
           <li key={pdf.id}>
             <b>
-              {pdf.type === "course" ? "Cours" : pdf.type === "question" ? "Question" : "Solution"}:
+              {pdf.type === "course"
+                ? "Cours"
+                : pdf.type === "question"
+                ? "Question"
+                : "Solution"}
+              :
             </b>{" "}
             {pdf.title}{" "}
             {pdf.fileUrl && (
-              <a
-                href={pdf.fileUrl.startsWith("http") ? pdf.fileUrl : backendUrl + pdf.fileUrl}
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                Ouvrir PDF
-              </a>
+              <>
+                <button
+                  type="button"
+                  onClick={() => setOpenPdfId(openPdfId === pdf.id ? null : pdf.id as string)}
+                  style={{ marginLeft: 8 }}
+                >
+                  See PDF
+                </button>
+                {openPdfId === pdf.id && (
+                  <div style={{ marginTop: 8 }}>
+                    <iframe
+                      src={pdf.fileUrl.startsWith("http") ? pdf.fileUrl : backendUrl + pdf.fileUrl}
+                      width="100%"
+                      height="600px"
+                      style={{ border: "1px solid #ccc" }}
+                      title={pdf.title}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </li>
         ))}
