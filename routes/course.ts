@@ -129,26 +129,15 @@ const courseRoutes = (): Router => {
         const { Course, Video, Quizz, QuizzQuestion } = req.app.get("models");
 
         if (typeof videos === "string") {
-          try {
-            videos = JSON.parse(videos);
-          } catch {
-            videos = [];
-          }
+          try { videos = JSON.parse(videos); } catch { videos = []; }
         }
         if (typeof quizz === "string") {
-          try {
-            quizz = JSON.parse(quizz);
-          } catch {
-            quizz = null;
-          }
+          try { quizz = JSON.parse(quizz); } catch { quizz = null; }
         }
         if (typeof questions === "string") {
-          try {
-            questions = JSON.parse(questions);
-          } catch {
-            questions = [];
-          }
+          try { questions = JSON.parse(questions); } catch { questions = []; }
         }
+
         const course = await Course.findByPk(id);
         if (!course) return sendError(res, COURSE_RESPONSE_MESSAGES.COURSE_NOT_FOUND, 404);
 
@@ -162,20 +151,41 @@ const courseRoutes = (): Router => {
           await course.setPacks(packIds);
         }
 
-        // Update videos
-        if (videos) {
-          const parsedVideos = typeof videos === "string" ? JSON.parse(videos) : videos;
-          await Video.destroy({ where: { courseId: id } });
-          for (const video of parsedVideos) {
-            await Video.create({
-              title: video.title,
-              url: video.url,
-              courseId: id,
-            });
+        // --- VIDEOS ---
+        if (Array.isArray(videos)) {
+          // Fetch all existing videos for this course
+          const existingVideos = await Video.findAll({ where: { courseId: id } });
+          const existingVideoIds = existingVideos.map((v: any) => v.id);
+
+          // Update or create videos
+          for (const video of videos) {
+            if (video.id && existingVideoIds.includes(video.id)) {
+              // Update existing video
+              const dbVideo = existingVideos.find((v: any) => v.id === video.id);
+              if (dbVideo) {
+                dbVideo.title = video.title;
+                dbVideo.url = video.url;
+                await dbVideo.save();
+              }
+            } else {
+              // Create new video
+              await Video.create({
+                title: video.title,
+                url: video.url,
+                courseId: id,
+              });
+            }
+          }
+          // Delete removed videos
+          const incomingIds = videos.filter(v => v.id).map(v => v.id);
+          for (const dbVideo of existingVideos) {
+            if (!incomingIds.includes(dbVideo.id)) {
+              await dbVideo.destroy();
+            }
           }
         }
 
-        // Update quizz and questions
+        // --- QUIZZ & QUESTIONS ---
         if (quizz) {
           // Update or create quizz
           let courseQuizz = await Quizz.findOne({ where: { courseId: id } });
@@ -187,15 +197,38 @@ const courseRoutes = (): Router => {
           }
 
           // Update questions if provided
-          if (questions && Array.isArray(questions)) {
-            await QuizzQuestion.destroy({ where: { quizzId: courseQuizz.id } });
+          if (Array.isArray(questions)) {
+            // Fetch all existing questions for this quizz
+            const existingQuestions = await QuizzQuestion.findAll({ where: { quizzId: courseQuizz.id } });
+            const existingQuestionIds = existingQuestions.map((q: any) => q.id);
+
+            // Update or create questions
             for (const q of questions) {
-              await QuizzQuestion.create({
-                quizzId: courseQuizz.id,
-                question: q.question,
-                correctAnswer: q.correctAnswer,
-                choices: q.choices,
-              });
+              if (q.id && existingQuestionIds.includes(q.id)) {
+                // Update existing question
+                const dbQ = existingQuestions.find((qq: any) => qq.id === q.id);
+                if (dbQ) {
+                  dbQ.question = q.question;
+                  dbQ.correctAnswer = q.correctAnswer;
+                  dbQ.choices = q.choices;
+                  await dbQ.save();
+                }
+              } else {
+                // Create new question
+                await QuizzQuestion.create({
+                  quizzId: courseQuizz.id,
+                  question: q.question,
+                  correctAnswer: q.correctAnswer,
+                  choices: q.choices,
+                });
+              }
+            }
+            // Delete removed questions
+            const incomingQuestionIds = questions.filter(q => q.id).map(q => q.id);
+            for (const dbQ of existingQuestions) {
+              if (!incomingQuestionIds.includes(dbQ.id)) {
+                await dbQ.destroy();
+              }
             }
           }
         }

@@ -88,9 +88,21 @@ const AdminManageCourses: React.FC = () => {
       setEditQuizz(responseQuizz.data);
       if (responseQuizz.data && responseQuizz.data.id) {
         const resQuestions = await fetchQuestionsByQuizzId(responseQuizz.data.id, token);
-        setEditQuestions(
-          resQuestions.success && Array.isArray(resQuestions.data) ? resQuestions.data : []
-        );
+        // Merge both arrays if admin (or just always show all for admin panel)
+        let allQuestions: any[] = [];
+        if (resQuestions.success && resQuestions.data) {
+          if (Array.isArray(resQuestions.data)) {
+            // fallback: old API, just use as is
+            allQuestions = resQuestions.data;
+          } else {
+            // new API: merge answeredCorrectly and toAnswer
+            allQuestions = [
+              ...(resQuestions.data.answeredCorrectly || []),
+              ...(resQuestions.data.toAnswer || []),
+            ];
+          }
+        }
+        setEditQuestions(allQuestions);
       } else {
         setEditQuestions([]);
       }

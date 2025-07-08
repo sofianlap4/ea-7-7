@@ -30,6 +30,7 @@ import {
   PDF,
   Exercise,
   UserQuizzProgress,
+  RankingPointLog,
 } from "./model";
 import sequelize from "./utils/sequelizeInit";
 
@@ -97,6 +98,7 @@ app.set("models", {
   PDF,
   Exercise,
   UserQuizzProgress,
+  RankingPointLog,
 });
 
 // Routes (pass all needed models)

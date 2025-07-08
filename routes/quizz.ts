@@ -1,6 +1,6 @@
-import express, { Router, NextFunction } from 'express';
-import { authenticateToken, authorizeRoles } from '../middleware/auth';
-import { sendError, sendSuccess } from '../utils/response';
+import express, { Router, NextFunction } from "express";
+import { authenticateToken, authorizeRoles } from "../middleware/auth";
+import { sendError, sendSuccess } from "../utils/response";
 import { QUIZZ_RESPONSE_MESSAGES } from "../utils/responseMessages";
 import { rankingPoints } from "../utils/rankUtils";
 
@@ -29,9 +29,28 @@ const quizzRoutes = (): Router => {
     authenticateToken,
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const { QuizzQuestion } = req.app.get("models");
-        const questions = await QuizzQuestion.findAll({ where: { quizzId: req.params.quizzId } });
-        sendSuccess(res, questions, 200);
+        const { QuizzQuestion, UserQuizzProgress } = req.app.get("models");
+        const userId = req.user.id;
+        const quizzId = req.params.quizzId;
+
+        // Get all questions for this quizz
+        const questions = await QuizzQuestion.findAll({ where: { quizzId } });
+
+        // Get user's progress for this quizz
+        const userProgress = await UserQuizzProgress.findOne({
+          where: { userId, quizzId },
+        });
+
+        let alreadyCorrect: string[] = [];
+        if (userProgress && Array.isArray(userProgress.correctQuestions)) {
+          alreadyCorrect = userProgress.correctQuestions;
+        }
+
+        // Separate questions
+        const answeredCorrectly = questions.filter((q: any) => alreadyCorrect.includes(q.id));
+        const toAnswer = questions.filter((q: any) => !alreadyCorrect.includes(q.id));
+
+        sendSuccess(res, { answeredCorrectly, toAnswer }, 200);
       } catch (err: any) {
         next(err);
       }
@@ -56,7 +75,7 @@ const quizzRoutes = (): Router => {
         const questions = await QuizzQuestion.findAll({ where: { quizzId: quizz.id } });
         // Get user's previous correct answers for this quizz
         let userProgress = await UserQuizzProgress.findOne({
-          where: { userId, quizzId: quizz.id }
+          where: { userId, quizzId: quizz.id },
         });
         let alreadyCorrect: string[] = [];
         if (userProgress && Array.isArray(userProgress.correctQuestions)) {
@@ -67,13 +86,20 @@ const quizzRoutes = (): Router => {
         let newlyCorrect: string[] = [];
         let incorrectAnswers: any[] = [];
 
-        for (const question of questions) {
-          const userAnswer = answers[question.id];
+        for (const questionId of Object.keys(answers)) {
+          if (alreadyCorrect.includes(questionId)) {
+            // Optionally: ignore or throw error if user tries to answer already-correct question
+            continue;
+          }
+
+          const question = questions.find((q: any) => q.id === questionId);
+          if (!question) continue; // Question not found, skip
+
+          const userAnswer = answers[questionId];
           if (userAnswer === question.correctAnswer) {
-            // Only award points if not already answered correctly
-            if (!alreadyCorrect.includes(question.id)) {
+            if (!alreadyCorrect.includes(questionId)) {
               pointsEarned += rankingPoints.QuizzQuestionPassed;
-              newlyCorrect.push(question.id);
+              newlyCorrect.push(questionId);
             }
           } else {
             incorrectAnswers.push({
@@ -93,27 +119,41 @@ const quizzRoutes = (): Router => {
               correctQuestions: newlyCorrect,
             });
           } else {
-            userProgress.correctQuestions = [
-              ...new Set([...alreadyCorrect, ...newlyCorrect]),
-            ];
+            userProgress.correctQuestions = [...new Set([...alreadyCorrect, ...newlyCorrect])];
             await userProgress.save();
           }
-          // Add points to user
-          await User.increment(
-            { score: pointsEarned },
-            { where: { id: userId } }
-          );
+          // Add points to user ranking
+          const { Ranking, RankingPointLog } = req.app.get("models");
+          const [ranking, created] = await Ranking.findOrCreate({
+            where: { userId },
+            defaults: { points: 0 },
+          });
+          ranking.points += pointsEarned;
+          await ranking.save();
+
+          // Log the point addition with reason and context
+          await RankingPointLog.create({
+            userId,
+            rankingId: ranking.id,
+            points: pointsEarned,
+            reason: "QuizzQuestionPassed",
+            context: `Quizz: ${quizz.title} (${quizz.id}) - Course: ${req.params.courseId}`,
+          });
         }
 
-        sendSuccess(res, {
-          success: incorrectAnswers.length === 0,
-          pointsEarned,
-          incorrectAnswers,
-          message:
-            incorrectAnswers.length === 0
-              ? `Bravo ! Vous avez gagné ${pointsEarned} points.`
-              : "Certaines réponses sont incorrectes.",
-        }, 200);
+        sendSuccess(
+          res,
+          {
+            success: incorrectAnswers.length === 0,
+            pointsEarned,
+            incorrectAnswers,
+            message:
+              incorrectAnswers.length === 0
+                ? `Bravo ! Vous avez gagné ${pointsEarned} points.`
+                : "Certaines réponses sont incorrectes.",
+          },
+          200
+        );
       } catch (err: any) {
         next(err);
       }

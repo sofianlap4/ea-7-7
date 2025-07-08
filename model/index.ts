@@ -26,6 +26,7 @@ import defineReductionCodeModel from "./reductionCode";
 import definePDFModel from "./pdf";
 import defineExerciceModel from "./exercice";
 import defineUserQuizzProgressModel from "./userQuizzProgress";
+import defineRankingPointLogModel from "./rankingPointLog";
 
 // Initialize models
 const User = defineUserModel(sequelize);
@@ -53,6 +54,7 @@ const ReductionCode = defineReductionCodeModel(sequelize);
 const PDF = definePDFModel(sequelize);
 const Exercise = defineExerciceModel(sequelize);
 const UserQuizzProgress = defineUserQuizzProgressModel(sequelize);
+const RankingPointLog = defineRankingPointLogModel(sequelize);
 
 // --- Associations for UserQuizzProgress ---
 User.hasMany(UserQuizzProgress, { foreignKey: "userId", as: "quizzProgress" });
@@ -221,6 +223,14 @@ UserPackReduction.belongsTo(UserPack, { foreignKey: "userPackId", as: "userPack"
 ReductionCode.hasMany(UserPackReduction, { foreignKey: "reductionCodeId", as: "usages" });
 UserPackReduction.belongsTo(ReductionCode, { foreignKey: "reductionCodeId", as: "reductionCode" });
 
+// ...after importing and initializing models...
+
+Ranking.hasMany(RankingPointLog, { foreignKey: "rankingId", as: "pointLogs" });
+RankingPointLog.belongsTo(Ranking, { foreignKey: "rankingId", as: "ranking" });
+
+User.hasMany(RankingPointLog, { foreignKey: "userId", as: "rankingPointLogs" });
+RankingPointLog.belongsTo(User, { foreignKey: "userId", as: "user" });
+
 // Export all models
 export {
   sequelize,
@@ -248,5 +258,6 @@ export {
   ReductionCode,
   PDF,
   Exercise,
-  UserQuizzProgress
+  UserQuizzProgress,
+  RankingPointLog
 };

@@ -65,6 +65,31 @@ const videoRoutes = (): Router => {
     }
   );
 
+  router.put(
+    '/id/:videoId',
+    authenticateToken,
+    authorizeRoles( 'admin', 'superadmin'),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { videoId } = req.params;
+        const { title, url, free } = req.body;
+
+        const video = await req.app.get("models").Video.findByPk(videoId);
+        if (!video) return sendError(res, VIDEO_RESPONSE_MESSAGES.VIDEO_NOT_FOUND, 404);
+
+        // Update video details
+        video.title = title;
+        video.url = url;
+        video.free = !!free;
+        await video.save();
+
+        sendSuccess(res, video);
+      } catch (err: any) {
+        next(err)
+      }
+    }
+  );
+
   return router;
 };
 
