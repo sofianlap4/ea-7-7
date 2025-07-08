@@ -2,24 +2,7 @@ import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { fetchCreateCourse } from "../api/courses";
 import { createQuizz, addQuizzQuestion } from "../api/quizz";
 import { fetchAllPacksAdmin } from "../api/packs";
-
-// Helper for uploading a PDF to a course
-const uploadPdfToCourse = async (
-  courseId: string,
-  pdf: File,
-  title: string,
-  type: "course" | "question" | "solution"
-) => {
-  const formData = new FormData();
-  formData.append("title", title);
-  formData.append("file", pdf);
-  formData.append("type", type);
-  const res = await fetch(`/api/pdfs/course/${courseId}`, {
-    method: "POST",
-    body: formData,
-  });
-  return await res.json();
-};
+import { addPdfToCourse } from "../api/pdf";
 
 const CreateCourseForm: React.FC = () => {
   const [title, setTitle] = useState<string>("");
@@ -72,18 +55,37 @@ const CreateCourseForm: React.FC = () => {
       setVideos([]);
       setPackIds([]);
 
-            // 2. Upload PDFs for courses
+      // 2. Upload PDFs for courses
       for (const { file, title: pdfTitle } of coursPdfs) {
-        await uploadPdfToCourse(response1.data.id, file, pdfTitle, "course");
+        if (file) {
+          await addPdfToCourse(response1.data.id, {
+            title: pdfTitle,
+            file,
+            type: "course",
+          });
+        }
       }
+      
 
       // 2. Upload PDFs for questions
       for (const { file, title: pdfTitle } of questionPdfs) {
-        await uploadPdfToCourse(response1.data.id, file, pdfTitle, "question");
+        if (file) {
+          await addPdfToCourse(response1.data.id, {
+            title: pdfTitle,
+            file,
+            type: "question",
+          });
+        }
       }
       // 3. Upload PDFs for solutions
       for (const { file, title: pdfTitle } of solutionPdfs) {
-        await uploadPdfToCourse(response1.data.id, file, pdfTitle, "solution");
+        if (file) {
+          await addPdfToCourse(response1.data.id, {
+            title: pdfTitle,
+            file,
+            type: "solution",
+          });
+        }
       }
 
       setCoursPdfs([]);

@@ -2,21 +2,28 @@ import express, { Router, NextFunction } from 'express';
 import { authenticateToken, authorizeRoles } from '../middleware/auth';
 import { sendError, sendSuccess } from '../utils/response';
 import { PDF_RESPONSE_MESSAGES } from "../utils/responseMessages";
+import { uploadPdf } from "../utils/multerUpload";
 
 const pdfRoutes = (): Router => {
   const router = express.Router();
 
-  // Add a PDF to a course
+  // Add a PDF to a course (with file upload)
   router.post(
     "/course/id/:courseId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
+    uploadPdf,
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const { title, fileUrl, type } = req.body;
+        const { title, type } = req.body;
         const { PDF, Course } = req.app.get("models");
         const course = await Course.findByPk(req.params.courseId);
         if (!course) return sendError(res, "Course not found", 404);
+
+        if (!req.file) return sendError(res, "No PDF file uploaded", 400);
+
+        // Build fileUrl (assuming static serving from /uploads/pdfs)
+        const fileUrl = `${process.env.BACKEND_URL}/uploads/pdfs/${req.file.filename}`;
 
         const pdf = await PDF.create({
           title,

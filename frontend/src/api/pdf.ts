@@ -3,16 +3,21 @@ import fetchWithAuth from '../utils/fetchWithAuth';
 // Add a PDF to a course (POST /api/pdfs/course/id/:courseId)
 export const addPdfToCourse = async (
   courseId: string,
-  data: { title: string; fileUrl: string; type: string },
+  data: { title: string; file: File; type: string },
   token?: string
 ) => {
+  const formData = new FormData();
+  formData.append('title', data.title);
+  formData.append('type', data.type);
+  formData.append('file', data.file);
+
   const res = await fetchWithAuth(`/api/pdfs/course/id/${courseId}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      // Do NOT set Content-Type, browser will set it for FormData
     },
-    body: JSON.stringify(data),
+    body: formData,
   });
   return await res.json();
 };

@@ -3,12 +3,7 @@ import { updateCourse, deleteCourse, fetchCourses } from "../api/courses";
 import { fetchQuizzByCourseId, fetchQuestionsByQuizzId } from "../api/quizz";
 import { fetchVideosByCourse } from "../api/videos";
 import { RESPONSE_MESSAGES } from "../utils/responseMessages";
-import {
-  uploadPdfToCourse,
-  fetchCoursePdfs,
-  deletePdf,
-  editPdfOfCourse,
-} from "../api/pdf";
+import { addPdfToCourse, fetchPdfsByCourse, deletePdfOfCourse, editPdfOfCourse } from "../api/pdf";
 
 interface PDF {
   id?: string;
@@ -83,7 +78,9 @@ const AdminManageCourses: React.FC = () => {
     setEditPackIds(course.packs ? course.packs.map((p: any) => p.id) : []);
     // Videos
     const responseVideos = await fetchVideosByCourse(course.id);
-    setEditVideos(responseVideos.success && Array.isArray(responseVideos.data) ? responseVideos.data : []);
+    setEditVideos(
+      responseVideos.success && Array.isArray(responseVideos.data) ? responseVideos.data : []
+    );
     // Quizz & questions
     const token = localStorage.getItem("token") || "";
     const responseQuizz = await fetchQuizzByCourseId(course.id, token);
@@ -91,7 +88,9 @@ const AdminManageCourses: React.FC = () => {
       setEditQuizz(responseQuizz.data);
       if (responseQuizz.data && responseQuizz.data.id) {
         const resQuestions = await fetchQuestionsByQuizzId(responseQuizz.data.id, token);
-        setEditQuestions(resQuestions.success && Array.isArray(resQuestions.data) ? resQuestions.data : []);
+        setEditQuestions(
+          resQuestions.success && Array.isArray(resQuestions.data) ? resQuestions.data : []
+        );
       } else {
         setEditQuestions([]);
       }
@@ -100,7 +99,7 @@ const AdminManageCourses: React.FC = () => {
       setEditQuestions([]);
     }
     // PDFs
-    const resPdfs = await fetchCoursePdfs(course.id);
+    const resPdfs = await fetchPdfsByCourse(course.id);
     setPdfs(resPdfs.success && Array.isArray(resPdfs.data) ? resPdfs.data : []);
   };
 
@@ -121,8 +120,7 @@ const AdminManageCourses: React.FC = () => {
     );
 
     // 2. PDFs: synchronize backend with local state
-    // Fetch backend PDFs to compare
-    const backendPdfsRes = await fetchCoursePdfs(editingId);
+    const backendPdfsRes = await fetchPdfsByCourse(editingId);
     const backendPdfs: PDF[] = backendPdfsRes.success ? backendPdfsRes.data : [];
 
     // Find deleted PDFs
@@ -130,13 +128,17 @@ const AdminManageCourses: React.FC = () => {
       (bpdf) => !pdfs.some((p) => p.id === bpdf.id)
     );
     for (const pdf of deletedPdfs) {
-      if (pdf.id) await deletePdf(pdf.id);
+      if (pdf.id) await deletePdfOfCourse(pdf.id);
     }
 
-    // Add new PDFs
+    // Add new PDFs (now using FormData and file)
     for (const pdf of pdfs) {
       if (pdf.file) {
-        await uploadPdfToCourse(editingId, pdf.file, pdf.title, pdf.type);
+        await addPdfToCourse(editingId, {
+          title: pdf.title,
+          file: pdf.file,
+          type: pdf.type,
+        });
       }
     }
 
@@ -429,7 +431,9 @@ const AdminManageCourses: React.FC = () => {
                   />
                   <select
                     value={newPdfType}
-                    onChange={(e) => setNewPdfType(e.target.value as "course" | "question" | "solution")}
+                    onChange={(e) =>
+                      setNewPdfType(e.target.value as "course" | "question" | "solution")
+                    }
                     style={{ marginRight: 8 }}
                   >
                     <option value='course'>Cours</option>
