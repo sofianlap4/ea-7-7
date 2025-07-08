@@ -9,6 +9,7 @@ const CourseList: React.FC<{ userRole: string }> = ({ userRole }) => {
     if (userRole === "student") {
       fetchStudentCourses()
         .then(response => {
+          console.log("Fetched student courses:", response.data);
           if (response.success) {
             setCourses(Array.isArray(response.data) ? response.data : []);
           } else {

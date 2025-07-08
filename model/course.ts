@@ -4,7 +4,6 @@ interface CourseAttributes {
   id?: string;
   title: string;
   description?: string;
-  isOpened: boolean;
   hidden: boolean;
   creatorId?: string;
   createdAt?: Date;
@@ -13,7 +12,7 @@ interface CourseAttributes {
 
 type CourseCreationAttributes = Optional<
   CourseAttributes,
-  "id" | "description" | "isOpened" | "hidden" | "creatorId" | "createdAt" | "updatedAt"
+  "id" | "description" | "hidden" | "creatorId" | "createdAt" | "updatedAt"
 >;
 
 export default (sequelize: Sequelize) => {
@@ -24,7 +23,6 @@ export default (sequelize: Sequelize) => {
     public id!: string;
     public title!: string;
     public description?: string;
-    public isOpened!: boolean;
     public hidden!: boolean;
     public creatorId?: string;
     public readonly createdAt!: Date;
@@ -45,10 +43,6 @@ export default (sequelize: Sequelize) => {
       description: {
         type: DataTypes.TEXT,
         allowNull: true,
-      },
-      isOpened: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
       },
       hidden: {
         type: DataTypes.BOOLEAN,

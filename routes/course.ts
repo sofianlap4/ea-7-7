@@ -14,7 +14,7 @@ const courseRoutes = (): Router => {
     authorizeRoles("student"),
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const { UserPack, Pack, Course } = req.app.get("models");
+        const { UserPack, Pack, Course, UserCourseProgress } = req.app.get("models");
 
         // Find active UserPack for the user
         const userPack = await UserPack.findOne({
@@ -36,7 +36,26 @@ const courseRoutes = (): Router => {
 
         // Return all courses in the pack
         let courses = userPack.pack.courses || [];
-        sendSuccess(res, courses, 200);
+
+        // Fetch all UserCourseProgress for the current user
+        const userCourseProgress = await UserCourseProgress.findAll({
+          where: { userId: (req as any).user.id },
+          attributes: ["courseId", "isOpened"],
+        });
+
+        // Map courseId to isOpened for quick lookup
+        const progressMap: Record<string, boolean> = {};
+        userCourseProgress.forEach((progress: any) => {
+          progressMap[progress.courseId] = progress.isOpened;
+        });
+
+        // Add isOpened to each course
+        const coursesWithOpened = courses.map((course: any) => ({
+          ...course.toJSON(),
+          isOpened: progressMap[course.id] || false,
+        }));
+
+        sendSuccess(res, coursesWithOpened, 200);
       } catch (err: any) {
         next(err);
       }
@@ -113,10 +132,12 @@ const courseRoutes = (): Router => {
       if (!course) return sendError(res, COURSE_RESPONSE_MESSAGES.COURSE_NOT_FOUND, 404);
 
       // Set isOpened to true if not already true
-      if (!course.isOpened) {
-        course.isOpened = true;
-        await course.save();
-      }
+      // In your course GET route
+      const { UserCourseProgress } = req.app.get("models");
+      await UserCourseProgress.findOrCreate({
+        where: { userId: req.user.id, courseId: req.params.id },
+        defaults: { isOpened: true, openedAt: new Date() },
+      });
 
       sendSuccess(res, course, 200);
     } catch (err: any) {
@@ -137,13 +158,25 @@ const courseRoutes = (): Router => {
         const { Course, Video, Quizz, QuizzQuestion } = req.app.get("models");
 
         if (typeof videos === "string") {
-          try { videos = JSON.parse(videos); } catch { videos = []; }
+          try {
+            videos = JSON.parse(videos);
+          } catch {
+            videos = [];
+          }
         }
         if (typeof quizz === "string") {
-          try { quizz = JSON.parse(quizz); } catch { quizz = null; }
+          try {
+            quizz = JSON.parse(quizz);
+          } catch {
+            quizz = null;
+          }
         }
         if (typeof questions === "string") {
-          try { questions = JSON.parse(questions); } catch { questions = []; }
+          try {
+            questions = JSON.parse(questions);
+          } catch {
+            questions = [];
+          }
         }
 
         const course = await Course.findByPk(id);
@@ -185,7 +218,7 @@ const courseRoutes = (): Router => {
             }
           }
           // Delete removed videos
-          const incomingIds = videos.filter(v => v.id).map(v => v.id);
+          const incomingIds = videos.filter((v) => v.id).map((v) => v.id);
           for (const dbVideo of existingVideos) {
             if (!incomingIds.includes(dbVideo.id)) {
               await dbVideo.destroy();
@@ -207,7 +240,9 @@ const courseRoutes = (): Router => {
           // Update questions if provided
           if (Array.isArray(questions)) {
             // Fetch all existing questions for this quizz
-            const existingQuestions = await QuizzQuestion.findAll({ where: { quizzId: courseQuizz.id } });
+            const existingQuestions = await QuizzQuestion.findAll({
+              where: { quizzId: courseQuizz.id },
+            });
             const existingQuestionIds = existingQuestions.map((q: any) => q.id);
 
             // Update or create questions
@@ -232,7 +267,7 @@ const courseRoutes = (): Router => {
               }
             }
             // Delete removed questions
-            const incomingQuestionIds = questions.filter(q => q.id).map(q => q.id);
+            const incomingQuestionIds = questions.filter((q) => q.id).map((q) => q.id);
             for (const dbQ of existingQuestions) {
               if (!incomingQuestionIds.includes(dbQ.id)) {
                 await dbQ.destroy();
