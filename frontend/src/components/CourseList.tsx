@@ -26,7 +26,7 @@ const CourseList: React.FC<{ userRole: string }> = ({ userRole }) => {
       <ul>
         {courses.length > 0 ? (
           courses.map((course) => (
-            <li key={course.id}>
+            <li key={course.id} style={course.isOpened ? {} : { color: "gray" }}>
               <Link to={`/courses/${course.id}`}>
                 <strong>titre: {course.title}</strong>
               </Link>

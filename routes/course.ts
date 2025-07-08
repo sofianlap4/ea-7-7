@@ -108,8 +108,16 @@ const courseRoutes = (): Router => {
   // Get a course by ID
   router.get("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
-      const course = await req.app.get("models").Course.findByPk(req.params.id);
+      const { Course } = req.app.get("models");
+      const course = await Course.findByPk(req.params.id);
       if (!course) return sendError(res, COURSE_RESPONSE_MESSAGES.COURSE_NOT_FOUND, 404);
+
+      // Set isOpened to true if not already true
+      if (!course.isOpened) {
+        course.isOpened = true;
+        await course.save();
+      }
+
       sendSuccess(res, course, 200);
     } catch (err: any) {
       next(err);
