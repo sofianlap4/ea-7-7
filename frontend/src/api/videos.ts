@@ -12,13 +12,13 @@ export const addVideo = async (video: { title: string; url: string; courseId: st
 };
 
 export const fetchVideosByCourse = async (courseId: string | number) => {
-  const res = await fetchWithAuth(`/api/videos/course/${courseId}`);
+  const res = await fetchWithAuth(`/api/videos/course/id/${courseId}`);
   if (res.status === 403) return { accessDenied: true, videos: [] };
   return await res.json();
 };
 
 export const deleteVideo = async (videoId: string, token?: string) => {
-  const res = await fetchWithAuth(`/api/videos/${videoId}`, {
+  const res = await fetchWithAuth(`/api/videos/id/${videoId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

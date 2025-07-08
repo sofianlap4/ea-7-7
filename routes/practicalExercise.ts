@@ -142,7 +142,7 @@ const practicalExerciseRoutes = (): Router => {
   });
 
   // Get one ranked exercise
-  router.get("/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.get("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const exercise = await req.app.get("models").PracticalExercise.findByPk(req.params.id);
       if (!exercise) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
@@ -152,8 +152,8 @@ const practicalExerciseRoutes = (): Router => {
     }
   });
 
-  // DELETE /ranked-exercises/:id
-  router.delete("/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  // DELETE /ranked-exercises/id/:id
+  router.delete("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const id = req.params.id;
       const exercise = await req.app.get("models").PracticalExercise.findByPk(id);
@@ -167,7 +167,7 @@ const practicalExerciseRoutes = (): Router => {
   });
 
   // PUT /ranked-exercises/:id
-  router.put("/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.put("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const id = req.params.id;
       const updated = await req.app
@@ -183,7 +183,7 @@ const practicalExerciseRoutes = (): Router => {
 
   // Attempt a ranked exercise (enforces pack usage limits and logs the attempt)
   router.post(
-    "/:exerciseId/attempt",
+    "/id/:exerciseId/attempt",
     authenticateToken,
     checkPackUsageLimits,
     async (req: any, res: any, next: NextFunction) => {
@@ -208,7 +208,7 @@ const practicalExerciseRoutes = (): Router => {
 
   // Submit a solution for a ranked exercise (enforces pack usage limits and logs the attempt)
   router.post(
-    "/:exerciseId/submit",
+    "/id/:exerciseId/submit",
     authenticateToken,
     checkPackUsageLimits,
     async (req: any, res: any, next: NextFunction) => {

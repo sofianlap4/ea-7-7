@@ -37,7 +37,7 @@ export const fetchAllRankings = async (token: string) => {
 
 // Update a student's ranking points (admin only)
 export const updateStudentRankingPoints = async (userId: string, points: number, token: string) => {
-  const res = await fetchWithAuth(`/api/leaderboard/studentRank/${userId}`, {
+  const res = await fetchWithAuth(`/api/leaderboard/studentRank/id/${userId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

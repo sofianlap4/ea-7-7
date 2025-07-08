@@ -1,7 +1,7 @@
 import fetchWithAuth from "../utils/fetchWithAuth";
 
 export async function submitPracticalExercise(exerciseId: string, code: string, token: string | null) {
-  const res = await fetchWithAuth(`/api/practical-exercises/${exerciseId}/submit`, {
+  const res = await fetchWithAuth(`/api/practical-exercises/id/${exerciseId}/submit`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export async function practicalExerciseRun(
 }
 
 export async function fetchExerciseApi(exerciseId: string, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/${exerciseId}`, {
+  const res = await fetchWithAuth(`/api/practical-exercises/id/${exerciseId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export async function fetchExerciseApi(exerciseId: string, token: string) {
 }
 
 export async function updatePracticalExercise(editingId: string, formData: any, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/${editingId}`, {
+  const res = await fetchWithAuth(`/api/practical-exercises/id/${editingId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export async function updatePracticalExercise(editingId: string, formData: any, 
 }
 
 export async function deletePracticalExercise(id: string, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/${id}`, {
+  const res = await fetchWithAuth(`/api/practical-exercises/id/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ export async function fetchAllPracticalExercises(token: string) {
 }
 
 export async function createPracticalExerciseAttempt(exerciseId: string, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/${exerciseId}/attempt`, {
+  const res = await fetchWithAuth(`/api/practical-exercises/id/${exerciseId}/attempt`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

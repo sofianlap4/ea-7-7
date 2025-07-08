@@ -113,7 +113,7 @@ export default () => {
 
   // UPDATE a reduction code (admin)
   router.put(
-    "/reduction-codes/:id",
+    "/reduction-codes/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -147,7 +147,7 @@ export default () => {
 
   // DELETE a reduction code (admin)
   router.delete(
-    "/reduction-codes/:id",
+    "/reduction-codes/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {

@@ -10,8 +10,8 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   // Helper to get models
   const getModels = (req: any) => req.app.get("models");
 
-  // GET /ranked-exercises/:exerciseId/solutions
-  router.get("/ranked-exercises/:exerciseId/solutions", async (req: any, res: any, next: NextFunction) => {
+  // GET /ranked-exercises/id/:exerciseId/solutions
+  router.get("/ranked-exercises/id/:exerciseId/solutions", async (req: any, res: any, next: NextFunction) => {
     try {
       const { exerciseId } = req.params;
       const { RankedExerciseSolution, SolutionComment, User, SolutionLike } = getModels(req);
@@ -41,7 +41,7 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   });
 
   // POST /solutions/:solutionId/like
-  router.post("/:solutionId/like", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.post("/id/:solutionId/like", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const { solutionId } = req.params;
       const userId = req.user.id;
@@ -66,7 +66,7 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   });
 
   // DELETE /solutions/:solutionId/like
-  router.delete("/:solutionId/like", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.delete("/id/:solutionId/like", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const { solutionId } = req.params;
       const userId = req.user.id;
@@ -84,7 +84,7 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   });
 
   // POST /solutions/:solutionId/comment
-  router.post("/:solutionId/comment", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.post("/id/:solutionId/comment", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const { solutionId } = req.params;
       const { text } = req.body;
@@ -106,7 +106,7 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   });
 
   // DELETE /solutions/:solutionId/comment/:commentId
-  router.delete("/:solutionId/comment/:commentId", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.delete("/id/:solutionId/comment/id/:commentId", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const { commentId } = req.params;
       const userId = req.user.id;
@@ -123,8 +123,8 @@ const practicalExerciseSolutionsRoutes = (): Router => {
     }
   });
 
-  // GET /users/:userId/solutions
-  router.get("/users/:userId/solutions", async (req: any, res: any, next: NextFunction) => {
+  // GET /users/id/:userId/solutions
+  router.get("/users/id/:userId/solutions", async (req: any, res: any, next: NextFunction) => {
     try {
       const { userId } = req.params;
       const { RankedExerciseSolution, RankedExercise } = getModels(req);

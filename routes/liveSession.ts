@@ -43,7 +43,7 @@ export default () => {
   );
 
   // Get join log for a live session (/admin/superadmin)
-  router.get("/:id/log", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.get("/id/:id/log", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const logs = await req.app.get("models").LiveSessionLog.findAll({
         where: { liveSessionId: req.params.id },
@@ -69,7 +69,7 @@ export default () => {
 
   // Student joins a session
   router.post(
-    "/:id/join",
+    "/id/:id/join",
     authenticateToken,
     authorizeRoles("student"),
     async (req: any, res: any, next: NextFunction) => {
@@ -145,7 +145,7 @@ export default () => {
 
   // Update a live session (admin)
   router.put(
-    "/:id",
+    "/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -171,7 +171,7 @@ export default () => {
 
   // Delete a live session (admin)
   router.delete(
-    "/:id",
+    "/id/:id",
     authenticateToken,
     authorizeRoles( "admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -188,7 +188,7 @@ export default () => {
   );
 
   // Get session detail
-  router.get("/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.get("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const session = await req.app.get("models").LiveSession.findByPk(req.params.id);
       if (!session) return sendError(res, LIVE_SESSION_RESPONSE_MESSAGES.SESSION_NOT_FOUND, 404);

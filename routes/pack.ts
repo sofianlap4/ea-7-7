@@ -57,7 +57,7 @@ export default () => {
 
   // Admin: Add/remove student to/from pack (accept/reject subscription)
   router.post(
-    "/:id/students",
+    "/id/:id/students",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -76,7 +76,7 @@ export default () => {
   );
 
   router.delete(
-    "/:id/students/:studentId",
+    "/id/:id/students/:studentId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -117,7 +117,7 @@ export default () => {
 
   // Admin: Manage offers for a pack
   router.post(
-    "/:id/offers",
+    "/id/:id/offers",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -139,7 +139,7 @@ export default () => {
   );
 
   router.put(
-    "/offers/:offerId",
+    "/offers/id/:offerId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -157,7 +157,7 @@ export default () => {
   );
 
   router.delete(
-    "/offers/:offerId",
+    "/offers/id/:offerId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -273,7 +273,7 @@ export default () => {
   );
   // Admin: Delete pack
   router.delete(
-    "/:id",
+    "/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -298,7 +298,7 @@ export default () => {
 
   // Admin: Get pack details by id
   router.get(
-    "/:id",
+    "/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -387,7 +387,7 @@ export default () => {
 
   // Admin: Update pack (name, description, courses)
   router.put(
-    "/:id",
+    "/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {

@@ -7,7 +7,7 @@ const leaderBoardRoutes = (): Router => {
   const router = express.Router();
 
   // GET /api/leaderboard/division/:rank
-  router.get("/division/:rank", authenticateToken, authorizeRoles("student"), async (req, res, next: NextFunction) => {
+  router.get("/division/id/:rank", authenticateToken, authorizeRoles("student"), async (req, res, next: NextFunction) => {
     try {
       const { Ranking, User } = req.app.get("models");
       const { rank } = req.params;
@@ -120,7 +120,7 @@ const leaderBoardRoutes = (): Router => {
 
   // PUT /api/leaderboard/studentRank/:userId
   router.put(
-    "/studentRank/:userId",
+    "/studentRank/id/:userId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {

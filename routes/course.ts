@@ -6,8 +6,8 @@ import { Op } from "sequelize";
 
 const courseRoutes = (): Router => {
   const router = express.Router();
-
   // Get courses for the logged-in student (included in their packs)
+
   router.get(
     "/my",
     authenticateToken,
@@ -106,7 +106,7 @@ const courseRoutes = (): Router => {
   });
 
   // Get a course by ID
-  router.get("/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  router.get("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const course = await req.app.get("models").Course.findByPk(req.params.id);
       if (!course) return sendError(res, COURSE_RESPONSE_MESSAGES.COURSE_NOT_FOUND, 404);
@@ -118,7 +118,7 @@ const courseRoutes = (): Router => {
 
   // Update a course by ID
   router.put(
-    "/:id",
+    "/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -217,7 +217,7 @@ const courseRoutes = (): Router => {
 
   // Delete a course by ID
   router.delete(
-    "/:id",
+    "/id/:id",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {

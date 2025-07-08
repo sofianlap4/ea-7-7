@@ -29,7 +29,7 @@ export async function createLiveSession(
 }
 
 export async function updateLiveSession(id: string, form: any, token: string) {
-  const res = await fetchWithAuth(`/api/live-sessions/${id}`, {
+  const res = await fetchWithAuth(`/api/live-sessions/id/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export async function updateLiveSession(id: string, form: any, token: string) {
 }
 
 export async function deleteLiveSession(id: string, token: string) {
-  const res = await fetchWithAuth(`/api/live-sessions/${id}`, {
+  const res = await fetchWithAuth(`/api/live-sessions/id/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -49,7 +49,7 @@ export async function deleteLiveSession(id: string, token: string) {
 }
 
 export async function joinLiveSession(id: string, token: string) {
-  const res = await fetchWithAuth(`/api/live-sessions/${id}/join`, {
+  const res = await fetchWithAuth(`/api/live-sessions/id/${id}/join`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -57,14 +57,14 @@ export async function joinLiveSession(id: string, token: string) {
 }
 
 export async function fetchLiveSessionLog(sessionId: string, token: string) {
-  const res = await fetchWithAuth(`/api/live-sessions/${sessionId}/log`, {
+  const res = await fetchWithAuth(`/api/live-sessions/id/${sessionId}/log`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return await res.json();
 }
 
 export async function fetchLiveSession(id: string, token: string) {
-  const res = await fetchWithAuth(`/api/live-sessions/${id}`, {
+  const res = await fetchWithAuth(`/api/live-sessions/id/${id}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return await res.json();

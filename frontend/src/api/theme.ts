@@ -39,6 +39,6 @@ export const deleteTheme = async (id: string | number) => {
 };
 
 export const fetchThemesByPackId = async (packId: string | number) => {
-  const res = await fetchWithAuth(`/api/themes/by-pack/${packId}`);
+  const res = await fetchWithAuth(`/api/themes/by-pack/id/${packId}`);
   return await res.json();
 };

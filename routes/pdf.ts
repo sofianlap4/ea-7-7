@@ -8,7 +8,7 @@ const pdfRoutes = (): Router => {
 
   // Add a PDF to a course
   router.post(
-    "/course/:courseId",
+    "/course/id/:courseId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -33,7 +33,7 @@ const pdfRoutes = (): Router => {
 
   // Get all PDFs for a course
   router.get(
-    "/course/:courseId",
+    "/course/id/:courseId",
     authenticateToken,
     async (req: any, res: any, next: NextFunction) => {
       try {

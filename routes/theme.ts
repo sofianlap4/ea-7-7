@@ -117,7 +117,7 @@ const themeRoutes = (): Router => {
 
   // Get all themes associated to a specific pack
   router.get(
-    '/by-pack/:packId',
+    '/by-pack/id/:packId',
     authenticateToken,
     async (req: any, res: any, next: NextFunction) => {
       try {

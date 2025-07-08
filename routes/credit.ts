@@ -65,7 +65,7 @@ export default () => {
 
   // Admin: Get all credit transactions for a specific user
   router.get(
-    "/user/:userId",
+    "/user/id/:userId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {

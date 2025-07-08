@@ -12,7 +12,7 @@ export const fetchAllPacksAdmin = async () => {
 };
 
 export const fetchPackById = async (id: string | number) => {
-  const res = await fetchWithAuth(`/api/packs/${id}`);
+  const res = await fetchWithAuth(`/api/packs/id/${id}`);
   return await res.json();
 };
 
@@ -44,7 +44,7 @@ export const updatePack = async (
     offers?: { id?: string; durationMonths: number; price: number }[];
   }
 ) => {
-  const res = await fetchWithAuth(`/api/packs/${id}`, {
+  const res = await fetchWithAuth(`/api/packs/id/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -57,7 +57,7 @@ export const createPackOffer = async (
   packId: string,
   data: { durationMonths: number; price: number }
 ) => {
-  const res = await fetchWithAuth(`/api/packs/${packId}/offers`, {
+  const res = await fetchWithAuth(`/api/packs/id/${packId}/offers`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -70,7 +70,7 @@ export const updatePackOffer = async (
   offerId: string,
   data: { durationMonths: number; price: number }
 ) => {
-  const res = await fetchWithAuth(`/api/packs/offers/${offerId}`, {
+  const res = await fetchWithAuth(`/api/packs/offers/id/${offerId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -80,17 +80,17 @@ export const updatePackOffer = async (
 
 // Delete an offer (admin)
 export const deletePackOffer = async (offerId: string) => {
-  const res = await fetchWithAuth(`/api/packs/offers/${offerId}`, { method: 'DELETE' });
+  const res = await fetchWithAuth(`/api/packs/offers/id/${offerId}`, { method: 'DELETE' });
   return await res.json();
 };
 
 export const deletePack = async (id: string | number) => {
-  const res = await fetchWithAuth(`/api/packs/${id}`, { method: 'DELETE' });
+  const res = await fetchWithAuth(`/api/packs/id/${id}`, { method: 'DELETE' });
   return await res.json();
 };
 
 export const addStudentToPack = async (packId: string | number, studentId: string | number) => {
-  const res = await fetchWithAuth(`/api/packs/${packId}/students`, {
+  const res = await fetchWithAuth(`/api/packs/id/${packId}/students`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ studentId }),
@@ -99,7 +99,7 @@ export const addStudentToPack = async (packId: string | number, studentId: strin
 };
 
 export const removeStudentFromPack = async (packId: string | number, studentId: string | number) => {
-  const res = await fetchWithAuth(`/api/packs/${packId}/students/${studentId}`, { method: 'DELETE' });
+  const res = await fetchWithAuth(`/api/packs/id/${packId}/students/id/${studentId}`, { method: 'DELETE' });
   return await res.json();
 };
 
@@ -129,7 +129,7 @@ export const fetchPackRequests = async (packId: string) => {
 };
 
 export const rejectPackRequest = async (packId: string, requestId: string) => {
-  const res = await fetchWithAuth(`/api/packs/${packId}/requests/${requestId}/reject`, { method: 'POST' });
+  const res = await fetchWithAuth(`/api/packs/id/${packId}/requests/id/${requestId}/reject`, { method: 'POST' });
   return await res.json();
 };
 

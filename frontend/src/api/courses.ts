@@ -14,7 +14,7 @@ export const fetchCourses = async (token?: string) => {
 
 // Fetch a course by ID (GET /api/courses/:id)
 export const fetchCourseById = async (id: string | number) => {
-  const res = await fetchWithAuth(`/api/courses/${id}`);
+  const res = await fetchWithAuth(`/api/courses/id/${id}`);
   return await res.json();
 };
 
@@ -65,7 +65,7 @@ export const updateCourse = async (
   if (quizz) body.quizz = JSON.stringify(quizz);
   if (questions) body.questions = JSON.stringify(questions);
 
-  const res = await fetchWithAuth(`/api/courses/${editingId}`, {
+  const res = await fetchWithAuth(`/api/courses/id/${editingId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -75,7 +75,7 @@ export const updateCourse = async (
 
 // Delete a course by ID (DELETE /api/courses/:id)
 export const deleteCourse = async (id: string, token?: string) => {
-  const res = await fetchWithAuth(`/api/courses/${id}`, {
+  const res = await fetchWithAuth(`/api/courses/id/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

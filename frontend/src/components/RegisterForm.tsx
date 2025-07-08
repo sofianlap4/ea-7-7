@@ -8,10 +8,10 @@ const GOUVERNORATS = [
 ];
 
 const PACK_TYPES = [
-  "2eme info gratuit",
-  "3eme info gratuit",
-  "Bac info gratuit",
-  "Bac scientifique gratuit"
+  { label: "2eme info", value: "2eme info gratuit" },
+  { label: "3eme info", value: "3eme info gratuit" },
+  { label: "bac info", value: "Bac info gratuit" },
+  { label: "bac scientifique", value: "Bac scientifique gratuit" }
 ];
 
 interface RegisterPayload {
@@ -28,16 +28,16 @@ interface RegisterPayload {
 const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
 
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [dateOfBirth, setDateOfBirth] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>('sofienne');
+  const [lastName, setLastName] = useState<string>('nabli');
+  const [phone, setPhone] = useState<string>('12345678');
+  const [dateOfBirth, setDateOfBirth] = useState<string>('2025-07-09');
   const [gouvernorat, setGouvernorat] = useState<string>(GOUVERNORATS[0]);
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [password, setPassword] = useState<string>('TTuu1234');
+  const [confirmPassword, setConfirmPassword] = useState<string>('TTuu1234');
+  const [email, setEmail] = useState<string>('sofiannabli1993@gmail.com');
   const [message, setMessage] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [packType, setPackType] = useState<string>(PACK_TYPES[0]);
+  const [packType, setPackType] = useState<string>(PACK_TYPES[0].value);
 
   // Client-side validation
   const validate = (): boolean => {
@@ -151,9 +151,9 @@ const RegisterForm: React.FC = () => {
         </select>
       </label>
       <label>
-        Pack gratuit
+        Classe
         <select value={packType} onChange={(e: ChangeEvent<HTMLSelectElement>) => setPackType(e.target.value)} required>
-          {PACK_TYPES.map(pt => <option key={pt} value={pt}>{pt}</option>)}
+          {PACK_TYPES.map(pt => <option key={pt.label} value={pt.value}>{pt.label}</option>)}
         </select>
       </label>
       <label>

@@ -36,7 +36,7 @@ export async function fetchMyPackTransactions() {
 }
 
 export const fetchUserSolutions = async (userId: string) => {
-  const res = await fetchWithAuth(`/api/solutions/users/${userId}/solutions`);
+  const res = await fetchWithAuth(`/api/solutions/users/id/${userId}/solutions`);
   return await res.json();
 };
 

@@ -33,7 +33,7 @@ const videoRoutes = (): Router => {
 
   // Get all videos for a course
   router.get(
-    '/course/:courseId',
+    '/course/id/:courseId',
     authenticateToken,
     checkPackUsageLimits,
     async (req: any, res: any, next: NextFunction) => {
@@ -48,7 +48,7 @@ const videoRoutes = (): Router => {
 
   // Delete a video by ID (admins only)
   router.delete(
-    '/:videoId',
+    '/id/:videoId',
     authenticateToken,
     authorizeRoles( 'admin', 'superadmin'),
     async (req: any, res: any, next: NextFunction) => {

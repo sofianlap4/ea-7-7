@@ -13,3 +13,7 @@ export const RESPONSE_MESSAGES = {
   ERROR_NEWORK: "Erreur réseau",
   CREDIT_ADDED: "Crédit ajouté avec succès !"
 };
+
+export const PDF_RESPONSE_MESSAGES = {
+  
+}
