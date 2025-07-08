@@ -1,45 +1,22 @@
 import React, { useEffect, useState } from "react";
-import {
-  updateCourse,
-  deleteCourse,
-  fetchCourses,
-  fetchQuizzByCourseId,
-  fetchQuestionsByQuizzId,
-} from "../api/courses";
-import { fetchVideosByCourse, deleteVideo } from "../api/videos";
+import { updateCourse, deleteCourse, fetchCourses } from "../api/courses";
+import { fetchQuizzByCourseId, fetchQuestionsByQuizzId } from "../api/quizz";
+import { fetchVideosByCourse } from "../api/videos";
 import { RESPONSE_MESSAGES } from "../utils/responseMessages";
-
-// Helper API for PDFs
-const fetchCoursePdfs = async (courseId: string) => {
-  const res = await fetch(`/api/pdfs/course/${courseId}`, { method: "GET" });
-  return await res.json();
-};
-const uploadPdfToCourse = async (
-  courseId: string,
-  pdf: File,
-  title: string,
-  type: "question" | "solution"
-) => {
-  const formData = new FormData();
-  formData.append("title", title);
-  formData.append("file", pdf);
-  formData.append("type", type);
-  const res = await fetch(`/api/pdfs/course/${courseId}`, {
-    method: "POST",
-    body: formData,
-  });
-  return await res.json();
-};
-const deletePdf = async (pdfId: string) => {
-  const res = await fetch(`/api/pdfs/course/id/${pdfId}`, { method: "DELETE" });
-  return await res.json();
-};
+import {
+  uploadPdfToCourse,
+  fetchCoursePdfs,
+  deletePdf,
+  editPdfOfCourse,
+} from "../api/pdf";
 
 interface PDF {
-  id: string;
+  id?: string;
   title: string;
-  fileUrl: string;
-  type: "question" | "solution";
+  fileUrl?: string;
+  type: "course" | "question" | "solution";
+  file?: File; // Only for new PDFs
+  _toDelete?: boolean; // Mark for deletion
 }
 
 interface Course {
@@ -62,11 +39,12 @@ const AdminManageCourses: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [allPacks, setAllPacks] = useState<{ id: string; name: string }[]>([]);
-  // PDF state
+  // PDFs state: all PDFs (existing and new)
   const [pdfs, setPdfs] = useState<PDF[]>([]);
+  // For adding new PDF
   const [newPdfTitle, setNewPdfTitle] = useState("");
   const [newPdfFile, setNewPdfFile] = useState<File | null>(null);
-  const [newPdfType, setNewPdfType] = useState<"question" | "solution">("question");
+  const [newPdfType, setNewPdfType] = useState<"course" | "question" | "solution">("question");
 
   // For adding video/question
   const [newVideoTitle, setNewVideoTitle] = useState("");
@@ -82,10 +60,8 @@ const AdminManageCourses: React.FC = () => {
     if (response.success) {
       setCourses(Array.isArray(response.data) ? response.data : []);
     } else {
-      console.error("Error fetching courses:", response.error);
       setCourses([]);
     }
-
     const fetchPacks = async () => {
       const token = localStorage.getItem("token") || "";
       const res = await fetch("/api/packs", { headers: { Authorization: `Bearer ${token}` } });
@@ -99,55 +75,23 @@ const AdminManageCourses: React.FC = () => {
     loadCourses();
   }, []);
 
-  // Load PDFs for the course being edited
-  useEffect(() => {
-    if (editingId) {
-      fetchCoursePdfs(editingId).then((res) => {
-        if (res.success) setPdfs(res.data);
-        else setPdfs([]);
-      });
-    } else {
-      setPdfs([]);
-    }
-  }, [editingId]);
-
-  // Delete course
-  const handleDelete = async (id: string) => {
-    if (!window.confirm(RESPONSE_MESSAGES.CONFIRM_DELETE_COURSE)) return;
-    setLoading(true);
-    const token = localStorage.getItem("token") || "";
-    const response = await deleteCourse(id, token);
-    setLoading(false);
-    if (response && response.success) {
-      setMessage("Cours supprimé avec succès.");
-      await loadCourses();
-    } else {
-      setMessage(response?.error || "Erreur lors de la suppression du cours.");
-    }
-  };
-
+  // Load all related data for editing
   const startEdit = async (course: Course) => {
     setEditingId(course.id);
     setEditTitle(course.title);
     setEditDescription(course.description);
     setEditPackIds(course.packs ? course.packs.map((p: any) => p.id) : []);
-    const token = localStorage.getItem("token") || "";
+    // Videos
     const responseVideos = await fetchVideosByCourse(course.id);
-    if (responseVideos.success) {
-      setEditVideos(Array.isArray(responseVideos?.data) ? responseVideos?.data : []);
-    } else {
-      setEditVideos([]);
-    }
+    setEditVideos(responseVideos.success && Array.isArray(responseVideos.data) ? responseVideos.data : []);
+    // Quizz & questions
+    const token = localStorage.getItem("token") || "";
     const responseQuizz = await fetchQuizzByCourseId(course.id, token);
     if (responseQuizz.success) {
-      setEditQuizz(responseQuizz?.data);
-      if (responseQuizz?.data && responseQuizz?.data.id) {
-        const resQuestions = await fetchQuestionsByQuizzId(responseQuizz?.data?.id, token);
-        if (resQuestions.success) {
-          setEditQuestions(Array.isArray(resQuestions?.data) ? resQuestions?.data : []);
-        } else {
-          setEditQuestions([]);
-        }
+      setEditQuizz(responseQuizz.data);
+      if (responseQuizz.data && responseQuizz.data.id) {
+        const resQuestions = await fetchQuestionsByQuizzId(responseQuizz.data.id, token);
+        setEditQuestions(resQuestions.success && Array.isArray(resQuestions.data) ? resQuestions.data : []);
       } else {
         setEditQuestions([]);
       }
@@ -155,13 +99,17 @@ const AdminManageCourses: React.FC = () => {
       setEditQuizz(null);
       setEditQuestions([]);
     }
-    // PDFs loaded by useEffect
+    // PDFs
+    const resPdfs = await fetchCoursePdfs(course.id);
+    setPdfs(resPdfs.success && Array.isArray(resPdfs.data) ? resPdfs.data : []);
   };
 
   // Save all edits to backend
   const handleEditSave = async () => {
     if (!editingId) return;
     setLoading(true);
+
+    // 1. Update course, videos, quizz, questions
     const response = await updateCourse(
       editingId,
       editTitle,
@@ -171,6 +119,40 @@ const AdminManageCourses: React.FC = () => {
       editQuizz,
       editQuestions
     );
+
+    // 2. PDFs: synchronize backend with local state
+    // Fetch backend PDFs to compare
+    const backendPdfsRes = await fetchCoursePdfs(editingId);
+    const backendPdfs: PDF[] = backendPdfsRes.success ? backendPdfsRes.data : [];
+
+    // Find deleted PDFs
+    const deletedPdfs = backendPdfs.filter(
+      (bpdf) => !pdfs.some((p) => p.id === bpdf.id)
+    );
+    for (const pdf of deletedPdfs) {
+      if (pdf.id) await deletePdf(pdf.id);
+    }
+
+    // Add new PDFs
+    for (const pdf of pdfs) {
+      if (pdf.file) {
+        await uploadPdfToCourse(editingId, pdf.file, pdf.title, pdf.type);
+      }
+    }
+
+    // Optionally, update changed PDFs (title/type)
+    for (const pdf of pdfs) {
+      if (pdf.id && !pdf.file) {
+        const backendPdf = backendPdfs.find((b) => b.id === pdf.id);
+        if (
+          backendPdf &&
+          (backendPdf.title !== pdf.title || backendPdf.type !== pdf.type)
+        ) {
+          await editPdfOfCourse(pdf.id, { title: pdf.title, type: pdf.type });
+        }
+      }
+    }
+
     setLoading(false);
     if (response && response.success) {
       setMessage("Cours mis à jour avec succès.");
@@ -178,43 +160,6 @@ const AdminManageCourses: React.FC = () => {
       loadCourses();
     } else {
       setMessage(response?.error || "Erreur lors de la mise à jour du cours.");
-    }
-  };
-
-  // Add new PDF to course
-  const handleAddPdf = async () => {
-    if (!editingId || !newPdfFile || !newPdfTitle) {
-      setMessage("Titre et fichier requis pour le PDF.");
-      return;
-    }
-    setLoading(true);
-    const res = await uploadPdfToCourse(editingId, newPdfFile, newPdfTitle, newPdfType);
-    setLoading(false);
-    if (res.success) {
-      setMessage("PDF ajouté !");
-      setNewPdfFile(null);
-      setNewPdfTitle("");
-      setNewPdfType("question");
-      // Reload PDFs
-      fetchCoursePdfs(editingId).then((res) => {
-        if (res.success) setPdfs(res.data);
-      });
-    } else {
-      setMessage(res.error || "Erreur lors de l'ajout du PDF.");
-    }
-  };
-
-  // Delete PDF from course
-  const handleDeletePdf = async (pdfId: string) => {
-    if (!editingId) return;
-    setLoading(true);
-    const res = await deletePdf(pdfId);
-    setLoading(false);
-    if (res.success) {
-      setMessage("PDF supprimé !");
-      setPdfs(pdfs.filter((p) => p.id !== pdfId));
-    } else {
-      setMessage(res.error || "Erreur lors de la suppression du PDF.");
     }
   };
 
@@ -268,6 +213,43 @@ const AdminManageCourses: React.FC = () => {
   const handleRemoveQuizz = () => {
     setEditQuizz(null);
     setEditQuestions([]);
+  };
+
+  // Local-only add/remove PDF
+  const handleAddPdfLocal = () => {
+    if (!newPdfFile || !newPdfTitle) {
+      setMessage("Titre et fichier requis pour le PDF.");
+      return;
+    }
+    setPdfs([
+      ...pdfs,
+      {
+        title: newPdfTitle,
+        type: newPdfType,
+        file: newPdfFile,
+      },
+    ]);
+    setNewPdfFile(null);
+    setNewPdfTitle("");
+    setNewPdfType("question");
+  };
+  const handleRemovePdfLocal = (idx: number) => {
+    setPdfs(pdfs.filter((_, i) => i !== idx));
+  };
+
+  // Delete course
+  const handleDelete = async (id: string) => {
+    if (!window.confirm(RESPONSE_MESSAGES.CONFIRM_DELETE_COURSE)) return;
+    setLoading(true);
+    const token = localStorage.getItem("token") || "";
+    const response = await deleteCourse(id, token);
+    setLoading(false);
+    if (response && response.success) {
+      setMessage("Cours supprimé avec succès.");
+      await loadCourses();
+    } else {
+      setMessage(response?.error || "Erreur lors de la suppression du cours.");
+    }
   };
 
   return (
@@ -412,16 +394,26 @@ const AdminManageCourses: React.FC = () => {
                 <h4>PDFs</h4>
                 <div>
                   <ul>
-                    {pdfs.map((pdf) => (
-                      <li key={pdf.id}>
-                        <b>{pdf.type === "question" ? "Question" : "Solution"}:</b> {pdf.title}{" "}
-                        <a href={pdf.fileUrl} target="_blank" rel="noopener noreferrer">
-                          Ouvrir PDF
-                        </a>
+                    {pdfs.map((pdf, idx) => (
+                      <li key={pdf.id || idx}>
+                        <b>
+                          {pdf.type === "course"
+                            ? "Cours"
+                            : pdf.type === "question"
+                            ? "Question"
+                            : "Solution"}
+                          :
+                        </b>{" "}
+                        {pdf.title}{" "}
+                        {pdf.fileUrl && (
+                          <a href={pdf.fileUrl} target='_blank' rel='noopener noreferrer'>
+                            Ouvrir PDF
+                          </a>
+                        )}
                         <button
-                          type="button"
+                          type='button'
                           style={{ marginLeft: 8, color: "red" }}
-                          onClick={() => handleDeletePdf(pdf.id)}
+                          onClick={() => handleRemovePdfLocal(idx)}
                         >
                           Supprimer
                         </button>
@@ -429,27 +421,28 @@ const AdminManageCourses: React.FC = () => {
                     ))}
                   </ul>
                   <input
-                    type="text"
-                    placeholder="Titre du PDF"
+                    type='text'
+                    placeholder='Titre du PDF'
                     value={newPdfTitle}
                     onChange={(e) => setNewPdfTitle(e.target.value)}
                     style={{ marginRight: 8 }}
                   />
                   <select
                     value={newPdfType}
-                    onChange={(e) => setNewPdfType(e.target.value as "question" | "solution")}
+                    onChange={(e) => setNewPdfType(e.target.value as "course" | "question" | "solution")}
                     style={{ marginRight: 8 }}
                   >
-                    <option value="question">Question</option>
-                    <option value="solution">Solution</option>
+                    <option value='course'>Cours</option>
+                    <option value='question'>Question</option>
+                    <option value='solution'>Solution</option>
                   </select>
                   <input
-                    type="file"
-                    accept="application/pdf"
+                    type='file'
+                    accept='application/pdf'
                     onChange={(e) => setNewPdfFile(e.target.files?.[0] || null)}
                     style={{ marginRight: 8 }}
                   />
-                  <button type="button" onClick={handleAddPdf}>
+                  <button type='button' onClick={handleAddPdfLocal}>
                     Ajouter PDF
                   </button>
                 </div>

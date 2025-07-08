@@ -154,3 +154,8 @@ export const PDF_RESPONSE_MESSAGES = {
 export const EXERCICE_RESPONSE_MESSAGES = {
   EXERCISE_NOT_FOUND: "Exercice introuvable.",
 };
+
+export const QUIZZ_RESPONSE_MESSAGES = {
+  QUIZZ_NOT_FOUND: "Quiz introuvable.",
+  QUESTION_NOT_FOUND: "Question introuvable.",
+}

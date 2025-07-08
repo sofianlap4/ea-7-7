@@ -50,6 +50,7 @@ import themeRoutes from "./routes/theme";
 import userPackReductionRoutes from "./routes/userPackReduction";
 import pdfRoutes from "./routes/pdf";
 import exerciceRoutes from "./routes/exercice";
+import quizzRoutes from "./routes/quizz";
 
 const PORT = 5000;
 
@@ -100,6 +101,7 @@ app.set("models", {
 app.use("/api/auth", authRoutes());
 app.use("/api/videos", videoRoutes());
 app.use("/api/courses", courseRoutes());
+app.use("/api/courses", quizzRoutes())
 app.use("/api/profile", profileRoutes());
 app.use("/api/practical-exercises", rankedExerciseRoutes());
 app.use("/api/python", pythonRunner);

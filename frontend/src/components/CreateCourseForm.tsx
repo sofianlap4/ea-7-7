@@ -1,5 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
-import { fetchCreateCourse, createQuizz, addQuizzQuestion } from "../api/courses";
+import { fetchCreateCourse } from "../api/courses";
+import { createQuizz, addQuizzQuestion } from "../api/quizz";
 import { fetchAllPacksAdmin } from "../api/packs";
 
 // Helper for uploading a PDF to a course

@@ -4,7 +4,7 @@ import AddVideoForm from "./AddVideoForm";
 import { fetchCourseById } from "../api/courses";
 import { fetchProfile } from "../api/profile";
 import { fetchVideosByCourse } from "../api/videos"; // <-- import here
-import { fetchQuizzByCourseId, fetchQuestionsByQuizzId, submitQuizz } from "../api/courses"; // Add these imports
+import { fetchQuizzByCourseId, fetchQuestionsByQuizzId, submitQuizz } from "../api/quizz"; // Add these imports
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -80,7 +80,7 @@ const CourseDetail: React.FC = () => {
       if (response.success) {
           if (response?.data && response?.data.id) {
             setQuizz(response?.data);
-            fetchQuestionsByQuizzId(response?.data.id).then((qs) => {
+            fetchQuestionsByQuizzId(response?.data.id).then((qs: any) => {
               setQuestions(Array.isArray(qs) ? qs : []);
             });
           } else {
