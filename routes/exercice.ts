@@ -2,11 +2,12 @@ import express, { Request, Response, Router, NextFunction } from "express";
 import { authenticateToken, authorizeRoles } from "../middleware/auth";
 import { sendSuccess, sendError } from "../utils/response";
 import { EXERCICE_RESPONSE_MESSAGES } from "../utils/responseMessages";
+import { checkPackAccess } from "../middleware/checkAccess"; // <-- Import the middleware
 
 const exerciceRoutes = (): Router => {
   const router = express.Router();
 
-  // Create Exercise
+  // Create Exercise (admin only)
   router.post(
     "/",
     authenticateToken,
@@ -23,10 +24,11 @@ const exerciceRoutes = (): Router => {
     }
   );
 
-  // Get all Exercises (with PDFs and Videos)
+  // Get all Exercises (with PDFs and Videos) -- PROTECTED BY PACK ACCESS
   router.get(
     "/",
     authenticateToken,
+    checkPackAccess, // <-- Add here
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { Exercise, PDF, Video } = req.app.get("models");
@@ -44,10 +46,11 @@ const exerciceRoutes = (): Router => {
     }
   );
 
-  // Get Exercise by ID (with PDFs and Videos)
+  // Get Exercise by ID (with PDFs and Videos) -- PROTECTED BY PACK ACCESS
   router.get(
     "/id/:id",
     authenticateToken,
+    checkPackAccess, // <-- Add here
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { Exercise, PDF, Video } = req.app.get("models");
@@ -66,7 +69,7 @@ const exerciceRoutes = (): Router => {
     }
   );
 
-  // Update Exercise
+  // Update Exercise (admin only)
   router.put(
     "/id/:id",
     authenticateToken,
@@ -90,7 +93,7 @@ const exerciceRoutes = (): Router => {
     }
   );
 
-  // Delete Exercise
+  // Delete Exercise (admin only)
   router.delete(
     "/id/:id",
     authenticateToken,

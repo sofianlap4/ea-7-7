@@ -1,8 +1,8 @@
 import { authenticateToken } from "../middleware/auth";
-import { checkPackUsageLimits } from "../middleware/packs";
 import express from "express";
 import { sendSuccess, sendError } from "../utils/response";
 import { RUNCODE_RESPONSE_MESSAGES } from "../utils/responseMessages";
+import { checkPackAccess } from "../middleware/checkAccess";
 
 const router = express.Router();
 
@@ -51,7 +51,7 @@ function getForbiddenFunctions(code: string): string[] {
     );
 }
 
-router.post("/run-code", authenticateToken, checkPackUsageLimits, async (req: any, res: any) => {
+router.post("/run-code", authenticateToken, checkPackAccess, async (req: any, res: any) => {
   const { code, testCases } = req.body;
   if (!code || !Array.isArray(testCases)) {
     return sendError(

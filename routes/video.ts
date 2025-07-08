@@ -1,6 +1,5 @@
 import express, { Router, NextFunction } from 'express';
 import { authenticateToken, authorizeRoles } from '../middleware/auth';
-import { checkPackUsageLimits } from '../middleware/packs';
 import { sendError, sendSuccess } from '../utils/response';
 import { VIDEO_RESPONSE_MESSAGES } from "../utils/responseMessages";
 
@@ -35,7 +34,6 @@ const videoRoutes = (): Router => {
   router.get(
     '/course/id/:courseId',
     authenticateToken,
-    checkPackUsageLimits,
     async (req: any, res: any, next: NextFunction) => {
       try {
         const videos = await req.app.get("models").Video.findAll({ where: { courseId: req.params.courseId } });

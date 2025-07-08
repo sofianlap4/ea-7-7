@@ -1,6 +1,6 @@
 import express, { Request, Response, Router, NextFunction } from "express";
 import { authenticateToken, authorizeRoles } from "../middleware/auth";
-import { checkPackUsageLimits } from "../middleware/packs";
+import { checkPackAccess } from "../middleware/checkAccess";
 import axios from "axios";
 import { getRank } from "../utils/rankUtils";
 import { sendError, sendSuccess } from "../utils/response";
@@ -185,7 +185,7 @@ const practicalExerciseRoutes = (): Router => {
   router.post(
     "/id/:exerciseId/attempt",
     authenticateToken,
-    checkPackUsageLimits,
+    checkPackAccess,
     async (req: any, res: any, next: NextFunction) => {
       try {
         const exercise = await req.app
@@ -210,7 +210,7 @@ const practicalExerciseRoutes = (): Router => {
   router.post(
     "/id/:exerciseId/submit",
     authenticateToken,
-    checkPackUsageLimits,
+    checkPackAccess,
     async (req: any, res: any, next: NextFunction) => {
       try {
         const exercise = await req.app

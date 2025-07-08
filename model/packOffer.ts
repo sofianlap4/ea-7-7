@@ -3,7 +3,7 @@ import { Sequelize, DataTypes, Model, Optional } from "sequelize";
 export interface PackOfferAttributes {
   id?: string;
   packId: string;
-  durationMonths: 3 | 6 | 9;
+  durationMonths: 3 | 6 | 9 | 12;
   price: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -15,7 +15,7 @@ export default (sequelize: Sequelize) => {
   class PackOffer extends Model<PackOfferAttributes, PackOfferCreationAttributes> implements PackOfferAttributes {
     public id!: string;
     public packId!: string;
-    public durationMonths!: 3 | 6 | 9;
+    public durationMonths!: 3 | 6 | 9 | 12;
     public price!: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -35,7 +35,7 @@ export default (sequelize: Sequelize) => {
       durationMonths: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: { isIn: [[3, 6, 9]] },
+        validate: { isIn: [[3, 6, 9, 12]] },
       },
       price: {
         type: DataTypes.INTEGER,

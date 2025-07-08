@@ -3,7 +3,7 @@ import { PythonShell } from "python-shell";
 import path from "path";
 import { authenticateToken } from "../middleware/auth";
 import fs from "fs";
-import { checkPackUsageLimits } from "../middleware/packs";
+import { checkPackAccess } from "../middleware/checkAccess";
 import { sendSuccess, sendError } from "../utils/response";
 import { RUNCODE_RESPONSE_MESSAGES } from "../utils/responseMessages";
 
@@ -26,7 +26,7 @@ interface CodeRunResponse {
   error?: string;
 }
 
-router.post("/run-code", authenticateToken, checkPackUsageLimits, async (req: any, res: any) => {
+router.post("/run-code", authenticateToken, checkPackAccess, async (req: any, res: any) => {
   let pyShell: PythonShell | null = null;
   const TIMEOUT_MS = 20000;
 

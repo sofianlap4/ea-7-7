@@ -3,6 +3,7 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth";
 import { Op } from "sequelize";
 import { sendError, sendSuccess } from '../utils/response';
 import { LIVE_SESSION_RESPONSE_MESSAGES } from "../utils/responseMessages";
+import { checkPackAccess } from "../middleware/checkAccess"; // <-- Import the middleware
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ export default () => {
     "/my-live-sessions",
     authenticateToken,
     authorizeRoles("student"),
+    checkPackAccess, // <-- Add here
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { UserPack, LiveSession } = req.app.get("models");
@@ -42,36 +44,12 @@ export default () => {
     }
   );
 
-  // Get join log for a live session (/admin/superadmin)
-  router.get("/id/:id/log", authenticateToken, async (req: any, res: any, next: NextFunction) => {
-    try {
-      const logs = await req.app.get("models").LiveSessionLog.findAll({
-        where: { liveSessionId: req.params.id },
-        include: [{ model: req.app.get("models").User, attributes: ["id", "firstName"] }],
-        order: [["createdAt", "ASC"]],
-      });
-      if (!logs || logs.length === 0) {
-        return sendError(res, LIVE_SESSION_RESPONSE_MESSAGES.NO_JOIN_LOGS, 404);
-      }
-      sendSuccess(
-        res,
-        logs.map((log: any) => ({
-          userId: log.userId,
-          firstName: log.User?.firstName || LIVE_SESSION_RESPONSE_MESSAGES.UNKNOWN_USER,
-          joinedAt: log.createdAt,
-        })),
-        200
-      );
-    } catch (err: any) {
-      next(err);
-    }
-  });
-
   // Student joins a session
   router.post(
     "/id/:id/join",
     authenticateToken,
     authorizeRoles("student"),
+    checkPackAccess, // <-- Add here
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { UserPack, Pack, LiveSession } = req.app.get("models");
@@ -116,6 +94,49 @@ export default () => {
       }
     }
   );
+
+  // Get session detail (student access)
+  router.get(
+    "/id/:id",
+    authenticateToken,
+    authorizeRoles("student"),
+    checkPackAccess, // <-- Add here
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const session = await req.app.get("models").LiveSession.findByPk(req.params.id);
+        if (!session) return sendError(res, LIVE_SESSION_RESPONSE_MESSAGES.SESSION_NOT_FOUND, 404);
+        sendSuccess(res, session, 200);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  // Get join log for a live session (/admin/superadmin)
+  router.get("/id/:id/log", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+    try {
+      const logs = await req.app.get("models").LiveSessionLog.findAll({
+        where: { liveSessionId: req.params.id },
+        include: [{ model: req.app.get("models").User, attributes: ["id", "firstName"] }],
+        order: [["createdAt", "ASC"]],
+      });
+      if (!logs || logs.length === 0) {
+        return sendError(res, LIVE_SESSION_RESPONSE_MESSAGES.NO_JOIN_LOGS, 404);
+      }
+      sendSuccess(
+        res,
+        logs.map((log: any) => ({
+          userId: log.userId,
+          firstName: log.User?.firstName || LIVE_SESSION_RESPONSE_MESSAGES.UNKNOWN_USER,
+          joinedAt: log.createdAt,
+        })),
+        200
+      );
+    } catch (err: any) {
+      next(err);
+    }
+  });
+  
 
   // Create a new live session (/admin)
   router.post(
@@ -187,18 +208,7 @@ export default () => {
     }
   );
 
-  // Get session detail
-  router.get("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
-    try {
-      const session = await req.app.get("models").LiveSession.findByPk(req.params.id);
-      if (!session) return sendError(res, LIVE_SESSION_RESPONSE_MESSAGES.SESSION_NOT_FOUND, 404);
-      sendSuccess(res, session, 200);
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  // Get all upcoming live sessions (for calendar)
+  // Get all upcoming live sessions (for calendar, admin only)
   router.get("/", authenticateToken, authorizeRoles("admin", "superadmin"), async (req: any, res: any, next: NextFunction) => {
     try {
       const sessions = await req.app.get("models").LiveSession.findAll({

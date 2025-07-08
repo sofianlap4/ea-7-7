@@ -3,15 +3,17 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth";
 import { sendSuccess, sendError } from "../utils/response";
 import { COURSE_RESPONSE_MESSAGES } from "../utils/responseMessages";
 import { Op } from "sequelize";
+import { checkPackAccess } from "../middleware/checkAccess";
 
 const courseRoutes = (): Router => {
   const router = express.Router();
-  // Get courses for the logged-in student (included in their packs)
 
+  // Get courses for the logged-in student (included in their packs)
   router.get(
     "/my",
     authenticateToken,
     authorizeRoles("student"),
+    checkPackAccess, // <-- Add here
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { UserPack, Pack, Course, UserCourseProgress } = req.app.get("models");
@@ -125,25 +127,30 @@ const courseRoutes = (): Router => {
   });
 
   // Get a course by ID
-  router.get("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
-    try {
-      const { Course } = req.app.get("models");
-      const course = await Course.findByPk(req.params.id);
-      if (!course) return sendError(res, COURSE_RESPONSE_MESSAGES.COURSE_NOT_FOUND, 404);
+  router.get(
+    "/id/:id",
+    authenticateToken,
+    checkPackAccess, // <-- Add here
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { Course } = req.app.get("models");
+        const course = await Course.findByPk(req.params.id);
+        if (!course) return sendError(res, COURSE_RESPONSE_MESSAGES.COURSE_NOT_FOUND, 404);
 
-      // Set isOpened to true if not already true
-      // In your course GET route
-      const { UserCourseProgress } = req.app.get("models");
-      await UserCourseProgress.findOrCreate({
-        where: { userId: req.user.id, courseId: req.params.id },
-        defaults: { isOpened: true, openedAt: new Date() },
-      });
+        // Set isOpened to true if not already true
+        // In your course GET route
+        const { UserCourseProgress } = req.app.get("models");
+        await UserCourseProgress.findOrCreate({
+          where: { userId: req.user.id, courseId: req.params.id },
+          defaults: { isOpened: true, openedAt: new Date() },
+        });
 
-      sendSuccess(res, course, 200);
-    } catch (err: any) {
-      next(err);
+        sendSuccess(res, course, 200);
+      } catch (err: any) {
+        next(err);
+      }
     }
-  });
+  );
 
   // Update a course by ID
   router.put(

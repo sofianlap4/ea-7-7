@@ -1,13 +1,13 @@
 import express from "express";
 import Database from "better-sqlite3";
 import { authenticateToken } from "../middleware/auth";
-import { checkPackUsageLimits } from "../middleware/packs";
+import { checkPackAccess } from "../middleware/checkAccess";
 import { sendSuccess, sendError } from "../utils/response";
 import { RUNCODE_RESPONSE_MESSAGES } from "../utils/responseMessages";
 
 const router = express.Router();
 
-router.post("/run-code", authenticateToken, checkPackUsageLimits, (req: any, res: any) => {
+router.post("/run-code", authenticateToken, checkPackAccess, (req: any, res: any) => {
   const { code, testCases } = req.body;
 
   if (!code || !Array.isArray(testCases)) {

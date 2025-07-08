@@ -92,12 +92,12 @@ const PackList: React.FC<{ userRole?: string }> = ({ userRole }) => {
           ) : (
             <p>No offers available.</p>
           )}
-          <h4>Courses:</h4>
+          {/* <h4>Courses:</h4>
           <ul>
             {pack.courses?.map((c: any) => (
               <li key={c.id}>{c.title}</li>
             ))}
-          </ul>
+          </ul> */}
           {userRole === "student" &&
             (myPackId === pack.id ? (
               <button disabled>Already Subscribed</button>
