@@ -9,7 +9,7 @@ import CreateCourseForm from "./components/CreateCourseForm";
 import CourseList from "./components/CourseList";
 import CourseDetail from "./components/CourseDetail";
 import LogoutButton from "./components/LogoutButton";
-import RankedExercisesPage from "./pages/PracticalExercisesPage";
+import PracticalExercisesPage from "./pages/PracticalExercisesPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import AdminRankedExercises from "./pages/AdminPracticalExercises";
@@ -36,6 +36,8 @@ import AdminEditPracticalExercice from "./pages/AdminEditPracticalExercice";
 import AdminExercice from "./pages/AdminExercice";
 import AdminEditExercice from "./pages/AdminEditExercice";
 import AdminNewExercice from "./pages/AdminNewExercice";
+import ExercisesPage from "./pages/ExercisesPage";
+import ExercisesDetailPage from "./pages/ExercisesDetailPage";
 
 function Home() {
   return <h2>Welcome to the Platform!</h2>;
@@ -91,6 +93,7 @@ const App: React.FC = () => {
               {(userRole === "student" || userRole === "admin" || userRole === "superadmin") && (
                 <>
                   <Link to='/practical-exercises'>Exercices Pratiques</Link> |{" "}
+                  <Link to='/exercises'>Exercices</Link> |{" "}
                 </>
               )}
               {userRole === "student" && (
@@ -212,10 +215,36 @@ const App: React.FC = () => {
                 roles={["student", "admin", "superadmin"]}
                 userRole={userRole}
               >
-                <RankedExercisesPage />
+                <PracticalExercisesPage />
               </ProtectedRoute>
             }
           />
+          <Route
+            path='/exercises'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["student"]}
+                userRole={userRole}
+              >
+                <ExercisesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/student/exercice/:id'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["student"]}
+                userRole={userRole}
+              >
+                <ExercisesDetailPage />
+              </ProtectedRoute>
+            }
+          />
+
+
           <Route
             path='/packs'
             element={

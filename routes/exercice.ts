@@ -129,6 +129,57 @@ const exerciceRoutes = (): Router => {
     }
   );
 
+  // Get all exercises related to the current student's pack
+  router.get(
+    "/student/pack",
+    authenticateToken,
+    checkPackAccess,
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { Exercise, Pack } = req.app.get("models");
+        const packId = (req as any).userPack?.packId || (req as any).pack?.id || req.query.packId;
+        if (!packId) return sendError(res, "Pack not found", 404);
+        const { Theme } = req.app.get("models");
+        const pack = await Pack.findByPk(packId, {
+          include: [
+            {
+              model: Exercise,
+              as: "exercises",
+              include: [
+                { model: Theme, as: "themes" }
+              ]
+            }
+          ],
+        });
+        if (!pack) return sendError(res, "Pack not found", 404);
+        sendSuccess(res, pack.exercises || [], 200);
+      } catch (err: any) {
+        sendError(res, err.message, 400);
+      }
+    }
+  );
+
+  // Get exercise by id (only PDFs and Videos)
+  router.get(
+    "/student/exercice/id/:id",
+    authenticateToken,
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { Exercise, PDF, Video } = req.app.get("models");
+        const exercise = await Exercise.findByPk(req.params.id, {
+          include: [
+            { model: PDF, as: "pdfs" },
+            { model: Video, as: "videos" },
+          ],
+        });
+        if (!exercise) return sendError(res, EXERCICE_RESPONSE_MESSAGES.EXERCISE_NOT_FOUND, 404);
+        sendSuccess(res, exercise, 200);
+      } catch (err: any) {
+        sendError(res, err.message, 400);
+      }
+    }
+  );
+
   return router;
 };
 

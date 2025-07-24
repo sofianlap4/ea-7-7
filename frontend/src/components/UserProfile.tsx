@@ -1,15 +1,18 @@
 import React, { use, useEffect, useState } from "react";
-import { fetchProfile, changePassword, changeEmail } from "../api/profile";
+import { fetchProfile, changePassword, changeProfileInfo } from "../api/profile";
 import { sendVerificationEmail } from "../api/auth"; // adjust import
 import { useNavigate } from "react-router-dom";
 
 interface Profile {
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-  isEmailVerified: boolean;
-  className: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: string;
+  isEmailVerified?: boolean;
+  className?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  gouvernorat?: string;
 }
 
 const UserProfile: React.FC = () => {
@@ -17,9 +20,14 @@ const UserProfile: React.FC = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordMsg, setPasswordMsg] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [emailPassword, setEmailPassword] = useState("");
-  const [emailMsg, setEmailMsg] = useState("");
+  const [editProfile, setEditProfile] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    dateOfBirth: "",
+    gouvernorat: ""
+  });
+  const [profileMsg, setProfileMsg] = useState("");
   const [verifyMsg, setVerifyMsg] = useState("");
   const navigate = useNavigate();
 
@@ -27,6 +35,13 @@ const UserProfile: React.FC = () => {
     fetchProfile().then(response => {
       if (response.success) {
         setProfile(response.data);
+        setEditProfile({
+          firstName: response.data.firstName || "",
+          lastName: response.data.lastName || "",
+          phone: response.data.phone || "",
+          dateOfBirth: response.data.dateOfBirth || "",
+          gouvernorat: response.data.gouvernorat || ""
+        });
       } else {
         console.error("Failed to fetch profile:", response.error);
       }
@@ -47,30 +62,32 @@ const UserProfile: React.FC = () => {
     setNewPassword("");
   };
 
-  const handleChangeEmail = async (e: React.FormEvent) => {
+  const handleChangeProfileInfo = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await changeEmail(newEmail, emailPassword);
-    
+    const res = await changeProfileInfo(editProfile);
     if (res.success) {
-      setEmailMsg(res?.data.message);
-      setProfile((prev) => (prev ? { ...prev, email: newEmail, isEmailVerified: false } : prev));
-      setNewEmail("");
-      setEmailPassword("");
+      setProfileMsg(res?.message || res?.data?.message || "Profil mis à jour");
+      setProfile((prev) => (prev ? { ...prev, ...editProfile } : prev));
     } else {
-      setEmailMsg(res.error);
+      setProfileMsg(res.error || "Erreur lors de la mise à jour du profil");
     }
   };
 
   const handleVerifyEmail = async () => {
     if (!profile) return;
+    if (!profile.email) {
+      setVerifyMsg("Email non disponible");
+      return;
+    }
     const res = await sendVerificationEmail(profile.email);
     if (!res.success) {
       setVerifyMsg(res.error || "Failed to send verification email");
       return;
     } else {
       setVerifyMsg(res?.data.message);
-      navigate(`/verify-email?email=${encodeURIComponent(profile.email)}`);
-      setEmailMsg(""); // Clear email message if verification is successful
+      if (profile.email) {
+        navigate(`/verify-email?email=${encodeURIComponent(profile.email)}`);
+      }
     }
   };
 
@@ -79,12 +96,55 @@ const UserProfile: React.FC = () => {
   return (
     <div>
       <h2>Mon Profil</h2>
-      <p>
-        <strong>Prenom:</strong> {profile.firstName}
-      </p>
-      <p>
-        <strong>Nom:</strong> {profile.lastName}
-      </p>
+      <form onSubmit={handleChangeProfileInfo}>
+        <div>
+          <label>Prénom:</label>
+          <input
+            type="text"
+            value={editProfile.firstName}
+            onChange={e => setEditProfile(p => ({ ...p, firstName: e.target.value }))}
+            placeholder="Prénom"
+          />
+        </div>
+        <div>
+          <label>Nom:</label>
+          <input
+            type="text"
+            value={editProfile.lastName}
+            onChange={e => setEditProfile(p => ({ ...p, lastName: e.target.value }))}
+            placeholder="Nom"
+          />
+        </div>
+        <div>
+          <label>Téléphone:</label>
+          <input
+            type="text"
+            value={editProfile.phone}
+            onChange={e => setEditProfile(p => ({ ...p, phone: e.target.value }))}
+            placeholder="Téléphone"
+          />
+        </div>
+        <div>
+          <label>Date de naissance:</label>
+          <input
+            type="date"
+            value={editProfile.dateOfBirth}
+            onChange={e => setEditProfile(p => ({ ...p, dateOfBirth: e.target.value }))}
+            placeholder="Date de naissance"
+          />
+        </div>
+        <div>
+          <label>Gouvernorat:</label>
+          <input
+            type="text"
+            value={editProfile.gouvernorat}
+            onChange={e => setEditProfile(p => ({ ...p, gouvernorat: e.target.value }))}
+            placeholder="Gouvernorat"
+          />
+        </div>
+        <button type="submit">Mettre à jour le profil</button>
+        {profileMsg && <p>{profileMsg}</p>}
+      </form>
       <p>
         <strong>Email:</strong> {profile.email}
       </p>
@@ -99,7 +159,6 @@ const UserProfile: React.FC = () => {
           </>
         )}
       </p>
-
       <h3>Changer le mot de passe</h3>
       <form onSubmit={handleChangePassword}>
         <input
@@ -118,26 +177,6 @@ const UserProfile: React.FC = () => {
         />
         <button type="submit">Changer le mot de passe</button>
         {passwordMsg && <p>{passwordMsg}</p>}
-      </form>
-
-      <h3>Changer Email</h3>
-      <form onSubmit={handleChangeEmail}>
-        <input
-          type="email"
-          placeholder="Nouvel Email"
-          value={newEmail}
-          onChange={(e) => setNewEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Mot de passe actuel"
-          value={emailPassword}
-          onChange={(e) => setEmailPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Changer Email</button>
-        {emailMsg && <p>{emailMsg}</p>}
       </form>
     </div>
   );

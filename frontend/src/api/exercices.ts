@@ -79,3 +79,28 @@ export const fetchDeleteExercice = async (id: string, token?: string) => {
   });
   return await res.json();
 };
+
+// Fetch all exercises for the current student's pack (GET /api/exercices/student/pack)
+export const fetchStudentPackExercices = async (token?: string, packId?: string) => {
+  const url = packId ? `/api/exercices/student/pack?packId=${packId}` : '/api/exercices/student/pack';
+  const res = await fetchWithAuth(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await res.json();
+};
+
+// Fetch exercise by id (only PDFs and Videos) (GET /api/exercices/student/exercice/id/:id)
+export const fetchStudentExerciceById = async (id: string, token?: string) => {
+  const res = await fetchWithAuth(`/api/exercices/student/exercice/id/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await res.json();
+};

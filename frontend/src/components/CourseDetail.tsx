@@ -142,6 +142,26 @@ const CourseDetail: React.FC = () => {
 
     if (response.success) {
       setQuizzResult(response?.data);
+      // Move correctly answered questions to answeredCorrectly
+      if (response.data?.correctAnswers) {
+        setQuestions(prev => {
+          const correctIds = response.data.correctAnswers.map((a: any) => a.id);
+          const newlyCorrect = prev.toAnswer.filter(q => correctIds.includes(q.id));
+          return {
+            toAnswer: prev.toAnswer.filter(q => !correctIds.includes(q.id)),
+            answeredCorrectly: [...prev.answeredCorrectly, ...newlyCorrect],
+          };
+        });
+        // Remove answers for those questions
+        setAnswers(prev => {
+          const correctIds = response.data.correctAnswers.map((a: any) => a.id);
+          const newAnswers: Record<string, string> = {};
+          Object.keys(prev).forEach(key => {
+            if (!correctIds.includes(key)) newAnswers[key] = prev[key];
+          });
+          return newAnswers;
+        });
+      }
     } else {
       console.error("Error submitting quizz:", response.error);
       setQuizzResult({ success: false, error: response.error });

@@ -19,7 +19,7 @@ export const checkPackAccess = async (
       Pack: ModelStatic<any>;
     };
     const userId = (req as any).user?.id;
-    let packId = req.params.packId || req.body.packId || req.query.packId;
+    let packId = (req.params && req.params.packId) || (req.body && req.body.packId) || (req.query && req.query.packId);
 
     let userPack: any = null;
 

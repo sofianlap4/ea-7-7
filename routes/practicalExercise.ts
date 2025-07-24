@@ -6,6 +6,7 @@ import { getRank } from "../utils/rankUtils";
 import { sendError, sendSuccess } from "../utils/response";
 import { PRACTICAL_EXERCICE_RESPONSE_MESSAGES } from "../utils/responseMessages";
 import { Op } from "sequelize";
+import { rankingPoints } from "../utils/rankUtils";
 
 const practicalExerciseRoutes = (): Router => {
   const router = express.Router();
@@ -309,9 +310,10 @@ const practicalExerciseRoutes = (): Router => {
           });
 
           const { Ranking } = req.app.get("models");
-          let points = 1;
-          if (exercise.difficulty === "medium") points = 3;
-          if (exercise.difficulty === "hard") points = 5;
+
+          let points = rankingPoints.codeSolvedEasy;
+          if (exercise.difficulty === "medium") points = rankingPoints.codeSolvedMedium;
+          if (exercise.difficulty === "hard") points = rankingPoints.codeSolvedHard;
 
           let ranking = await Ranking.findOne({ where: { userId: req.user.id } });
           if (!ranking) {

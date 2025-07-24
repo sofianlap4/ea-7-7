@@ -44,3 +44,18 @@ export const fetchMyRank = async () => {
   const res = await fetchWithAuth('/api/profile/me/rank');
   return await res.json();
 };
+
+export const changeProfileInfo = async (data: {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  gouvernorat?: string;
+}) => {
+  const res = await fetchWithAuth('/api/profile/change-profile-info', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return await res.json();
+};

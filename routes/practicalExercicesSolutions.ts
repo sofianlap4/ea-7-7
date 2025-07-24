@@ -127,12 +127,12 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   router.get("/users/id/:userId/solutions", async (req: any, res: any, next: NextFunction) => {
     try {
       const { userId } = req.params;
-      const { PracticalExerciseSolution, RankedExercise } = getModels(req);
+      const { PracticalExerciseSolution, PracticalExercise } = getModels(req);
 
       const solutions = await PracticalExerciseSolution.findAll({
         where: { userId },
         include: [
-          { model: RankedExercise, as: "exercise" }
+          { model: PracticalExercise, as: "exercise" }
         ],
         order: [["createdAt", "DESC"]],
       });
