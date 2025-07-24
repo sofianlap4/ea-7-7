@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   fetchAdminExercices,
   fetchDeleteExercice,
 } from "../api/exercices";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 
 const AdminExercice: React.FC = () => {
   const [exercices, setExercices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    pageSize: 10,
+    page: 0,
+  });
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,6 +51,33 @@ const AdminExercice: React.FC = () => {
     }
   };
 
+  const columns = useMemo<GridColDef[]>(
+    () => [
+      { field: "title", headerName: "Title", width: 220, renderCell: (params) => (
+        <span
+          style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+          onClick={() => navigate(`/admin/exercices/edit/${params.row.id}`)}
+        >
+          {params.value}
+        </span>
+      ) },
+      { field: "description", headerName: "Description", width: 400 },
+      {
+        field: "actions",
+        headerName: "Actions",
+        width: 180,
+        sortable: false,
+        renderCell: (params) => (
+          <>
+            <button onClick={() => navigate(`/admin/exercices/edit/${params.row.id}`)}>Edit</button>
+            <button style={{ marginLeft: 8 }} onClick={() => handleDelete(params.row.id)}>Delete</button>
+          </>
+        ),
+      },
+    ],
+    [navigate]
+  );
+
   return (
     <div>
       <h2>Admin: Exercices</h2>
@@ -55,34 +87,19 @@ const AdminExercice: React.FC = () => {
       ) : error ? (
         <div style={{ color: "red" }}>{error}</div>
       ) : (
-        <table border={1} cellPadding={8} style={{ width: "100%", marginTop: 16 }}>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {exercices.map(ex => (
-              <tr key={ex.id}>
-                <td>
-                  <span
-                    style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
-                    onClick={() => navigate(`/admin/exercices/edit/${ex.id}`)}
-                  >
-                    {ex.title}
-                  </span>
-                </td>
-                <td>{ex.description}</td>
-                <td>
-                  <button onClick={() => navigate(`/admin/exercices/edit/${ex.id}`)}>Edit</button>
-                  <button onClick={() => handleDelete(ex.id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div style={{ width: "100%", minHeight: 400, background: "#fff", marginTop: 16 }}>
+          <DataGrid
+            rows={exercices}
+            columns={columns}
+            getRowId={(row) => row.id}
+            loading={false}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            pageSizeOptions={[5, 10, 20, 50]}
+            autoHeight
+            disableRowSelectionOnClick
+          />
+        </div>
       )}
     </div>
   );
