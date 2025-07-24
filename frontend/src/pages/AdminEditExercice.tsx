@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchExerciceById, fetchUpdateExercice } from "../api/exercices";
 import { fetchPdfsByExercise, addPdfToExercise, editPdfOfExercise, deletePdfOfExercise } from "../api/pdf";
 import { fetchVideosByExercise, addVideoToExercise, editVideoOfExercise, deleteVideoOfExercise } from "../api/videos";
+import { fetchAllPacksAdmin } from "../api/packs";
+import { fetchAllThemes } from "../api/theme";
 
 const AdminEditExercice: React.FC = () => {
   const { exerciseId } = useParams<{ exerciseId: string }>();
@@ -16,6 +18,19 @@ const AdminEditExercice: React.FC = () => {
   const [newVideoLinks, setNewVideoLinks] = useState<string[]>([]);
   const [pdfsToDelete, setPdfsToDelete] = useState<string[]>([]);
   const [videosToDelete, setVideosToDelete] = useState<string[]>([]);
+  const [allThemes, setAllThemes] = useState<any[]>([]);
+  const [allPacks, setAllPacks] = useState<any[]>([]);
+  const [selectedThemeIds, setSelectedThemeIds] = useState<string[]>([]);
+  const [selectedPackIds, setSelectedPackIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchAllThemes().then(res => {
+      if (res.success && Array.isArray(res.data)) setAllThemes(res.data);
+    });
+    fetchAllPacksAdmin().then(res => {
+      if (res.success && Array.isArray(res.data)) setAllPacks(res.data);
+    });
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token") || "";
@@ -27,6 +42,9 @@ const AdminEditExercice: React.FC = () => {
             title: res.data.title || "",
             description: res.data.description || "",
           });
+          // Set selected themes and packs from response
+          setSelectedThemeIds((res.data.themes || []).map((t: any) => t.id));
+          setSelectedPackIds((res.data.packs || []).map((p: any) => p.id));
         } else {
           setError(res.error || "Failed to fetch exercice");
         }
@@ -85,12 +103,24 @@ const AdminEditExercice: React.FC = () => {
     setVideos(videos.map(video => video.id === videoId ? { ...video, title, url } : video));
   };
 
+  const handleThemeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedThemeIds(Array.from(e.target.selectedOptions, opt => opt.value));
+  };
+
+  const handlePackSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPackIds(Array.from(e.target.selectedOptions, opt => opt.value));
+  };
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
     const token = localStorage.getItem("token") || "";
     // Update exercise
-    const res = await fetchUpdateExercice(exerciseId!, formData, token);
+    const res = await fetchUpdateExercice(exerciseId!, {
+      ...formData,
+      themeIds: selectedThemeIds,
+      packIds: selectedPackIds
+    }, token);
     let success = res.success;
     // Delete marked PDFs
     for (const pdfId of pdfsToDelete) {
@@ -214,6 +244,22 @@ const AdminEditExercice: React.FC = () => {
             </div>
           ))}
           <button type="button" onClick={handleAddVideo}>Add Video</button>
+        </div>
+        <div>
+          <label>Select Themes:</label>
+          <select multiple value={selectedThemeIds} onChange={handleThemeSelect} style={{ width: 300 }}>
+            {allThemes.map(theme => (
+              <option key={theme.id} value={theme.id}>{theme.title}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label>Select Packs:</label>
+          <select multiple value={selectedPackIds} onChange={handlePackSelect} style={{ width: 300 }}>
+            {allPacks.map(pack => (
+              <option key={pack.id} value={pack.id}>{pack.name}</option>
+            ))}
+          </select>
         </div>
         <button type="submit">Update Exercice</button>
         <button type="button" onClick={() => navigate("/admin/exercices")}>Cancel</button>

@@ -37,7 +37,7 @@ export const fetchExerciceById = async (id: string, token?: string) => {
 
 // Create a new exercise (POST /api/exercices)
 export const fetchCreateExercice = async (
-  data: { title: string; description: string },
+  data: { title: string; description: string; themeIds?: string[]; packIds?: string[] },
   token?: string
 ) => {
   const res = await fetchWithAuth('/api/exercices', {
@@ -54,7 +54,7 @@ export const fetchCreateExercice = async (
 // Update an exercise (PUT /api/exercices/id/:id)
 export const fetchUpdateExercice = async (
   id: string,
-  data: { title?: string; description?: string },
+  data: { title?: string; description?: string; themeIds?: string[]; packIds?: string[] },
   token?: string
 ) => {
   const res = await fetchWithAuth(`/api/exercices/id/${id}`, {

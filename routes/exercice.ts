@@ -14,9 +14,17 @@ const exerciceRoutes = (): Router => {
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const { title, description } = req.body;
-        const { Exercise } = req.app.get("models");
+        const { title, description, themeIds, packIds } = req.body;
+        const { Exercise, Theme, Pack } = req.app.get("models");
         const exercise = await Exercise.create({ title, description });
+        // Associate themes if provided
+        if (Array.isArray(themeIds) && themeIds.length > 0) {
+          await exercise.setThemes(themeIds);
+        }
+        // Associate packs if provided
+        if (Array.isArray(packIds) && packIds.length > 0) {
+          await exercise.setPacks(packIds);
+        }
         sendSuccess(res, exercise, 201);
       } catch (err: any) {
         sendError(res, err.message, 400);
@@ -52,11 +60,13 @@ const exerciceRoutes = (): Router => {
     checkPackAccess, // <-- Add here
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const { Exercise, PDF, Video } = req.app.get("models");
+        const { Exercise, PDF, Video, Pack, Theme } = req.app.get("models");
         const exercise = await Exercise.findByPk(req.params.id, {
           include: [
             { model: PDF, as: "pdfs" },
             { model: Video, as: "videos" },
+            { model: Pack, as: "packs" },
+            { model: Theme, as: "themes" },
           ],
         });
         if (!exercise)
@@ -75,8 +85,8 @@ const exerciceRoutes = (): Router => {
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const { title, description } = req.body;
-        const { Exercise } = req.app.get("models");
+        const { title, description, themeIds, packIds } = req.body;
+        const { Exercise, Theme, Pack } = req.app.get("models");
         const exercise = await Exercise.findByPk(req.params.id);
         if (!exercise)
           return sendError(res, EXERCICE_RESPONSE_MESSAGES.EXERCISE_NOT_FOUND, 404);
@@ -84,6 +94,15 @@ const exerciceRoutes = (): Router => {
         exercise.title = title ?? exercise.title;
         exercise.description = description ?? exercise.description;
         await exercise.save();
+
+        // Update themes if provided
+        if (Array.isArray(themeIds)) {
+          await exercise.setThemes(themeIds);
+        }
+        // Update packs if provided
+        if (Array.isArray(packIds)) {
+          await exercise.setPacks(packIds);
+        }
 
         sendSuccess(res, exercise, 200);
       } catch (err: any) {

@@ -102,7 +102,7 @@ const App: React.FC = () => {
               {(userRole === "admin" || userRole === "superadmin") && (
                 <>
                   <Link to='/manage-courses'>Gérer les Cours</Link> |{" "}
-                  <Link to='/admin/exercises'>Gérer les Exercices</Link> |{" "}
+                  <Link to='/admin/exercices'>Gérer les Exercices</Link> |{" "}
                 </>
               )}
               <LogoutButton onLogout={() => setIsAuthenticated(false)} /> |{" "}
@@ -451,7 +451,7 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path='/admin/exercices'
             element={

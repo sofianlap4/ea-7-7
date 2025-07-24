@@ -243,6 +243,34 @@ Course.hasMany(UserCourseProgress, { foreignKey: "courseId", as: "userProgress" 
 UserCourseProgress.belongsTo(User, { foreignKey: "userId", as: "user" });
 UserCourseProgress.belongsTo(Course, { foreignKey: "courseId", as: "course" });
 
+// Exercise <-> Pack (Many-to-Many)
+Exercise.belongsToMany(Pack, {
+  through: "PackExercise",
+  foreignKey: "exerciseId",
+  otherKey: "packId",
+  as: "packs",
+});
+Pack.belongsToMany(Exercise, {
+  through: "PackExercise",
+  foreignKey: "packId",
+  otherKey: "exerciseId",
+  as: "exercises",
+});
+
+// Exercise <-> Theme (Many-to-Many)
+Exercise.belongsToMany(Theme, {
+  through: "ExerciseTheme",
+  foreignKey: "exerciseId",
+  otherKey: "themeId",
+  as: "themes",
+});
+Theme.belongsToMany(Exercise, {
+  through: "ExerciseTheme",
+  foreignKey: "themeId",
+  otherKey: "exerciseId",
+  as: "exercises",
+});
+
 // Export all models
 export {
   sequelize,

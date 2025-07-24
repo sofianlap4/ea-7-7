@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCreateExercice } from "../api/exercices";
 import { addPdfToExercise } from "../api/pdf";
 import { addVideoToExercise } from "../api/videos";
+import { fetchAllPacksAdmin } from "../api/packs";
+import { fetchAllThemes } from "../api/theme";
 
 const AdminNewExercice: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +13,19 @@ const AdminNewExercice: React.FC = () => {
   const [videoInputs, setVideoInputs] = useState<{ url: string; title: string }[]>([]);
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [allThemes, setAllThemes] = useState<any[]>([]);
+  const [allPacks, setAllPacks] = useState<any[]>([]);
+  const [selectedThemeIds, setSelectedThemeIds] = useState<string[]>([]);
+  const [selectedPackIds, setSelectedPackIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchAllThemes().then(res => {
+      if (res.success && Array.isArray(res.data)) setAllThemes(res.data);
+    });
+    fetchAllPacksAdmin().then(res => {
+      if (res.success && Array.isArray(res.data)) setAllPacks(res.data);
+    });
+  }, []);
 
   const handleAddVideo = () => {
     setVideoInputs([...videoInputs, { url: "", title: "" }]);
@@ -35,13 +50,25 @@ const AdminNewExercice: React.FC = () => {
     setPdfInputs(pdfInputs.map((pdf, i) => i === idx ? { ...pdf, [field]: value } : pdf));
   };
 
+  const handleThemeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedThemeIds(Array.from(e.target.selectedOptions, opt => opt.value));
+  };
+
+  const handlePackSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPackIds(Array.from(e.target.selectedOptions, opt => opt.value));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
     const token = localStorage.getItem("token") || "";
     // 1. Create the exercise
-    const res = await fetchCreateExercice(formData, token);
+    const res = await fetchCreateExercice({
+      ...formData,
+      themeIds: selectedThemeIds,
+      packIds: selectedPackIds
+    }, token);
     if (res.success && res.data && res.data.id) {
       const exerciseId = res.data.id;
       for (const pdf of pdfInputs) {
@@ -133,6 +160,22 @@ const AdminNewExercice: React.FC = () => {
             </div>
           ))}
           <button type="button" onClick={handleAddVideo}>Add Video</button>
+        </div>
+        <div>
+          <label>Select Themes:</label>
+          <select multiple value={selectedThemeIds} onChange={handleThemeSelect} style={{ width: 300 }}>
+            {allThemes.map(theme => (
+              <option key={theme.id} value={theme.id}>{theme.title}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label>Select Packs:</label>
+          <select multiple value={selectedPackIds} onChange={handlePackSelect} style={{ width: 300 }}>
+            {allPacks.map(pack => (
+              <option key={pack.id} value={pack.id}>{pack.name}</option>
+            ))}
+          </select>
         </div>
         <button type="submit" disabled={loading}>Create Exercice</button>
         <button type="button" onClick={() => navigate("/admin/exercices")}>Cancel</button>
