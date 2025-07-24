@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchAllRankings, updateStudentRankingPoints } from "../api/leaderboard";
+import { DataGrid, GridColDef, GridPaginationModel, GridRenderCellParams } from "@mui/x-data-grid";
 
 type User = {
   id: string;
@@ -43,51 +44,76 @@ const ManageRankingPage: React.FC = () => {
     setEditPoints(rest);
   };
 
+  // Prepare DataGrid rows
+  const rows = rankings.map(r => ({
+    id: r.userId,
+    student: r.user?.name || r.userId,
+    points: r.points,
+    currentRank: r.currentRank,
+  }));
+
+  // DataGrid columns
+  const columns: GridColDef[] = [
+    { field: "student", headerName: "Student", width: 200 },
+    {
+      field: "points",
+      headerName: "Points",
+      width: 120,
+      renderCell: (params: GridRenderCellParams) => {
+        const userId = params.row.id;
+        return editPoints[userId] !== undefined ? (
+          <input
+            type="number"
+            value={editPoints[userId]}
+            onChange={e =>
+              setEditPoints({ ...editPoints, [userId]: Number(e.target.value) })
+            }
+            style={{ width: 60 }}
+          />
+        ) : (
+          params.value
+        );
+      },
+    },
+    { field: "currentRank", headerName: "Current Rank", width: 150 },
+    {
+      field: "edit",
+      headerName: "Edit",
+      width: 120,
+      sortable: false,
+      filterable: false,
+      renderCell: (params: GridRenderCellParams) => {
+        const userId = params.row.id;
+        return editPoints[userId] !== undefined ? (
+          <button onClick={() => handleSave(userId)}>Save</button>
+        ) : (
+          <button onClick={() => handleEdit(userId, params.row.points)}>Edit</button>
+        );
+      },
+    },
+  ];
+
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({ pageSize: 10, page: 0 });
+
   return (
     <div>
       <h2>Manage Student Rankings</h2>
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <table border={1} cellPadding={8}>
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Points</th>
-              <th>Current Rank</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rankings.map(r => (
-              <tr key={r.userId}>
-                <td>{r.user?.name || r.userId}</td>
-                <td>
-                  {editPoints[r.userId] !== undefined ? (
-                    <input
-                      type="number"
-                      value={editPoints[r.userId]}
-                      onChange={e =>
-                        setEditPoints({ ...editPoints, [r.userId]: Number(e.target.value) })
-                      }
-                      style={{ width: 60 }}
-                    />
-                  ) : (
-                    r.points
-                  )}
-                </td>
-                <td>{r.currentRank}</td>
-                <td>
-                  {editPoints[r.userId] !== undefined ? (
-                    <button onClick={() => handleSave(r.userId)}>Save</button>
-                  ) : (
-                    <button onClick={() => handleEdit(r.userId, r.points)}>Edit</button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div style={{ width: "100%", minHeight: 400 }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            getRowId={row => row.id}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            pageSizeOptions={[5, 10, 20, 50]}
+            autoHeight
+            disableRowSelectionOnClick
+            sx={{ background: "#fff" }}
+          />
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchUserPackReductions } from "../api/packReduction";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 
 interface UserPackReduction {
   id: string;
@@ -33,46 +34,63 @@ const UserPackReductionList: React.FC = () => {
     fetchReductions();
   }, []);
 
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({ pageSize: 10, page: 0 });
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
+
+  // Prepare DataGrid rows
+  const rows = reductions.map(r => ({
+    id: r.id,
+    utilisateur: `${r.user?.firstName || ""} ${r.user?.lastName || ""}`.trim(),
+    email: r.user?.email,
+    pack: r.userPack?.pack?.name || "-",
+    offre: r.userPack?.offer ? `${r.userPack.offer.durationMonths} months - ${r.userPack.offer.price} €` : "-",
+    code: r.reductionCode?.code || "-",
+    pourcentage: r.reductionCode?.percentage ?? "-",
+    date: r.createdAt ? new Date(r.createdAt).toLocaleString() : "",
+  }));
+
+  // DataGrid columns
+  const columns: GridColDef[] = [
+    {
+      field: "utilisateur",
+      headerName: "Utilisateur",
+      width: 180,
+      renderCell: (params) => (
+        <span>
+          {params.value}
+          <br />
+          <small>{params.row.email}</small>
+        </span>
+      ),
+    },
+    { field: "pack", headerName: "Pack", width: 140 },
+    { field: "offre", headerName: "Offre", width: 180 },
+    { field: "code", headerName: "Code de réduction", width: 150 },
+    { field: "pourcentage", headerName: "Réduction (%)", width: 130 },
+    { field: "date", headerName: "Date", width: 180 },
+  ];
 
   return (
     <div>
       <h2>Utilisateurs ayant acheté des packs avec des codes de réduction</h2>
-      {reductions.length === 0 ? (
+      {rows.length === 0 ? (
         <p>Aucune réduction trouvée.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Pack</th>
-            <th>Offre</th>
-            <th>Code de réduction</th>
-            <th>éduction (%)</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reductions.map((r) => (
-            <tr key={r.id}>
-              <td>
-                {r.user?.firstName || ""} {r.user?.lastName || ""}<br />
-                <small>{r.user?.email}</small>
-              </td>
-              <td>{r.userPack?.pack?.name || "-"}</td>
-              <td>
-                {r.userPack?.offer
-                  ? `${r.userPack.offer.durationMonths} months - ${r.userPack.offer.price} €`
-                  : "-"}
-              </td>
-              <td>{r.reductionCode?.code || "-"}</td>
-              <td>{r.reductionCode?.percentage ?? "-"}%</td>
-              <td>{new Date(r.createdAt).toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <div style={{ width: "100%", minHeight: 400 }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            getRowId={row => row.id}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            pageSizeOptions={[5, 10, 20, 50]}
+            autoHeight
+            disableRowSelectionOnClick
+            sx={{ background: "#fff" }}
+          />
+        </div>
       )}
     </div>
   );

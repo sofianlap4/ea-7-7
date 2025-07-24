@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchAllCreditTransactions, addCreditToStudent } from "../api/credit";
 import { RESPONSE_MESSAGES } from "../utils/responseMessages";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 
 const AdminCreditPage: React.FC = () => {
   const [studentId, setStudentId] = useState("");
@@ -8,6 +9,8 @@ const AdminCreditPage: React.FC = () => {
   const [attachmentUrl, setAttachmentUrl] = useState("");
   const [message, setMessage] = useState("");
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({ pageSize: 10, page: 0 });
+  const [displayRows, setDisplayRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchTransactions = async () => {
@@ -26,6 +29,19 @@ const AdminCreditPage: React.FC = () => {
     fetchTransactions();
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    setDisplayRows(
+      (transactions || []).map((tx) => ({
+        id: tx.id,
+        userId: tx.userId,
+        amount: tx.amount,
+        type: tx.type,
+        attachmentUrl: tx.attachmentUrl,
+        createdAt: tx.createdAt ? new Date(tx.createdAt).toLocaleString() : "",
+      }))
+    );
+  }, [transactions]);
 
   const handleAddCredit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,34 +82,38 @@ const AdminCreditPage: React.FC = () => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <table border={1} cellPadding={6} style={{ width: "100%", marginTop: 12 }}>
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Amount</th>
-              <th>Type</th>
-              <th>Justification URL</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map(tx => (
-              <tr key={tx.id}>
-                <td>{tx.userId}</td>
-                <td>{tx.amount}</td>
-                <td>{tx.type}</td>
-                <td>
-                  {tx.attachmentUrl ? (
-                    <a href={tx.attachmentUrl} target="_blank" rel="noopener noreferrer">Voir</a>
+        <div style={{ width: "100%", minHeight: 400, marginTop: 12 }}>
+          <DataGrid
+            rows={displayRows}
+            columns={[
+              { field: "userId", headerName: "User ID", width: 150 },
+              { field: "amount", headerName: "Amount", width: 120 },
+              { field: "type", headerName: "Type", width: 150 },
+              {
+                field: "attachmentUrl",
+                headerName: "Justification URL",
+                width: 180,
+                renderCell: (params) =>
+                  params.value ? (
+                    <a href={params.value} target="_blank" rel="noopener noreferrer">Voir</a>
                   ) : (
                     "-"
-                  )}
-                </td>
-                <td>{new Date(tx.createdAt).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  ),
+                sortable: false,
+                filterable: false,
+              },
+              { field: "createdAt", headerName: "Date", width: 180 },
+            ]}
+            getRowId={(row) => row.id}
+            loading={loading}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            pageSizeOptions={[5, 10, 20, 50]}
+            autoHeight
+            disableRowSelectionOnClick
+            sx={{ background: "#fff" }}
+          />
+        </div>
       )}
     </div>
   );

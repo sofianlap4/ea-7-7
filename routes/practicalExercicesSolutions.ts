@@ -10,13 +10,13 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   // Helper to get models
   const getModels = (req: any) => req.app.get("models");
 
-  // GET /ranked-exercises/id/:exerciseId/solutions
-  router.get("/ranked-exercises/id/:exerciseId/solutions", async (req: any, res: any, next: NextFunction) => {
+  // GET /practical-exercises/id/:exerciseId/solutions
+  router.get("/practical-exercises/id/:exerciseId/solutions", async (req: any, res: any, next: NextFunction) => {
     try {
       const { exerciseId } = req.params;
-      const { RankedExerciseSolution, SolutionComment, User, SolutionLike } = getModels(req);
+      const { PracticalExerciseSolution, SolutionComment, User, SolutionLike } = getModels(req);
 
-      const solutions = await RankedExerciseSolution.findAll({
+      const solutions = await PracticalExerciseSolution.findAll({
         where: { exerciseId },
         include: [
           {
@@ -45,9 +45,9 @@ const practicalExerciseSolutionsRoutes = (): Router => {
     try {
       const { solutionId } = req.params;
       const userId = req.user.id;
-      const { SolutionLike, RankedExerciseSolution } = getModels(req);
+      const { SolutionLike, PracticalExerciseSolution } = getModels(req);
 
-      const solution = await RankedExerciseSolution.findByPk(solutionId);
+      const solution = await PracticalExerciseSolution.findByPk(solutionId);
       if (!solution) return sendError(res, PRACTICAL_EXERCICE_SOLUTION_RESPONSE_MESSAGES.SOLUTION_NOT_FOUND, 404);
 
       if (solution.userId === userId) {
@@ -58,7 +58,7 @@ const practicalExerciseSolutionsRoutes = (): Router => {
       if (alreadyLiked) return sendError(res, PRACTICAL_EXERCICE_SOLUTION_RESPONSE_MESSAGES.ALREADY_LIKED, 400);
 
       await SolutionLike.create({ solutionId, userId });
-      await RankedExerciseSolution.increment("likes", { by: 1, where: { id: solutionId } });
+      await PracticalExerciseSolution.increment("likes", { by: 1, where: { id: solutionId } });
       sendSuccess(res, { success: true }, 200);
     } catch (err: any) {
       next(err);
@@ -70,13 +70,13 @@ const practicalExerciseSolutionsRoutes = (): Router => {
     try {
       const { solutionId } = req.params;
       const userId = req.user.id;
-      const { SolutionLike, RankedExerciseSolution } = getModels(req);
+      const { SolutionLike, PracticalExerciseSolution } = getModels(req);
 
       const like = await SolutionLike.findOne({ where: { solutionId, userId } });
       if (!like) return sendError(res, PRACTICAL_EXERCICE_SOLUTION_RESPONSE_MESSAGES.LIKE_NOT_FOUND, 404);
 
       await like.destroy();
-      await RankedExerciseSolution.decrement("likes", { by: 1, where: { id: solutionId } });
+      await PracticalExerciseSolution.decrement("likes", { by: 1, where: { id: solutionId } });
       sendSuccess(res, { success: true }, 200);
     } catch (err: any) {
       next(err);
@@ -127,9 +127,9 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   router.get("/users/id/:userId/solutions", async (req: any, res: any, next: NextFunction) => {
     try {
       const { userId } = req.params;
-      const { RankedExerciseSolution, RankedExercise } = getModels(req);
+      const { PracticalExerciseSolution, RankedExercise } = getModels(req);
 
-      const solutions = await RankedExerciseSolution.findAll({
+      const solutions = await PracticalExerciseSolution.findAll({
         where: { userId },
         include: [
           { model: RankedExercise, as: "exercise" }

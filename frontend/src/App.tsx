@@ -27,7 +27,7 @@ import LiveSessionsCalendar from "./components/LiveSessionsCalendar";
 import AdminCreditPage from "./pages/AdminCreditPage";
 import LiveSessionDetail from "./pages/LiveSessionDetail";
 import ContactPage from "./pages/ContactPage";
-import RankedExerciseSolutionsPage from "./pages/PracticalExerciseSolutionsPage";
+import PracticalExerciseSolutionsPage from "./pages/PracticalExerciseSolutionsPage";
 import MyRankPage from "./pages/MyRankPage";
 import ManageRankingPage from "./pages/ManageRankingPage";
 import AdminManageThemes from "./pages/AdminManageThemes";
@@ -381,7 +381,7 @@ const App: React.FC = () => {
                 roles={["student"]}
                 userRole={userRole}
               >
-                <RankedExerciseSolutionsPage />
+                <PracticalExerciseSolutionsPage />
               </ProtectedRoute>
             }
           />

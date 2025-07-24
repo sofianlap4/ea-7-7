@@ -2,7 +2,7 @@ import fetchWithAuth from '../utils/fetchWithAuth';
 
 // Fetch all solutions for a ranked exercise, ordered by most liked
 export const fetchExerciseSolutions = async (exerciseId: string) => {
-  const res = await fetchWithAuth(`/api/solutions/ranked-exercises/id/${exerciseId}/solutions`);
+  const res = await fetchWithAuth(`/api/solutions/practical-exercises/id/${exerciseId}/solutions`);
   return await res.json();
 };
 
