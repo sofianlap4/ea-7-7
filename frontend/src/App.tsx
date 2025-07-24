@@ -451,8 +451,9 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          
           <Route
-            path='/admin/exercises'
+            path='/admin/exercices'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}

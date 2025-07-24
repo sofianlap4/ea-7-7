@@ -1,6 +1,17 @@
 import fetchWithAuth from '../utils/fetchWithAuth';
 
 // Fetch all exercises (GET /api/exercices)
+export const fetchAdminExercices = async (token?: string) => {
+  const res = await fetchWithAuth('/api/exercices/admin', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await res.json();
+};
+
 export const fetchExercices = async (token?: string) => {
   const res = await fetchWithAuth('/api/exercices', {
     method: 'GET',

@@ -26,9 +26,8 @@ const exerciceRoutes = (): Router => {
 
   // Get all Exercises (with PDFs and Videos) -- PROTECTED BY PACK ACCESS
   router.get(
-    "/",
+    "/admin",
     authenticateToken,
-    checkPackAccess, // <-- Add here
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { Exercise, PDF, Video } = req.app.get("models");

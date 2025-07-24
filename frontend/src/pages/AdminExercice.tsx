@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
-  fetchExercices,
+  fetchAdminExercices,
   fetchDeleteExercice,
 } from "../api/exercices";
 
@@ -10,11 +10,12 @@ const AdminExercice: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
+  const loadExercices = () => {
     const token = localStorage.getItem("token") || "";
     setLoading(true);
-    fetchExercices(token)
+    fetchAdminExercices(token)
       .then((res) => {
         if (res.success && Array.isArray(res.data)) {
           setExercices(res.data);
@@ -27,7 +28,11 @@ const AdminExercice: React.FC = () => {
         setError("Failed to fetch exercices");
         setLoading(false);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    loadExercices();
+  }, [location]);
 
   const handleDelete = async (id: string) => {
     const token = localStorage.getItem("token") || "";

@@ -7,29 +7,32 @@ import { addVideoToExercise } from "../api/videos";
 const AdminNewExercice: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ title: "", description: "" });
-  const [pdfFiles, setPdfFiles] = useState<File[]>([]);
-  const [videoLinks, setVideoLinks] = useState<string[]>([]);
+  const [pdfInputs, setPdfInputs] = useState<{ file: File; title: string; type: string }[]>([]);
+  const [videoInputs, setVideoInputs] = useState<{ url: string; title: string }[]>([]);
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const handleAddVideo = () => {
-    setVideoLinks([...videoLinks, ""]);
+    setVideoInputs([...videoInputs, { url: "", title: "" }]);
   };
 
-  const handleVideoChange = (index: number, value: string) => {
-    const updated = [...videoLinks];
-    updated[index] = value;
-    setVideoLinks(updated);
+  const handleVideoInputChange = (idx: number, field: "url" | "title", value: string) => {
+    setVideoInputs(videoInputs.map((video, i) => i === idx ? { ...video, [field]: value } : video));
   };
 
-  const handleRemoveVideo = (index: number) => {
-    setVideoLinks(videoLinks.filter((_, i) => i !== index));
+  const handleRemoveVideo = (idx: number) => {
+    setVideoInputs(videoInputs.filter((_, i) => i !== idx));
   };
 
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setPdfFiles(Array.from(e.target.files));
+      const files = Array.from(e.target.files);
+      setPdfInputs(files.map(file => ({ file, title: file.name, type: "question" })));
     }
+  };
+
+  const handlePdfInputChange = (idx: number, field: "title" | "type", value: string) => {
+    setPdfInputs(pdfInputs.map((pdf, i) => i === idx ? { ...pdf, [field]: value } : pdf));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,17 +44,17 @@ const AdminNewExercice: React.FC = () => {
     const res = await fetchCreateExercice(formData, token);
     if (res.success && res.data && res.data.id) {
       const exerciseId = res.data.id;
-      for (const pdf of pdfFiles) {
+      for (const pdf of pdfInputs) {
         await addPdfToExercise(exerciseId, {
-          title: pdf.name,
-          file: pdf,
-          type: "question"
+          title: pdf.title,
+          file: pdf.file,
+          type: pdf.type
         }, token);
       }
-      for (const link of videoLinks) {
-        if (link) await addVideoToExercise(exerciseId, {
-          title: link,
-          url: link,
+      for (const video of videoInputs) {
+        if (video.url) await addVideoToExercise(exerciseId, {
+          title: video.title,
+          url: video.url,
           free: false
         });
       }
@@ -88,21 +91,43 @@ const AdminNewExercice: React.FC = () => {
           <label>Upload PDFs (question/solution):</label>
           <input type="file" multiple accept="application/pdf" onChange={handlePdfChange} />
           <ul>
-            {pdfFiles.map((file, idx) => (
-              <li key={idx}>{file.name}</li>
+            {pdfInputs.map((pdf, idx) => (
+              <li key={idx}>
+                <input
+                  type="text"
+                  value={pdf.title}
+                  onChange={e => handlePdfInputChange(idx, "title", e.target.value)}
+                  placeholder="PDF Title"
+                  required
+                />
+                <select value={pdf.type} onChange={e => handlePdfInputChange(idx, "type", e.target.value)}>
+                  <option value="question">Question</option>
+                  <option value="solution">Solution</option>
+                </select>
+                {pdf.file.name}
+              </li>
             ))}
           </ul>
         </div>
         <div>
           <label>Video Links:</label>
-          {videoLinks.map((link, idx) => (
+          {videoInputs.map((video, idx) => (
             <div key={idx}>
               <input
                 type="text"
-                value={link}
-                onChange={e => handleVideoChange(idx, e.target.value)}
+                value={video.url}
+                onChange={e => handleVideoInputChange(idx, "url", e.target.value)}
                 placeholder="Paste video URL"
                 style={{ width: 300 }}
+                required
+              />
+              <input
+                type="text"
+                value={video.title}
+                onChange={e => handleVideoInputChange(idx, "title", e.target.value)}
+                placeholder="Video Title"
+                style={{ width: 200, marginLeft: 8 }}
+                required
               />
               <button type="button" onClick={() => handleRemoveVideo(idx)}>Remove</button>
             </div>
