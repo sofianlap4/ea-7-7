@@ -1,3 +1,4 @@
+
 import express, { Router, NextFunction } from 'express';
 import { authenticateToken, authorizeRoles } from '../middleware/auth';
 import { sendError, sendSuccess } from '../utils/response';
@@ -5,6 +6,81 @@ import { VIDEO_RESPONSE_MESSAGES } from "../utils/responseMessages";
 
 const videoRoutes = (): Router => {
   const router = express.Router();
+
+  // Add a video to an exercise (admins only, Vimeo only)
+  router.post(
+    '/exercise/id/:exerciseId',
+    authenticateToken,
+    authorizeRoles('admin', 'superadmin'),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { title, url, free } = req.body;
+        if (!url || !url.includes('vimeo.com')) {
+          return sendError(res, VIDEO_RESPONSE_MESSAGES.ONLY_VIMEO);
+        }
+        const exercise = await req.app.get("models").Exercise.findByPk(req.params.exerciseId);
+        if (!exercise) {
+          return sendError(res, "Exercise not found");
+        }
+        const video = await req.app.get("models").Video.create({ title, url, exerciseId: exercise.id, free: !!free });
+        sendSuccess(res, video, 201);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
+  // Get all videos for an exercise
+  router.get(
+    '/exercise/id/:exerciseId',
+    authenticateToken,
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const videos = await req.app.get("models").Video.findAll({ where: { exerciseId: req.params.exerciseId } });
+        sendSuccess(res, videos, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
+  // Edit a video of an exercise
+  router.put(
+    '/exercise/id/:videoId',
+    authenticateToken,
+    authorizeRoles('admin', 'superadmin'),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { title, url, free } = req.body;
+        const video = await req.app.get("models").Video.findByPk(req.params.videoId);
+        if (!video) return sendError(res, VIDEO_RESPONSE_MESSAGES.VIDEO_NOT_FOUND, 404);
+        video.title = title;
+        video.url = url;
+        video.free = !!free;
+        await video.save();
+        sendSuccess(res, video, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
+  // Delete a video by ID (admins only)
+  router.delete(
+    '/exercise/id/:videoId',
+    authenticateToken,
+    authorizeRoles('admin', 'superadmin'),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const video = await req.app.get("models").Video.findByPk(req.params.videoId);
+        if (!video) return sendError(res, VIDEO_RESPONSE_MESSAGES.VIDEO_NOT_FOUND, 404);
+        await video.destroy();
+        sendSuccess(res, { message: "Video deleted" }, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
 
   // Add a video to a course (/admins only, Vimeo only)
   router.post(

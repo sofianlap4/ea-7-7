@@ -7,6 +7,88 @@ import { uploadPdf } from "../utils/multerUpload";
 const pdfRoutes = (): Router => {
   const router = express.Router();
 
+  // Add a PDF to an exercise (with file upload)
+  router.post(
+    "/exercise/id/:exerciseId",
+    authenticateToken,
+    authorizeRoles("admin", "superadmin"),
+    uploadPdf,
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { title, type } = req.body;
+        const { PDF, Exercise } = req.app.get("models");
+        const exercise = await Exercise.findByPk(req.params.exerciseId);
+        if (!exercise) return sendError(res, "Exercise not found", 404);
+        if (!req.file) return sendError(res, "No PDF file uploaded", 400);
+        const fileUrl = `${process.env.BACKEND_URL}/uploads/pdfs/${req.file.filename}`;
+        const pdf = await PDF.create({
+          title,
+          fileUrl,
+          type,
+          exerciseId: exercise.id,
+        });
+        sendSuccess(res, pdf, 201);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
+  // Get all PDFs for an exercise
+  router.get(
+    "/exercise/id/:exerciseId",
+    authenticateToken,
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { PDF } = req.app.get("models");
+        const pdfs = await PDF.findAll({
+          where: { exerciseId: req.params.exerciseId },
+          order: [["createdAt", "DESC"]],
+        });
+        sendSuccess(res, pdfs, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
+  // Edit a PDF of an exercise
+  router.put(
+    "/exercise/id/:pdfId",
+    authenticateToken,
+    authorizeRoles("admin", "superadmin"),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { title, fileUrl, type } = req.body;
+        const { PDF } = req.app.get("models");
+        const pdf = await PDF.findByPk(req.params.pdfId);
+        if (!pdf) return sendError(res, "PDF not found", 404);
+        await pdf.update({ title, fileUrl, type });
+        sendSuccess(res, pdf, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
+  // Delete a PDF by ID (admins only)
+  router.delete(
+    "/exercise/id/:pdfId",
+    authenticateToken,
+    authorizeRoles("admin", "superadmin"),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { PDF } = req.app.get("models");
+        const pdf = await PDF.findByPk(req.params.pdfId);
+        if (!pdf) return sendError(res, "PDF not found", 404);
+        await pdf.destroy();
+        sendSuccess(res, { message: "PDF deleted" }, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
   // Add a PDF to a course (with file upload)
   router.post(
     "/course/id/:courseId",

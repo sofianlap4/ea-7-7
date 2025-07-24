@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   fetchAllPracticalExercises,
   deletePracticalExercise,
@@ -115,35 +116,9 @@ const AdminPracticalExercises: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this exercise?")) return;
-    try {
-      const res = await deletePracticalExercise(id.toString(), localStorage.getItem("token") || "");
-      // Check if the response indicates success (e.g., success: true or status 200)
-      if (res?.data && res.success) {
-        setExercises(exercises.filter((e) => e.id !== id));
-      } else {
-        alert(res?.error || "Failed to delete exercise");
-      }
-    } catch (err) {
-      alert("Failed to delete exercise");
-    }
-  };
-
+  const navigate = useNavigate();
   const handleEdit = (exercise: PracticalExercise) => {
-    setEditingId(exercise.id);
-    setFormData({
-      title: exercise.title,
-      description: exercise.description,
-      difficulty: exercise.difficulty,
-      language: exercise.language,
-      starterCode: exercise.starterCode,
-      solution: exercise.solution,
-      testCases: exercise.testCases,
-      packIds: exercise.packIds || [],
-      themeIds: exercise.themeIds || [],
-      hidden: !!exercise.hidden,
-    });
+    navigate(`/admin/practical-exercises/edit/${exercise.id}`);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {

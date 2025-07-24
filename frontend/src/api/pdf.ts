@@ -1,5 +1,68 @@
 import fetchWithAuth from '../utils/fetchWithAuth';
 
+// Add a PDF to an exercise (POST /api/pdfs/exercise/id/:exerciseId)
+export const addPdfToExercise = async (
+  exerciseId: string,
+  data: { title: string; file: File; type: string },
+  token?: string
+) => {
+  const formData = new FormData();
+  formData.append('title', data.title);
+  formData.append('type', data.type);
+  formData.append('file', data.file);
+
+  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${exerciseId}`, {
+    method: 'POST',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      // Do NOT set Content-Type, browser will set it for FormData
+    },
+    body: formData,
+  });
+  return await res.json();
+};
+
+// Get all PDFs for an exercise (GET /api/pdfs/exercise/id/:exerciseId)
+export const fetchPdfsByExercise = async (exerciseId: string, token?: string) => {
+  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${exerciseId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await res.json();
+};
+
+// Edit a PDF of an exercise (PUT /api/pdfs/exercise/id/:pdfId)
+export const editPdfOfExercise = async (
+  pdfId: string,
+  data: { title?: string; fileUrl?: string; type?: string },
+  token?: string
+) => {
+  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${pdfId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(data),
+  });
+  return await res.json();
+};
+
+// Delete a PDF by ID (DELETE /api/pdfs/exercise/id/:pdfId)
+export const deletePdfOfExercise = async (pdfId: string, token?: string) => {
+  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${pdfId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await res.json();
+};
+
 // Add a PDF to a course (POST /api/pdfs/course/id/:courseId)
 export const addPdfToCourse = async (
   courseId: string,

@@ -32,6 +32,10 @@ import MyRankPage from "./pages/MyRankPage";
 import ManageRankingPage from "./pages/ManageRankingPage";
 import AdminManageThemes from "./pages/AdminManageThemes";
 import AdminReductionCodeList from "./components/AdminReductionCodeList";
+import AdminEditPracticalExercice from "./pages/AdminEditPracticalExercice";
+import AdminExercice from "./pages/AdminExercice";
+import AdminEditExercice from "./pages/AdminEditExercice";
+import AdminNewExercice from "./pages/AdminNewExercice";
 
 function Home() {
   return <h2>Welcome to the Platform!</h2>;
@@ -78,7 +82,7 @@ const App: React.FC = () => {
           {isAuthenticated && (
             <>
               <Link to='/profile'>Profil</Link> | <Link to='/live-sessions'>Sessions en Direct</Link> |{" "}
-              {( userRole === "admin" || userRole === "superadmin") && (
+              {(userRole === "admin" || userRole === "superadmin") && (
                 <>
                   <Link to='/create-course'>Créer un Cours</Link> |{" "}
                 </>
@@ -98,6 +102,7 @@ const App: React.FC = () => {
               {(userRole === "admin" || userRole === "superadmin") && (
                 <>
                   <Link to='/manage-courses'>Gérer les Cours</Link> |{" "}
+                  <Link to='/admin/exercises'>Gérer les Exercices</Link> |{" "}
                 </>
               )}
               <LogoutButton onLogout={() => setIsAuthenticated(false)} /> |{" "}
@@ -434,6 +439,56 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path='/admin/practical-exercises/edit/:exerciseId'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["admin", "superadmin"]}
+                userRole={userRole}
+              >
+                <AdminEditPracticalExercice />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/admin/exercises'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["admin", "superadmin"]}
+                userRole={userRole}
+              >
+                <AdminExercice />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/admin/exercices/edit/:exerciseId'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["admin", "superadmin"]}
+                userRole={userRole}
+              >
+                <AdminEditExercice />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/admin/exercices/new'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["admin", "superadmin"]}
+                userRole={userRole}
+              >
+                <AdminNewExercice />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
       </div>
     </Router>

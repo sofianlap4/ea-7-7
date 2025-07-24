@@ -90,9 +90,14 @@ Course.belongsToMany(Pack, {
 Course.hasMany(PDF, { as: "pdfs", foreignKey: "courseId" });
 PDF.belongsTo(Course, { foreignKey: "courseId", as: "course" });
 
+
 // Exercise <-> PDF (One-to-Many)
 Exercise.hasMany(PDF, { as: "pdfs", foreignKey: "exerciseId" });
 PDF.belongsTo(Exercise, { foreignKey: "exerciseId", as: "exercise" });
+
+// Exercise <-> Video (One-to-Many)
+Exercise.hasMany(Video, { as: "videos", foreignKey: "exerciseId" });
+Video.belongsTo(Exercise, { foreignKey: "exerciseId", as: "exercise" });
 
 // In your model/index.ts or wherever you define associations:
 User.hasMany(LiveSessionLog, { foreignKey: "userId" });

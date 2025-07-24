@@ -121,7 +121,7 @@ app.use("/api/leaderboard", leaderBoardRoutes());
 app.use("/api/themes", themeRoutes());
 app.use("/api/user-pack-reductions", userPackReductionRoutes());
 app.use("/api/pdfs", pdfRoutes());
-app.use("/api/exercises", exerciceRoutes());
+app.use("/api/exercices", exerciceRoutes());
 
 app.use((err: any, req: any, res: any, next: any) => {
   const status = err.status || 500;

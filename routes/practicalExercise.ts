@@ -9,6 +9,32 @@ import { Op } from "sequelize";
 
 const practicalExerciseRoutes = (): Router => {
   const router = express.Router();
+  // Get all theme IDs associated with an exercise
+  router.get("/:exerciseId/themes", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+    try {
+      const exercise = await req.app.get("models").PracticalExercise.findByPk(req.params.exerciseId);
+      if (!exercise) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
+      const themes = await exercise.getThemes({ attributes: ["id"] });
+      const themeIds = themes.map((t: any) => t.id);
+      sendSuccess(res, themeIds, 200);
+    } catch (err: any) {
+      next(err);
+    }
+  });
+
+  // Get all pack IDs associated with an exercise
+  router.get("/:exerciseId/packs", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+    try {
+      const exercise = await req.app.get("models").PracticalExercise.findByPk(req.params.exerciseId);
+      if (!exercise) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
+      const packs = await exercise.getPacks({ attributes: ["id"] });
+      const packIds = packs.map((p: any) => p.id);
+      sendSuccess(res, packIds, 200);
+    } catch (err: any) {
+      next(err);
+    }
+  });
+
 
   // Create new exercise
   router.post(
