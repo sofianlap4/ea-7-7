@@ -20,7 +20,7 @@ import AdminPackForm from "./components/AdminPackForm";
 import AdminPackStudents from "./components/AdminPackStudents";
 import AdminPackList from "./components/AdminPackList";
 import AdminManageCourses from "./components/AdminManageCourses";
-import RankedExerciseRunnerPage from "./pages/PracticalExerciseRunnerPage";
+import PracticalExerciseRunnerPage from "./pages/PracticalExerciseRunnerPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import CreditPage from "./pages/CreditPage";
 import LiveSessionsCalendar from "./components/LiveSessionsCalendar";
@@ -327,7 +327,7 @@ const App: React.FC = () => {
                 roles={["student", "admin", "superadmin"]}
                 userRole={userRole}
               >
-                <RankedExerciseRunnerPage />
+                <PracticalExerciseRunnerPage />
               </ProtectedRoute>
             }
           />

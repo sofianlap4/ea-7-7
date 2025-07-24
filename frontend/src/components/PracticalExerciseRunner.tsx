@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MonacoEditor from "@monaco-editor/react";
 import { createPracticalExerciseAttempt, submitPracticalExercise, practicalExerciseRun } from "../api/practicalExercices";
+import { PRACTICAL_RUNNER_RESPONSE_MESSAGES } from "../utils/responseMessages";
 
 interface TestCase {
   input: string;
@@ -26,18 +27,18 @@ const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, tes
   // Run Tests handler
   const runTests = async () => {
     setLoading(true);
-    setOutput("Running tests...");
+    setOutput(PRACTICAL_RUNNER_RESPONSE_MESSAGES.RUNNING_TESTS);
 
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setOutput("Error: Not authenticated. Please log in.");
+        setOutput(PRACTICAL_RUNNER_RESPONSE_MESSAGES.NOT_AUTHORIZED);
         navigate("/login");
         return;
       }
 
       if (!code.trim()) {
-        setOutput("Error: Code cannot be empty");
+        setOutput(PRACTICAL_RUNNER_RESPONSE_MESSAGES.EMPTY_CODE);
         return;
       }
 
@@ -63,7 +64,7 @@ const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, tes
         setOutput(`${response?.data?.message}\n\n${failedDetails}`);
         setTestResults(response?.data?.results);
       } else {
-        setOutput( response?.error || "No test results received.");
+        setOutput( response?.error || PRACTICAL_RUNNER_RESPONSE_MESSAGES.NO_TEST_CASES);
       }
 
       // Log the attempt (regardless of pass/fail)

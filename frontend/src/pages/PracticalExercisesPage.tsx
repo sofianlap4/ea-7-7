@@ -141,7 +141,7 @@ const PracticalExercisesPage: React.FC = () => {
           <br />
           <button
             style={{ marginTop: 8 }}
-            onClick={() => navigate(`/ranked-exercises/${randomExercise.id}`)}
+            onClick={() => navigate(`/practical-exercises/${randomExercise.id}`)}
           >
             Essayer
           </button>

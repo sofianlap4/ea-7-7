@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { fetchMyPack, fetchMyUsage } from "../api/packs";
+import { fetchMyPack } from "../api/packs";
 import { fetchMyPackTransactions } from "../api/profile";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 
 const MyPack: React.FC = () => {
   const [pack, setPack] = useState<any>(null);
-  const [usage, setUsage] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [displayTransactions, setDisplayTransactions] = useState<any[]>([]);
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -22,14 +21,7 @@ const MyPack: React.FC = () => {
         console.error("Error fetching pack:", response.error);
       }
     });
-    fetchMyUsage().then((response) => {
-      if (response.success) {
-        setUsage(response.data);
-      } else {
-        setUsage(null);
-        console.error("Error fetching usage:", response.error);
-      }
-    });
+
     fetchMyPackTransactions().then((response) => {
       if (response.success) {
         setTransactions(response.data || []);
@@ -70,37 +62,6 @@ const MyPack: React.FC = () => {
   return (
     <div>
       <h2>My Pack</h2>
-      {usage && usage.showUsage && (
-        <div style={{ marginBottom: 16, background: "#f8f8f8", padding: 8 }}>
-          <h4>Your Usage This Month:</h4>
-          <ul>
-            <li>
-              <strong>Exercises Submited:</strong> {usage.exercisesSubmited}{" "}
-              {usage.exerciseLimit !== undefined && usage.exerciseLimit !== null
-                ? `/ ${usage.exerciseLimit}`
-                : ""}{" "}
-              {usage.exercisesLeft !== null && usage.exercisesLeft !== undefined
-                ? `(Left: ${usage.exercisesLeft})`
-                : ""}
-            </li>
-            <li>
-              <strong>Code Runs:</strong> {usage.codeRuns}{" "}
-              {usage.codeRunLimit !== undefined && usage.codeRunLimit !== null
-                ? `/ ${usage.codeRunLimit}`
-                : ""}{" "}
-              {usage.codeRunsLeft !== null && usage.codeRunsLeft !== undefined
-                ? `(Left: ${usage.codeRunsLeft})`
-                : ""}
-            </li>
-            <li>
-              <strong>Live Sessions Joined:</strong> {usage.liveSessionsJoined}{" "}
-              {usage.liveSessionLimit !== undefined && usage.liveSessionLimit !== null
-                ? `/ ${usage.liveSessionLimit}`
-                : ""}
-            </li>
-          </ul>
-        </div>
-      )}
       {pack ? (
         <div style={{ border: "1px solid #ccc", margin: 8, padding: 8 }}>
           <h3>{pack.name}</h3>

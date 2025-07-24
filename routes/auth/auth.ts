@@ -122,7 +122,7 @@ const authRoutes = (): Router => {
         dateOfBirth,
         gouvernorat,
         recoveryCode,
-        packType, // <-- from frontend
+        packType,
       } = req.body;
 
       if ((!email || email.trim() === "") && (!recoveryCode || recoveryCode.trim() === "")) {

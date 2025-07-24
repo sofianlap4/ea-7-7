@@ -14,7 +14,7 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-          model: "RankedExerciseSolutions",
+          model: "PracticalExerciseSolutions",
           key: "id",
         },
         onDelete: "CASCADE",

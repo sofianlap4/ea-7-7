@@ -133,8 +133,3 @@ export const rejectPackRequest = async (packId: string, requestId: string) => {
   return await res.json();
 };
 
-export const fetchMyUsage = async () => {
-  const res = await fetchWithAuth('/api/packs/me/usage');
-  return await res.json();
-};
-

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ModelStatic } from "sequelize";
+import {CHECKACCESS_RESPONSE_MESSAGES} from "../utils/responseMessages";
 
 export const checkPackAccess = async (
   req: Request,
@@ -18,23 +19,39 @@ export const checkPackAccess = async (
       Pack: ModelStatic<any>;
     };
     const userId = (req as any).user?.id;
-    const packId = req.params.packId || req.body.packId || req.query.packId;
+    let packId = req.params.packId || req.body.packId || req.query.packId;
 
-    if (!packId) {
-      res.status(400).json({ error: "Pack ID is required." });
-      return;
-    }
+    let userPack: any = null;
 
-    let userPack = await UserPack.findOne({
-      where: { userId, packId, isActive: true },
-      include: [{ model: Pack, as: "pack" }],
-    });
-
-    if (!userPack) {
+    // If packId is not provided, get the most recent active UserPack for the user
+    if (!packId && userId) {
       userPack = await UserPack.findOne({
-        where: { userId, packId },
+        where: { userId, isActive: true },
+        order: [['createdAt', 'DESC']],
         include: [{ model: Pack, as: "pack" }],
       });
+      if (userPack) {
+        packId = userPack.packId;
+      }
+    }
+
+    // If packId is provided but userPack not found yet, search for active then fallback to any UserPack
+    if (packId && !userPack) {
+      userPack = await UserPack.findOne({
+        where: { userId, packId, isActive: true },
+        include: [{ model: Pack, as: "pack" }],
+      });
+      if (!userPack) {
+        userPack = await UserPack.findOne({
+          where: { userId, packId },
+          include: [{ model: Pack, as: "pack" }],
+        });
+      }
+    }
+
+    if (!packId) {
+      res.status(400).json({ error: CHECKACCESS_RESPONSE_MESSAGES.PACK_ID_NOT_FOUND });
+      return;
     }
 
     if (userPack) {
@@ -106,7 +123,7 @@ export const checkPackAccess = async (
     }
 
     if (!hasAccess) {
-      res.status(403).json({ error: "Access denied: no active pack." });
+      res.status(403).json({ error: CHECKACCESS_RESPONSE_MESSAGES.ACCESS_DENIED });
       return;
     }
 

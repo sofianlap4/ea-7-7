@@ -17,3 +17,11 @@ export const RESPONSE_MESSAGES = {
 export const PDF_RESPONSE_MESSAGES = {
   
 }
+
+export const PRACTICAL_RUNNER_RESPONSE_MESSAGES = {
+  NOT_AUTHORIZED: "Vous n'êtes pas autorisé à exécuter cet exercice.",
+  EMPTY_CODE: "Erreur : Le code ne peut pas être vide.",
+  NO_TEST_CASES: "Aucun cas de test fourni pour l'exécution.",
+  RUNNING_TESTS: "Exécution des tests...",
+  SUBMISSION_SUCCESS: "Soumission réussie.",
+}

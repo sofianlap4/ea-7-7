@@ -159,3 +159,8 @@ export const QUIZZ_RESPONSE_MESSAGES = {
   QUIZZ_NOT_FOUND: "Quiz introuvable.",
   QUESTION_NOT_FOUND: "Question introuvable.",
 }
+
+export const CHECKACCESS_RESPONSE_MESSAGES = {
+  PACK_ID_NOT_FOUND: "Pack ID introuvable.",
+  ACCESS_DENIED: "Access denied: no active pack."
+}
