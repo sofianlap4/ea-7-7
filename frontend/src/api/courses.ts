@@ -1,4 +1,14 @@
+
 import fetchWithAuth from '../utils/fetchWithAuth';
+
+// Fetch only title and description of courses for users with a freeVersion pack (GET /api/courses/free-version/courses)
+export const fetchPaidVersionPreviewsCourses = async () => {
+  const res = await fetchWithAuth('/api/courses/preview-paid-version/courses', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return await res.json();
+};
 
 // Fetch all courses (GET /api/courses)
 export const fetchCourses = async (token?: string) => {

@@ -9,6 +9,7 @@ export interface PackAttributes {
   type:  "2eme info" | "3eme info" | "Bac info" | "Bac scientifique" | "2eme info gratuit" | "3eme info gratuit" | "Bac info gratuit" | "Bac scientifique gratuit";
   freeVersion?: boolean;
   freeVersionId?: string;
+  paidVersionId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -27,6 +28,7 @@ export default (sequelize: Sequelize) => {
     public type!: "2eme info" | "3eme info" | "Bac info" | "Bac scientifique" | "2eme info gratuit" | "3eme info gratuit" | "Bac info gratuit" | "Bac scientifique gratuit";
     public freeVersion!: boolean;
     public freeVersionId?: string;
+    public paidVersionId?: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
   }
@@ -63,6 +65,10 @@ export default (sequelize: Sequelize) => {
         defaultValue: false,
       },
       freeVersionId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
+      paidVersionId: {
         type: DataTypes.UUID,
         allowNull: true,
       },

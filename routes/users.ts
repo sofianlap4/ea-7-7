@@ -72,6 +72,28 @@ const usersRoutes = (): Router => {
     }
   });
 
+    // Check if the user has an active pack and if it is freeVersion or not
+  router.get('/id/:userId/active-pack-status', authenticateToken, authorizeRoles('admin', 'superadmin', 'student'), async (req: any, res: any, next: NextFunction) => {
+    try {
+      const { UserPack, Pack } = req.app.get("models");
+      const userId = req.params.userId;
+      // Find active UserPack for the user
+      const userPack = await UserPack.findOne({
+        where: {
+          userId,
+          isActive: true,
+        },
+        include: [{ model: Pack, as: "pack" }],
+      });
+      if (!userPack || !userPack.pack) {
+        return sendSuccess(res, { hasActivePack: false, freeVersion: null }, 200);
+      }
+      return sendSuccess(res, { hasActivePack: true, freeVersion: !!userPack.pack.freeVersion }, 200);
+    } catch (err: any) {
+      next(err);
+    }
+  });
+
   return router;
 };
 

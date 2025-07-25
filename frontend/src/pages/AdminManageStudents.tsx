@@ -65,6 +65,17 @@ const AdminManageStudents: React.FC = () => {
     setMsg(data.success ? "Refresh tokens revoked" : data.error || "Failed to revoke");
   };
 
+  const handleArchive = async () => {
+    const data = await archiveUser(selectedStudent.id);
+    if (data.success) {
+      setMsg("User archived successfully");
+      setStudents((prev) => prev.filter((s) => s.id !== selectedStudent.id));
+      setTimeout(() => setSelectedStudent(null), 1000);
+    } else {
+      setMsg(data.error || "Failed to archive user");
+    }
+  };
+
   return (
     <div>
       <h2>Manage Students</h2>
@@ -90,6 +101,7 @@ const AdminManageStudents: React.FC = () => {
           {!editMode && <Button onClick={handleEdit}>Edit</Button>}
           {editMode && <Button onClick={handleSave}>Save</Button>}
           <Button onClick={handleRevoke} color="warning">Revoke Refresh Tokens</Button>
+          <Button onClick={handleArchive} color="error">Archive User</Button>
           <Button onClick={() => setSelectedStudent(null)}>Close</Button>
         </DialogActions>
       </Dialog>

@@ -18,6 +18,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
     if (response.success) {
       const token = response?.data?.token;
+      const user = response?.data?.user;
+      if (user?.archived) {
+        setMessage("Votre compte a été archivé. Veuillez contacter l'administrateur.");
+        return;
+      }
       setMessage(response?.data?.message || "Login successful");
       if (token) {
         localStorage.setItem("token", token);

@@ -47,6 +47,7 @@ function Home() {
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem("token"));
   const [userRole, setUserRole] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
     const handleStorage = () => setIsAuthenticated(!!localStorage.getItem("token"));
@@ -58,12 +59,19 @@ const App: React.FC = () => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = jwtDecode<{ role: string }>(token);
+        const decoded = jwtDecode<{ role: string; id?: string; userId?: string }>(token);
         setUserRole(decoded.role);
+        // Try to get user id from token (id or userId field)
+        if (decoded.id) setUserId(decoded.id);
+        else if (decoded.userId) setUserId(decoded.userId);
+        else setUserId("");
       } catch {
         setUserRole("");
+        setUserId("");
         localStorage.removeItem("token"); // Remove invalid token
       }
+    } else {
+      setUserId("");
     }
   }, [isAuthenticated]);
 
@@ -173,7 +181,7 @@ const App: React.FC = () => {
                 roles={["student", "admin", "superadmin"]}
                 userRole={userRole}
               >
-                <CourseList userRole={userRole} />
+                <CourseList userRole={userRole} userId={userId} />
               </ProtectedRoute>
             }
           />

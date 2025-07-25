@@ -65,3 +65,15 @@ export const archiveUser = async (id: string, token?: string) => {
   });
   return await res.json();
 };
+
+// Check if the user has an active pack and if it is freeVersion or not
+export const fetchUserActivePackStatus = async (id: string, token?: string) => {
+  const res = await fetchWithAuth(`/api/users/id/${id}/active-pack-status`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await res.json();
+};

@@ -318,6 +318,60 @@ const courseRoutes = (): Router => {
     }
   );
 
+  // Get only title and description of courses for users with a freeVersion pack, for their paidVersionId pack
+  router.get(
+    "/preview-paid-version/courses",
+    authenticateToken,
+    authorizeRoles("student"),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { UserPack, Pack, Course } = req.app.get("models");
+        // Find the user's active freeVersion pack
+        const userFreePack = await UserPack.findOne({
+          where: {
+            userId: req.user.id,
+            isActive: true,
+          },
+          include: [{
+            model: Pack,
+            as: "pack",
+            include: [{ model: Course, as: "courses", attributes: ["id"] }],
+          }],
+        });
+        if (!userFreePack || !userFreePack.pack || !userFreePack.pack.freeVersion) {
+          return sendSuccess(res, [], 200);
+        }
+        // Get the paidVersionId from the freeVersion pack
+        const paidVersionId = userFreePack.pack.paidVersionId;
+        if (!paidVersionId) {
+          return sendSuccess(res, [], 200);
+        }
+        // Find the paid pack and its courses
+        const paidPack = await Pack.findByPk(paidVersionId, {
+          include: [{ model: Course, as: "courses", attributes: ["id", "title", "description"] }],
+        });
+        if (!paidPack || !paidPack.courses) {
+          return sendSuccess(res, [], 200);
+        }
+
+        // Get the free pack's course IDs
+        const freeCourseIds = (userFreePack.pack.courses || []).map((c: any) => c.id);
+
+        // Filter paid pack courses to only those not in free pack
+        const result = paidPack.courses
+          .filter((course: any) => !freeCourseIds.includes(course.id))
+          .map((course: any) => ({
+            id: course.id,
+            title: course.title,
+            description: course.description,
+          }));
+        sendSuccess(res, result, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
+
   return router;
 };
 

@@ -28,7 +28,7 @@ async function fetchWithAuth(url: string, options: FetchWithAuthOptions = {}): P
 
   if (res.status === 401 || res.status === 403) {
     // Try to refresh token
-    const refreshRes = await fetch(`${backendUrl}/auth/refresh-token`, {
+    const refreshRes = await fetch(`${backendUrl}/api/auth/refresh-token`, {
       method: 'POST',
       credentials: 'include'
     });

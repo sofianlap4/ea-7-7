@@ -205,6 +205,11 @@ const authRoutes = (): Router => {
       const user = await User.findOne({ where: { email } });
       if (!user) return sendError(res, AUTH_RESPONSE_MESSAGES.USER_NOT_FOUND, 404);
 
+
+      if (user.archived) {
+        return sendError(res, "Votre compte a été archivé. Veuillez contacter l'administrateur.", 403);
+      }
+
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) return sendError(res, AUTH_RESPONSE_MESSAGES.INVALID_CREDENTIALS, 400);
 
