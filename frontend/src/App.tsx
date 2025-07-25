@@ -88,6 +88,7 @@ const App: React.FC = () => {
               {(userRole === "admin" || userRole === "superadmin") && (
                 <>
                   <Link to='/create-course'>Créer un Cours</Link> |{" "}
+                  <Link to='/admin/students'>Gérer les Étudiants</Link> |{" "}
                 </>
               )}
               {/* Only students can see practical Exercises */}

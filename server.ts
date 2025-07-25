@@ -55,6 +55,7 @@ import userPackReductionRoutes from "./routes/userPackReduction";
 import pdfRoutes from "./routes/pdf";
 import exerciceRoutes from "./routes/exercice";
 import quizzRoutes from "./routes/quizz";
+import usersRoutes from "./routes/users";
 
 const PORT = 5000;
 
@@ -124,6 +125,7 @@ app.use("/api/themes", themeRoutes());
 app.use("/api/user-pack-reductions", userPackReductionRoutes());
 app.use("/api/pdfs", pdfRoutes());
 app.use("/api/exercices", exerciceRoutes());
+app.use("/api/users", usersRoutes());
 
 app.use((err: any, req: any, res: any, next: any) => {
   const status = err.status || 500;
