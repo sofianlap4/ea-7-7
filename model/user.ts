@@ -16,6 +16,7 @@ interface UserAttributes {
   // Verification
   emailVerificationCode?: string;
   isEmailVerified?: boolean;
+  archived?: boolean;
 }
 
 type UserCreationAttributes = Optional<
@@ -34,6 +35,7 @@ type UserCreationAttributes = Optional<
   | "updatedAt"
   | "emailVerificationCode"
   | "isEmailVerified"
+  | "archived"
 >;
 
 export default (sequelize: Sequelize) => {
@@ -155,6 +157,9 @@ export default (sequelize: Sequelize) => {
         allowNull: true,
       },
       isEmailVerified: { type: DataTypes.BOOLEAN, defaultValue: false },
+
+      archived: { type: DataTypes.BOOLEAN, defaultValue: false },
+      
       emailVerificationCode: { type: DataTypes.STRING, allowNull: true },
     },
     {

@@ -31,7 +31,8 @@ import {
   Exercise,
   UserQuizzProgress,
   RankingPointLog,
-  UserCourseProgress
+  UserCourseProgress,
+  RefreshToken
 } from "./model";
 import sequelize from "./utils/sequelizeInit";
 
@@ -100,7 +101,8 @@ app.set("models", {
   Exercise,
   UserQuizzProgress,
   RankingPointLog,
-  UserCourseProgress
+  UserCourseProgress,
+  RefreshToken
 });
 
 // Routes (pass all needed models)

@@ -1,5 +1,15 @@
 import fetchWithAuth from '../utils/fetchWithAuth';
 
+export const logout = async () => {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+  await fetch(`${backendUrl}/auth/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  localStorage.removeItem('token');
+};
+
+
 export const loginRequest = async (email: string, password: string) => {
   const res = await fetchWithAuth('/api/auth/login', {
     method: 'POST',

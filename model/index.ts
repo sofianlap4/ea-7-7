@@ -26,6 +26,7 @@ import defineReductionCodeModel from "./reductionCode";
 import definePDFModel from "./pdf";
 import defineExerciceModel from "./exercice";
 import defineUserQuizzProgressModel from "./userQuizzProgress";
+import defineRefreshTokenModel from "./refreshToken";
 import defineRankingPointLogModel from "./rankingPointLog";
 import defineUserCourseProgressModel from "./userCourseProgress";
 
@@ -55,6 +56,10 @@ const ReductionCode = defineReductionCodeModel(sequelize);
 const PDF = definePDFModel(sequelize);
 const Exercise = defineExerciceModel(sequelize);
 const UserQuizzProgress = defineUserQuizzProgressModel(sequelize);
+const RefreshToken = defineRefreshTokenModel(sequelize);
+// User <-> RefreshToken (One-to-Many)
+User.hasMany(RefreshToken, { foreignKey: "userId", as: "refreshTokens" });
+RefreshToken.belongsTo(User, { foreignKey: "userId", as: "user" });
 const RankingPointLog = defineRankingPointLogModel(sequelize);
 const UserCourseProgress = defineUserCourseProgressModel(sequelize);
 
@@ -300,5 +305,6 @@ export {
   Exercise,
   UserQuizzProgress,
   RankingPointLog,
-  UserCourseProgress
+  UserCourseProgress,
+  RefreshToken
 };

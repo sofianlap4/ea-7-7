@@ -201,7 +201,8 @@ const authRoutes = (): Router => {
   router.post("/login", async (req: any, res: any, next: NextFunction) => {
     try {
       const { email, password } = req.body;
-      const user = await req.app.get("models").User.findOne({ where: { email } });
+      const { User, RefreshToken } = req.app.get("models");
+      const user = await User.findOne({ where: { email } });
       if (!user) return sendError(res, AUTH_RESPONSE_MESSAGES.USER_NOT_FOUND, 404);
 
       const valid = await bcrypt.compare(password, user.password);
@@ -217,6 +218,21 @@ const authRoutes = (): Router => {
         process.env.JWT_REFRESH_SECRET as any,
         { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN as any }
       );
+
+      // Store refresh token hash in DB
+      const refreshTokenHash = require("crypto").createHash("sha256").update(refreshToken).digest("hex");
+      const now = new Date();
+      const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
+      await RefreshToken.create({
+        userId: user.id,
+        tokenHash: refreshTokenHash,
+        issuedAt: now,
+        expiresAt,
+        device: req.headers["device"] || null,
+        userAgent: req.headers["user-agent"] || null,
+        ip: req.ip,
+        revoked: false,
+      });
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -239,21 +255,83 @@ const authRoutes = (): Router => {
     }
   });
 
-  // Refresh Token Endpoint
-  router.post("/refresh-token", (req: any, res: any, next: NextFunction) => {
+  // Refresh Token Endpoint with rotation
+  router.post("/refresh-token", async (req: any, res: any, next: NextFunction) => {
     try {
+      const { RefreshToken, User } = req.app.get("models");
       const refreshToken = req.cookies.refreshToken;
       if (!refreshToken) return sendError(res, AUTH_RESPONSE_MESSAGES.NO_REFRESH_TOKEN, 401);
 
-      jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string, (err: any, user: any) => {
+      // Hash the incoming token
+      const refreshTokenHash = require("crypto").createHash("sha256").update(refreshToken).digest("hex");
+      // Find in DB
+      const dbToken = await RefreshToken.findOne({ where: { tokenHash: refreshTokenHash, revoked: false } });
+      if (!dbToken) return sendError(res, AUTH_RESPONSE_MESSAGES.INVALID_REFRESH_TOKEN, 403);
+      if (dbToken.expiresAt < new Date()) return sendError(res, AUTH_RESPONSE_MESSAGES.INVALID_REFRESH_TOKEN, 403);
+
+      // Verify JWT
+      jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string, async (err: any, user: any) => {
         if (err) return sendError(res, AUTH_RESPONSE_MESSAGES.INVALID_REFRESH_TOKEN, 403);
+
+        // Token rotation: revoke old, issue new
+        dbToken.revoked = true;
+        await dbToken.save();
+
+        // Issue new refresh token
+        const dbUser = await User.findByPk(user.id);
+        if (!dbUser) return sendError(res, AUTH_RESPONSE_MESSAGES.USER_NOT_FOUND, 404);
+        const newRefreshToken = jwt.sign(
+          { id: dbUser.id, role: dbUser.role, email: dbUser.email },
+          process.env.JWT_REFRESH_SECRET as any,
+          { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN as any }
+        );
+        const newRefreshTokenHash = require("crypto").createHash("sha256").update(newRefreshToken).digest("hex");
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
+        await RefreshToken.create({
+          userId: dbUser.id,
+          tokenHash: newRefreshTokenHash,
+          issuedAt: now,
+          expiresAt,
+          device: req.headers["device"] || null,
+          userAgent: req.headers["user-agent"] || null,
+          ip: req.ip,
+          revoked: false,
+        });
+
+        res.cookie("refreshToken", newRefreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
         const accessToken = jwt.sign(
-          { id: user.id, role: user.role, email: user.email },
+          { id: dbUser.id, role: dbUser.role, email: dbUser.email },
           process.env.JWT_SECRET as any,
           { expiresIn: process.env.JWT_EXPIRES_IN as any }
         );
         sendSuccess(res, { token: accessToken }, 200);
       });
+    } catch (err: any) {
+      next(err);
+    }
+  });
+
+  // Logout endpoint: revoke current refresh token
+  router.post("/logout", async (req: any, res: any, next: NextFunction) => {
+    try {
+      const { RefreshToken } = req.app.get("models");
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) return sendSuccess(res, { message: "Logged out." }, 200);
+      const refreshTokenHash = require("crypto").createHash("sha256").update(refreshToken).digest("hex");
+      const dbToken = await RefreshToken.findOne({ where: { tokenHash: refreshTokenHash, revoked: false } });
+      if (dbToken) {
+        dbToken.revoked = true;
+        await dbToken.save();
+      }
+      res.clearCookie("refreshToken");
+      sendSuccess(res, { message: "Logged out." }, 200);
     } catch (err: any) {
       next(err);
     }

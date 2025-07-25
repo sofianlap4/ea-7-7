@@ -38,6 +38,7 @@ import AdminEditExercice from "./pages/AdminEditExercice";
 import AdminNewExercice from "./pages/AdminNewExercice";
 import ExercisesPage from "./pages/ExercisesPage";
 import ExercisesDetailPage from "./pages/ExercisesDetailPage";
+import AdminManageStudents from "./pages/AdminManageStudents";
 
 function Home() {
   return <h2>Welcome to the Platform!</h2>;
@@ -519,6 +520,18 @@ const App: React.FC = () => {
             }
           />
 
+          <Route
+            path='/admin/students'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["admin", "superadmin"]}
+                userRole={userRole}
+              >
+                <AdminManageStudents />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>
