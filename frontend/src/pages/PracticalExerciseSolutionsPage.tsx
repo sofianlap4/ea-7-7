@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 import {
   fetchExerciseSolutions,
   likeSolution,
@@ -22,6 +23,9 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
   const [commentLoading, setCommentLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const ITEMS_PER_PAGE = 5;
 
   // Fetch current user ID
   useEffect(() => {
@@ -100,6 +104,11 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
     setCommentLoading(null);
   };
 
+  // Update total pages when solutions change
+  useEffect(() => {
+    setTotalPages(Math.ceil(solutions.length / ITEMS_PER_PAGE));
+  }, [solutions]);
+
   // Remove comment logic
   const handleRemoveComment = async (solutionId: string, commentId: string) => {
     setError(null);
@@ -112,16 +121,27 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
     }
   };
 
+  // Handle page change
+  const handlePageChange = (selectedItem: { selected: number }) => {
+    setCurrentPage(selectedItem.selected);
+    window.scrollTo(0, 0); // Scroll to top when page changes
+  };
+
   if (currentUserId === null) {
     return <div>Loading...</div>;
   }
 
+  // Calculate current page items
+  const indexOfLastItem = (currentPage + 1) * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+  const currentItems = solutions.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div style={{ maxWidth: 900, margin: "0 auto" }}>
-      <h2>Student Solutions</h2>
+      <h2>Solutions des autres etudiants :</h2>
       <p>Félicitations pour votre bonne réponse à l'exercice ! Voici les solutions proposées par les autres élèves : n'hésitez pas à aimer celles que vous trouvez les plus meilleures.</p>
       {error && <div style={{ color: "red", marginBottom: 16 }}>{error}</div>}
-      {solutions.map((sol) => {
+      {currentItems.map((sol) => {
         const alreadyLiked = (sol.likesList || []).some(
           (like: any) => String(like.userId) === String(currentUserId)
         );
@@ -189,6 +209,65 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
           </div>
         );
       })}
+      
+      {totalPages > 1 && (
+        <div style={{ marginTop: 20, marginBottom: 20 }}>
+          <ReactPaginate
+            previousLabel={"← Précédent"}
+            nextLabel={"Suivant →"}
+            pageCount={totalPages}
+            onPageChange={handlePageChange}
+            forcePage={currentPage}
+            containerClassName={"pagination"}
+            previousLinkClassName={"pagination__link"}
+            nextLinkClassName={"pagination__link"}
+            disabledClassName={"pagination__link--disabled"}
+            activeClassName={"pagination__link--active"}
+            pageClassName={"pagination__item"}
+            pageLinkClassName={"pagination__link"}
+            breakLabel="..."
+            breakClassName={"pagination__item"}
+            breakLinkClassName={"pagination__link"}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+          />
+        </div>
+      )}
+
+      <style>
+        {`
+          .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            list-style: none;
+            padding: 0;
+          }
+          .pagination__item {
+            margin: 0 4px;
+          }
+          .pagination__link {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #333;
+            cursor: pointer;
+            text-decoration: none;
+          }
+          .pagination__link:hover {
+            background-color: #f0f0f0;
+          }
+          .pagination__link--active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+          }
+          .pagination__link--disabled {
+            color: #ccc;
+            cursor: not-allowed;
+          }
+        `}
+      </style>
     </div>
   );
 };
