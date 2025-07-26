@@ -1,7 +1,7 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
 export default (sequelize: Sequelize) => {
-  class CreditTransaction extends Model {}
+  class CreditTransaction extends Model { }
 
   CreditTransaction.init(
     {
@@ -32,12 +32,16 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
       },
       type: {
-        type: DataTypes.ENUM("admin_add", "purchase_bank", "purchase_d17", "purchase_pack"),
+        type: DataTypes.ENUM("admin_add", "purchase_bank", "purchase_post", "purchase_d17", "purchase_pack", "bank_transfer"),
         allowNull: false,
       },
       attachmentUrl: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      status: {
+        type: DataTypes.ENUM("pending", "approved", "rejected"),
+        defaultValue: "pending"
       },
       createdAt: {
         type: DataTypes.DATE,

@@ -39,6 +39,7 @@ import AdminNewExercice from "./pages/AdminNewExercice";
 import ExercisesPage from "./pages/ExercisesPage";
 import ExercisesDetailPage from "./pages/ExercisesDetailPage";
 import AdminManageStudents from "./pages/AdminManageStudents";
+import AdminVerifyPayments from "./pages/AdminVerifyPayments";
 
 function Home() {
   return <h2>Welcome to the Platform!</h2>;
@@ -129,7 +130,8 @@ const App: React.FC = () => {
               <Link to='/admin/credit'>Gestion des Crédits</Link> |{" "}
               <Link to='/admin/manage-ranking'>Gérer le Classement</Link>|{" "}
               <Link to='/admin/manage-themes'>Gérer les Thèmes</Link> |{" "}
-              <Link to='/admin/user-pack-reductions'>Gérer les Réductions</Link>
+              <Link to='/admin/user-pack-reductions'>Gérer les Réductions</Link> |{" "}
+              <Link to='/admin/verify-payments'>Vérifier les Paiements</Link> |{" "}
             </>
           )}
           {!isAuthenticated && <Link to='/request-password-reset'>Mot de passe oublié ?</Link>}
@@ -539,6 +541,21 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+
+                    <Route
+            path='/admin/verify-payments'
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                roles={["admin", "superadmin"]}
+                userRole={userRole}
+              >
+                <AdminVerifyPayments />
+              </ProtectedRoute>
+            }
+          />
+
+          
         </Routes>
       </div>
     </Router>
