@@ -76,3 +76,11 @@ export async function fetchAllStudentLiveSesssionsByPack(token: string) {
   });
   return await res.json();
 }
+
+// Fetch preview live sessions for paidVersionId pack if user has a freeVersion pack
+export async function fetchPreviewPaidVersionLiveSessions(token: string) {
+  const res = await fetchWithAuth("/api/live-sessions/preview-paid-version/live-sessions", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return await res.json();
+}

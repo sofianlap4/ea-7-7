@@ -136,7 +136,7 @@ export default () => {
       next(err);
     }
   });
-  
+
 
   // Create a new live session (/admin)
   router.post(
@@ -194,7 +194,7 @@ export default () => {
   router.delete(
     "/id/:id",
     authenticateToken,
-    authorizeRoles( "admin", "superadmin"),
+    authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
       try {
         const session = await req.app.get("models").LiveSession.findByPk(req.params.id);
@@ -220,6 +220,46 @@ export default () => {
       next(err);
     }
   });
+
+  // Get preview of live sessions for user's paidVersionId pack if user has an active freeVersion pack
+  router.get(
+    "/preview-paid-version/live-sessions",
+    authenticateToken,
+    authorizeRoles("student"),
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { UserPack, Pack, LiveSession } = req.app.get("models");
+        // Find user's active freeVersion pack
+        const userFreePack = await UserPack.findOne({
+          where: {
+            userId: req.user.id,
+            isActive: true,
+            endDate: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null as any }] },
+          },
+          include: [{
+            model: Pack,
+            as: "pack",
+          }],
+        });
+        if (!userFreePack || !userFreePack.pack || !userFreePack.pack.freeVersion) {
+          return sendSuccess(res, [], 200);
+        }
+        const paidVersionId = userFreePack.pack.paidVersionId;
+        if (!paidVersionId) {
+          return sendSuccess(res, [], 200);
+        }
+        // Get live sessions for the paid pack
+        const sessions = await LiveSession.findAll({
+          where: { packId: paidVersionId },
+          attributes: ["title", "description", "date"],
+          order: [["date", "ASC"]],
+        });
+        sendSuccess(res, sessions, 200);
+      } catch (err: any) {
+        next(err);
+      }
+    }
+  );
 
   return router;
 };

@@ -391,10 +391,8 @@ const App: React.FC = () => {
                 roles={["student", "admin", "superadmin"]}
                 userRole={userRole}
               >
-                <LiveSessionsCalendar
-                  userRole={userRole}
-                  token={localStorage.getItem("token") || ""}
-                />
+                <LiveSessionsCalendar userRole={userRole} token={localStorage.getItem("token") || ""} userId=
+                  {userId} />
               </ProtectedRoute>
             }
           />
