@@ -36,7 +36,7 @@ const usersRoutes = (): Router => {
       const { User } = req.app.get("models");
       const user = await User.findByPk(req.params.userId);
       if (!user) return sendError(res, "User not found", 404);
-      const updatable = ["firstName", "lastName", "email", "phone", "dateOfBirth", "gouvernorat"];
+      const updatable = ["firstName", "lastName", "email", "phone"];
       updatable.forEach((field) => {
         if (req.body[field] !== undefined) user[field] = req.body[field];
       });

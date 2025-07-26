@@ -119,8 +119,6 @@ const authRoutes = (): Router => {
         firstName,
         lastName,
         phone,
-        dateOfBirth,
-        gouvernorat,
         recoveryCode,
         packType,
       } = req.body;
@@ -155,8 +153,6 @@ const authRoutes = (): Router => {
         firstName,
         lastName,
         phone,
-        dateOfBirth,
-        gouvernorat,
         recoveryCode: recoveryCode ? await bcrypt.hash(recoveryCode, 10) : null,
         emailVerificationCode: emailVerificationCode || null,
       });

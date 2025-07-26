@@ -111,17 +111,15 @@ const profileRoutes = (): Router => {
     }
   });
 
-  // Change firstName, lastName, phone, dateOfBirth, gouvernorat
+  // Change firstName, lastName, phone
   router.post("/change-profile-info", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
-      const { firstName, lastName, phone, dateOfBirth, gouvernorat } = req.body;
+      const { firstName, lastName, phone } = req.body;
       const user = await req.app.get("models").User.findByPk(req.user.id);
       if (!user) return sendError(res, PROFILE_RESPONSE_MESSAGES.USER_NOT_FOUND, 404);
       if (firstName !== undefined) user.firstName = firstName;
       if (lastName !== undefined) user.lastName = lastName;
       if (phone !== undefined) user.phone = phone;
-      if (dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth;
-      if (gouvernorat !== undefined) user.gouvernorat = gouvernorat;
       await user.save();
       sendSuccess(res, { message: "Profile updated successfully" }, 200);
     } catch (err: any) {

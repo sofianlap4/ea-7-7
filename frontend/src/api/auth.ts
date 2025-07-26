@@ -32,8 +32,6 @@ export const register = async (user: {
   firstName: string;
   lastName: string;
   phone: string;
-  dateOfBirth: string;
-  gouvernorat: string;
   password: string;
   email?: string;
   classId?: string;

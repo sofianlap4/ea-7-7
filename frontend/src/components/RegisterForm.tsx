@@ -1,11 +1,7 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { register } from '../api/auth';
-  
-import { useNavigate } from 'react-router-dom';
 
-const GOUVERNORATS = [
-  'Tunis', 'Ariana', 'Ben Arous', 'Manouba', 'Nabeul', 'Zaghouan', 'Bizerte', 'Béja', 'Jendouba', 'Kef', 'Siliana', 'Sousse', 'Monastir', 'Mahdia', 'Sfax', 'Kairouan', 'Kasserine', 'Sidi Bouzid', 'Gabès', 'Mednine', 'Tataouine', 'Gafsa', 'Tozeur', 'Kebili'
-];
+import { useNavigate } from 'react-router-dom';
 
 const PACK_TYPES = [
   { label: "2eme info", value: "2eme info gratuit" },
@@ -19,8 +15,6 @@ interface RegisterPayload {
   lastName: string;
   email: string;
   phone: string;
-  dateOfBirth: string;
-  gouvernorat: string;
   password: string;
   packType: string;
 }
@@ -31,8 +25,6 @@ const RegisterForm: React.FC = () => {
   const [firstName, setFirstName] = useState<string>('sofienne');
   const [lastName, setLastName] = useState<string>('nabli');
   const [phone, setPhone] = useState<string>('12345678');
-  const [dateOfBirth, setDateOfBirth] = useState<string>('2025-07-09');
-  const [gouvernorat, setGouvernorat] = useState<string>(GOUVERNORATS[0]);
   const [password, setPassword] = useState<string>('TTuu1234');
   const [confirmPassword, setConfirmPassword] = useState<string>('TTuu1234');
   const [email, setEmail] = useState<string>('sofiannabli1993@gmail.com');
@@ -74,8 +66,6 @@ const RegisterForm: React.FC = () => {
       lastName,
       email,
       phone,
-      dateOfBirth,
-      gouvernorat,
       password,
       packType,
     };
@@ -134,22 +124,7 @@ const RegisterForm: React.FC = () => {
           required
         />
       </label>
-      <label>
-        Date de naissance
-        <input
-          type="date"
-          placeholder="Date de naissance"
-          value={dateOfBirth}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setDateOfBirth(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Gouvernorat
-        <select value={gouvernorat} onChange={(e: ChangeEvent<HTMLSelectElement>) => setGouvernorat(e.target.value)} required>
-          {GOUVERNORATS.map(g => <option key={g} value={g}>{g}</option>)}
-        </select>
-      </label>
+
       <label>
         Classe
         <select value={packType} onChange={(e: ChangeEvent<HTMLSelectElement>) => setPackType(e.target.value)} required>

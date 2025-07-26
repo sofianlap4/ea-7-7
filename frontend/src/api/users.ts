@@ -28,7 +28,7 @@ export const fetchUserById = async (id: string, token?: string) => {
 // Update user by ID
 export const updateUserById = async (
   id: string,
-  data: { firstName?: string; lastName?: string; email?: string; phone?: string; dateOfBirth?: string; gouvernorat?: string },
+  data: { firstName?: string; lastName?: string; email?: string; phone?: string; },
   token?: string
 ) => {
   const res = await fetchWithAuth(`/api/users/id/${id}`, {

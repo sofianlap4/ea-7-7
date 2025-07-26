@@ -91,8 +91,6 @@ const AdminManageStudents: React.FC = () => {
               <TextField label="Last Name" name="lastName" value={editData.lastName || ""} onChange={handleEditChange} fullWidth margin="normal" disabled={!editMode} />
               <TextField label="Email" name="email" value={editData.email || ""} onChange={handleEditChange} fullWidth margin="normal" disabled={!editMode} />
               <TextField label="Phone" name="phone" value={editData.phone || ""} onChange={handleEditChange} fullWidth margin="normal" disabled={!editMode} />
-              <TextField label="Date of Birth" name="dateOfBirth" value={editData.dateOfBirth || ""} onChange={handleEditChange} fullWidth margin="normal" disabled={!editMode} />
-              <TextField label="Gouvernorat" name="gouvernorat" value={editData.gouvernorat || ""} onChange={handleEditChange} fullWidth margin="normal" disabled={!editMode} />
               {msg && <div style={{ color: msg.includes('success') ? 'green' : 'red' }}>{msg}</div>}
             </>
           )}

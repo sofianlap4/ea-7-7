@@ -49,8 +49,6 @@ export const changeProfileInfo = async (data: {
   firstName?: string;
   lastName?: string;
   phone?: string;
-  dateOfBirth?: string;
-  gouvernorat?: string;
 }) => {
   const res = await fetchWithAuth('/api/profile/change-profile-info', {
     method: 'POST',

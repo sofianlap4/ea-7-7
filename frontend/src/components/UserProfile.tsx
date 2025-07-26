@@ -11,8 +11,6 @@ interface Profile {
   isEmailVerified?: boolean;
   className?: string;
   phone?: string;
-  dateOfBirth?: string;
-  gouvernorat?: string;
 }
 
 const UserProfile: React.FC = () => {
@@ -24,8 +22,6 @@ const UserProfile: React.FC = () => {
     firstName: "",
     lastName: "",
     phone: "",
-    dateOfBirth: "",
-    gouvernorat: ""
   });
   const [profileMsg, setProfileMsg] = useState("");
   const [verifyMsg, setVerifyMsg] = useState("");
@@ -39,8 +35,6 @@ const UserProfile: React.FC = () => {
           firstName: response.data.firstName || "",
           lastName: response.data.lastName || "",
           phone: response.data.phone || "",
-          dateOfBirth: response.data.dateOfBirth || "",
-          gouvernorat: response.data.gouvernorat || ""
         });
       } else {
         console.error("Failed to fetch profile:", response.error);
@@ -122,24 +116,6 @@ const UserProfile: React.FC = () => {
             value={editProfile.phone}
             onChange={e => setEditProfile(p => ({ ...p, phone: e.target.value }))}
             placeholder="Téléphone"
-          />
-        </div>
-        <div>
-          <label>Date de naissance:</label>
-          <input
-            type="date"
-            value={editProfile.dateOfBirth}
-            onChange={e => setEditProfile(p => ({ ...p, dateOfBirth: e.target.value }))}
-            placeholder="Date de naissance"
-          />
-        </div>
-        <div>
-          <label>Gouvernorat:</label>
-          <input
-            type="text"
-            value={editProfile.gouvernorat}
-            onChange={e => setEditProfile(p => ({ ...p, gouvernorat: e.target.value }))}
-            placeholder="Gouvernorat"
           />
         </div>
         <button type="submit">Mettre à jour le profil</button>

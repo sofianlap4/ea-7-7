@@ -9,8 +9,6 @@ interface UserAttributes {
   firstName: string;
   lastName: string;
   phone: string;
-  dateOfBirth: Date;
-  gouvernorat: string;
   createdAt?: Date;
   updatedAt?: Date;
   // Verification
@@ -29,8 +27,6 @@ type UserCreationAttributes = Optional<
   | "firstName"
   | "lastName"
   | "phone"
-  | "dateOfBirth"
-  | "gouvernorat"
   | "createdAt"
   | "updatedAt"
   | "emailVerificationCode"
@@ -48,8 +44,6 @@ export default (sequelize: Sequelize) => {
     public firstName!: string;
     public lastName!: string;
     public phone!: string;
-    public dateOfBirth!: Date;
-    public gouvernorat!: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
     public emailVerificationCode?: string;
@@ -118,43 +112,6 @@ export default (sequelize: Sequelize) => {
         validate: {
           is: /^\d{8}$/,
         },
-      },
-      dateOfBirth: {
-        type: DataTypes.DATEONLY,
-        allowNull: true,
-        validate: {
-          isDate: true,
-        },
-      },
-      gouvernorat: {
-        type: DataTypes.ENUM(
-          "Tunis",
-          "Ariana",
-          "Ben Arous",
-          "Manouba",
-          "Nabeul",
-          "Zaghouan",
-          "Bizerte",
-          "Beja",
-          "Jendouba",
-          "Kef",
-          "Siliana",
-          "Sousse",
-          "Monastir",
-          "Mahdia",
-          "Sfax",
-          "Kairouan",
-          "Kasserine",
-          "Sidi Bouzid",
-          "Gabes",
-          "Mednine",
-          "Tataouine",
-          "Tozeur",
-          "Kebili",
-          "Gafsa",
-          "Medenine"
-        ),
-        allowNull: true,
       },
       isEmailVerified: { type: DataTypes.BOOLEAN, defaultValue: false },
 
