@@ -48,11 +48,10 @@ const PackList: React.FC<{ userRole?: string }> = ({ userRole }) => {
   const handleSubscribe = async (
     packId: string,
     offerId: string,
-    reductionCode: string,
-    force = false
+    reductionCode: string
   ) => {
     setSubscribingPackId(packId);
-    const res = await subscribeToPack(packId, offerId, reductionCode, force);
+    const res = await subscribeToPack(packId, offerId, reductionCode);
 
     if (res.success) {
       setMyPackId(packId);
@@ -64,7 +63,7 @@ const PackList: React.FC<{ userRole?: string }> = ({ userRole }) => {
     const error = res?.error;
 
     if (res.status === 401) {
-      await handleSubscribe(packId, offerId, reductionCode, true);
+      setMessage(error || "Vous avez déjà un abonnement actif à ce pack. Veuillez attendre la date d'expiration avant de vous réabonner.");
     } else if (res.status === 404) {
       setMessage(RESPONSE_MESSAGES.NO_ENOUGH_CREDIT);
     } else {

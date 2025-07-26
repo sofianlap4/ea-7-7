@@ -351,6 +351,42 @@ const practicalExerciseRoutes = (): Router => {
     }
   );
 
+  // Get the number of practical exercises for the user's active pack (and paidVersionId if freeVersion)
+  router.get("/count/for-user-pack", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+    try {
+      const { UserPack, Pack, PracticalExercise } = req.app.get("models");
+      // Find user's active pack
+      const userPack = await UserPack.findOne({
+        where: {
+          userId: req.user.id,
+          isActive: true,
+          endDate: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
+        },
+        include: [{
+          model: Pack,
+          as: "pack",
+          include: [{ model: PracticalExercise, as: "practicalExercises", attributes: ["id"] }],
+        }],
+      });
+      if (!userPack || !userPack.pack) {
+        return sendSuccess(res, { total: 0, paidVersionTotal: 0 }, 200);
+      }
+      const total = (userPack.pack.practicalExercises || []).length;
+
+      let paidVersionTotal = 0;
+      if (userPack.pack.freeVersion && userPack.pack.paidVersionId) {
+        // Find paid version pack and count its practical exercises
+        const paidPack = await Pack.findByPk(userPack.pack.paidVersionId, {
+          include: [{ model: PracticalExercise, as: "practicalExercises", attributes: ["id"] }],
+        });
+        paidVersionTotal = paidPack && paidPack.practicalExercises ? paidPack.practicalExercises.length : 0;
+      }
+      return sendSuccess(res, { total, paidVersionTotal }, 200);
+    } catch (err: any) {
+      next(err);
+    }
+  });
+
   return router;
 };
 

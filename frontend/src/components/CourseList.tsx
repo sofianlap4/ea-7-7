@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 import { fetchStudentCourses, fetchPaidVersionPreviewsCourses } from "../api/courses";
 import { fetchUserActivePackStatus } from "../api/users";
@@ -10,6 +11,8 @@ const CourseList: React.FC<{ userRole: string; userId?: string }> = ({ userRole,
   const [premiumCourses, setPremiumCourses] = useState<any[]>([]);
   const [isFreeVersion, setIsFreeVersion] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
+  const [premiumPage, setPremiumPage] = useState(0);
+  const premiumPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,6 +62,13 @@ const CourseList: React.FC<{ userRole: string; userId?: string }> = ({ userRole,
 
   if (loading) return <div>Chargement...</div>;
 
+  // Pagination logic for premium courses
+  const pageCount = Math.ceil(premiumCourses.length / premiumPerPage);
+  const paginatedPremium = premiumCourses.slice(
+    premiumPage * premiumPerPage,
+    (premiumPage + 1) * premiumPerPage
+  );
+
   return (
     <div>
       <h2>Liste des cours :</h2>
@@ -81,7 +91,7 @@ const CourseList: React.FC<{ userRole: string; userId?: string }> = ({ userRole,
         <>
           <h3>Premium (cours disponibles si vous passez à la version payante) :</h3>
           <ul>
-            {premiumCourses.map((course) => (
+            {paginatedPremium.map((course) => (
               <li
                 key={course.id}
                 style={{ background: "#eee", color: "#888", cursor: "pointer", borderRadius: 4, marginBottom: 8, padding: 8 }}
@@ -93,6 +103,58 @@ const CourseList: React.FC<{ userRole: string; userId?: string }> = ({ userRole,
               </li>
             ))}
           </ul>
+          {pageCount > 1 && (
+            <ReactPaginate
+              previousLabel={"← Précédent"}
+              nextLabel={"Suivant →"}
+              breakLabel={"..."}
+              pageCount={pageCount}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={2}
+              onPageChange={({ selected }) => setPremiumPage(selected)}
+              forcePage={premiumPage}
+              containerClassName={"pagination-container"}
+              pageClassName={"pagination-page"}
+              previousClassName={"pagination-previous"}
+              nextClassName={"pagination-next"}
+              breakClassName={"pagination-break"}
+              activeClassName={"pagination-active"}
+              disabledClassName={"pagination-disabled"}
+            />
+          )}
+
+          {/* Inline styles for pagination */}
+          <style>{`
+            .pagination-container {
+              display: flex;
+              list-style: none;
+              gap: 8px;
+              justify-content: center;
+              margin: 16px 0;
+              padding: 0;
+            }
+            .pagination-page, .pagination-previous, .pagination-next, .pagination-break {
+              background: #fff;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              padding: 6px 14px;
+              cursor: pointer;
+              font-size: 1rem;
+              transition: background 0.2s, color 0.2s;
+            }
+            .pagination-page:hover, .pagination-previous:hover, .pagination-next:hover {
+              background: #f0f0f0;
+            }
+            .pagination-active {
+              background: #1976d2;
+              color: #fff !important;
+              border-color: #1976d2;
+            }
+            .pagination-disabled {
+              opacity: 0.5;
+              cursor: not-allowed;
+            }
+          `}</style>
         </>
       )}
     </div>

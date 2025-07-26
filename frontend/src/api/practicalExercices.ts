@@ -135,3 +135,15 @@ export async function fetchRandomPracticalExercise(
   });
   return await res.json();
 }
+
+// Fetch the count of practical exercises for the user's active pack and paidVersionId pack
+export async function fetchPracticalExerciseCountForUserPack(token: string) {
+  const res = await fetchWithAuth('/api/practical-exercises/count/for-user-pack', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return await res.json();
+}

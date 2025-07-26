@@ -181,7 +181,7 @@ export default () => {
       try {
         const user = await req.app.get("models").User.findByPk(req.user.id);
         const pack = await req.app.get("models").Pack.findByPk(req.params.id);
-        const { offerId, reductionCode, force } = req.body;
+        const { offerId, reductionCode } = req.body;
 
         if (!user || !pack)
           return sendError(res, PACK_RESPONSE_MESSAGES.USER_OR_PACK_NOT_FOUND, 400);
@@ -195,8 +195,14 @@ export default () => {
           },
         });
 
-        if (activeUserPack && activeUserPack.packId !== pack.id && !force) {
-          return sendError(res, PACK_RESPONSE_MESSAGES.ALREADY_SUBSCRIBED, 401);
+        // User cannot subscribe to the same pack until expiry
+        if (activeUserPack && activeUserPack.packId === pack.id) {
+          const expiry = activeUserPack.endDate ? new Date(activeUserPack.endDate) : null;
+          let msg = "Vous avez déjà un abonnement actif à ce pack.";
+          if (expiry) {
+            msg += ` Veuillez attendre la date d'expiration : ${expiry.toLocaleDateString()} avant de vous réabonner.`;
+          }
+          return sendError(res, msg, 401);
         }
 
         // Find the selected offer
@@ -220,8 +226,8 @@ export default () => {
           return sendError(res, PACK_RESPONSE_MESSAGES.NOT_ENOUGH_CREDIT, 404);
         }
 
-        // Deactivate old pack if force
-        if (activeUserPack && activeUserPack.packId !== pack.id && force) {
+        // Deactivate old pack
+        if (activeUserPack && activeUserPack.packId !== pack.id) {
           activeUserPack.isActive = false;
           await activeUserPack.save();
         }

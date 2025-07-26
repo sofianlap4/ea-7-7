@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/PracticalExercisesPage.css";
-import { fetchRandomPracticalExercise } from "../api/practicalExercices";
+import { fetchRandomPracticalExercise, fetchPracticalExerciseCountForUserPack } from "../api/practicalExercices";
+import { fetchUserActivePackStatus } from "../api/users";
 import { fetchThemesByPackId } from "../api/theme";
 import { fetchMyPack } from "../api/packs";
 
@@ -23,7 +24,11 @@ interface PracticalExercise {
 const LANGUAGES = ["python", "javascript", "sql"];
 const DIFFICULTIES = ["easy", "medium", "hard"];
 
-const PracticalExercisesPage: React.FC = () => {
+interface PracticalExercisesPageProps {
+  userId?: string;
+}
+
+const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
   const [selectedThemeId, setSelectedThemeId] = useState<string>("");
@@ -33,10 +38,12 @@ const PracticalExercisesPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [myPackId, setMyPackId] = useState<string>("");
   const [selectedThemeIds, setSelectedThemeIds] = useState<string[]>([]);
+  const [exerciseCounts, setExerciseCounts] = useState<{ total: number; paidVersionTotal: number }>({ total: 0, paidVersionTotal: 0 });
+  const [isFreeVersion, setIsFreeVersion] = useState<boolean | null>(null);
 
   const navigate = useNavigate();
 
-  // Fetch user's packId and then fetch themes for that pack
+  // Fetch user's packId, themes, exercise counts, and freeVersion status
   useEffect(() => {
     const fetchPackAndThemes = async () => {
       const packRes = await fetchMyPack();
@@ -44,6 +51,22 @@ const PracticalExercisesPage: React.FC = () => {
         setMyPackId(packRes.data.id);
         const themesRes = await fetchThemesByPackId(packRes.data.id);
         if (themesRes && themesRes.success) setThemes(themesRes.data);
+
+        // Fetch exercise counts
+        const token = localStorage.getItem("token") || "";
+        const countsRes = await fetchPracticalExerciseCountForUserPack(token);
+        console.log(countsRes)
+        if (countsRes && countsRes.success && countsRes.data) {
+          setExerciseCounts(countsRes.data);
+        }
+
+        // Fetch freeVersion status
+        if (userId) {
+          const userStatus = await fetchUserActivePackStatus(userId, token);
+          if (userStatus && userStatus.success && userStatus.data) {
+            setIsFreeVersion(userStatus.data.freeVersion === true);
+          }
+        }
       }
     };
     fetchPackAndThemes();
@@ -72,6 +95,22 @@ const PracticalExercisesPage: React.FC = () => {
   return (
     <div className='practical-exercises-page'>
       <h2>Exercises Pratiques</h2>
+
+      {/* Show exercise counts and CTA for freeVersion users */}
+      {isFreeVersion === true && (
+        <div style={{ marginBottom: 16, background: '#f7f7f7', border: '1px solid #ddd', borderRadius: 6, padding: 16 }}>
+          <div><strong>Exercices disponibles avec votre pack gratuit :</strong> {exerciseCounts.total}</div>
+          <div><strong>Exercices disponibles avec la version payante :</strong> {exerciseCounts.paidVersionTotal}</div>
+          <button style={{ marginTop: 12, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 18px', cursor: 'pointer', fontWeight: 500 }} onClick={() => navigate('/packs')}>
+            Découvrir les packs premium
+          </button>
+        </div>
+      )}
+      {isFreeVersion === false && (
+        <div style={{ marginBottom: 16, background: '#f7f7f7', border: '1px solid #ddd', borderRadius: 6, padding: 16 }}>
+          <div><strong>Exercices disponibles :</strong> {exerciseCounts.total}</div>
+        </div>
+      )}
       <div style={{ marginBottom: 16 }}>
         <label>
           Language:&nbsp;

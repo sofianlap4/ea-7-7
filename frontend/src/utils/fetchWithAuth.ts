@@ -56,6 +56,12 @@ async function fetchWithAuth(url: string, options: FetchWithAuthOptions = {}): P
         headers: retryHeaders,
         credentials: 'include',
       });
+    } else {
+      // Refresh token invalid, redirect to login
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+      // Return a dummy rejected response to stop further processing
+      return Promise.reject(new Error('Session expired. Redirecting to login.'));
     }
   }
 

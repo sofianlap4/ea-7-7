@@ -107,13 +107,12 @@ export const removeStudentFromPack = async (packId: string | number, studentId: 
 export const subscribeToPack = async (
   packId: string,
   offerId: string,
-  reductionCode?: string,
-  force = false
+  reductionCode?: string
 ) => {
   const res = await fetchWithAuth(`/api/packs/id/${packId}/subscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ offerId, reductionCode, force }),
+    body: JSON.stringify({ offerId, reductionCode }),
   });
   return await res.json();
 };

@@ -225,7 +225,7 @@ const App: React.FC = () => {
                 roles={["student", "admin", "superadmin"]}
                 userRole={userRole}
               >
-                <PracticalExercisesPage />
+                <PracticalExercisesPage userId={userId} />
               </ProtectedRoute>
             }
           />
