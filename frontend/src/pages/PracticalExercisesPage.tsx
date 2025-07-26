@@ -21,7 +21,8 @@ interface PracticalExercise {
   }>;
 }
 
-const LANGUAGES = ["python", "javascript", "sql"];
+//const LANGUAGES = ["python", "javascript", "sql"];
+const LANGUAGES = ["python"];
 const DIFFICULTIES = ["easy", "medium", "hard"];
 
 interface PracticalExercisesPageProps {
@@ -29,7 +30,7 @@ interface PracticalExercisesPageProps {
 }
 
 const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("python");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
   const [selectedThemeId, setSelectedThemeId] = useState<string>("");
   const [themes, setThemes] = useState<any[]>([]);
@@ -115,7 +116,7 @@ const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId 
         <label>
           Language:&nbsp;
           <select value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value)}>
-            <option value=''>All</option>
+            {/* <option value=''>All</option> */}
             {LANGUAGES.map((lang) => (
               <option key={lang} value={lang}>
                 {lang}
