@@ -24,7 +24,8 @@ const columns: GridColDef[] = [
     width: 180,
     renderCell: (params) =>
       params.value ? (
-        <a href={params.value} target="_blank" rel="noopener noreferrer">
+        
+        <a href={`${process.env.REACT_APP_BACKEND_URL}/uploads/${params.value}`} target="_blank" rel="noopener noreferrer">
           Voir
         </a>
       ) : (

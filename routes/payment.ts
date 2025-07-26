@@ -304,8 +304,14 @@ const paymentRoutes = (): Router => {
 
   // Approve or reject bank transfer
   router.post('/admin/bank-transfers/:id/verify', authenticateToken, authorizeRoles("admin", "superadmin"), async (req: any, res: any, next: NextFunction) => {
-    const sequelize = req.app.get("sequelize");
+    if (!sequelize) {
+      return sendError(res, 'Database connection not initialized', 500);
+    }
+
     const transaction = await sequelize.transaction();
+    if (!transaction) {
+      return sendError(res, 'Failed to start database transaction', 500);
+    }
 
     try {
       const { CreditTransaction, User } = req.app.get("models");
@@ -359,7 +365,7 @@ const paymentRoutes = (): Router => {
       });
 
     } catch (err: any) {
-      await transaction.rollback();
+      if (transaction) await transaction.rollback();
       console.error('Bank transfer verification error:', err);
       next(err);
     }

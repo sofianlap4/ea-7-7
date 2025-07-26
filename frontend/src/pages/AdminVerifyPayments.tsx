@@ -43,7 +43,7 @@ interface AdminBankTransfer {
     verifiedBy?: number;
     verifiedAt?: string;
     createdAt: string;
-    user: UserInfo;
+    User: UserInfo;
 }
 
 const AdminVerifyPayments: React.FC = () => {
@@ -88,6 +88,10 @@ const AdminVerifyPayments: React.FC = () => {
     const handleViewDetails = async (id: number) => {
         try {
             const details = await getAdminBankTransferDetails(id);
+            // Ensure 'User' property exists
+            if (!details.User) {
+                details.User = { firstName: 'Unknown', lastName: 'User', email: '', id: 0, credit: 0 };
+            }
             setSelectedTransfer(details);
             setOpenDialog(true);
         } catch (error) {
@@ -247,13 +251,13 @@ const AdminVerifyPayments: React.FC = () => {
                         <Box sx={{ pt: 2 }}>
                             <Box sx={{ mb: 3 }}>
                                 <p><strong>User: </strong>
-                                    {selectedTransfer.user.firstName} {selectedTransfer.user.lastName}
+                                    {selectedTransfer.User.firstName} {selectedTransfer.User.lastName}
                                 </p>
-                                <p><strong>Email: </strong> {selectedTransfer.user.email}</p>
+                                <p><strong>Email: </strong> {selectedTransfer.User.email}</p>
                                 <p><strong>Amount: </strong> {selectedTransfer.amount} TND</p>
-                                <p><strong>Current Credit: </strong> {selectedTransfer.user.credit} TND</p>
+                                <p><strong>Current Credit: </strong> {selectedTransfer.User.credit} TND</p>
                                 <p><strong>Transfer Date: </strong>
-                                    {new Date(selectedTransfer.transferDate).toLocaleString()}
+                                    {new Date(selectedTransfer.createdAt).toLocaleString()}
                                 </p>
                             </Box>
 

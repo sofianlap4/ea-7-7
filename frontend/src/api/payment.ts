@@ -32,7 +32,7 @@ interface AdminBankTransfer {
   verifiedAt?: string;
   createdAt: string;
   updatedAt: string;
-  user: {
+  User: {
     id: number;
     firstName: string;
     lastName: string;
