@@ -23,7 +23,6 @@ const ExercicesPage: React.FC<{ token: string; userId: string }> = ({ token, use
     const fetchData = async () => {
       try {
         const status = await fetchUserActivePackStatus(userId, token);
-        console.log(status)
         if (status.success && status.data) {
           setIsFreeVersion(status.data.freeVersion === true);
           if (status.data.freeVersion === true) {
