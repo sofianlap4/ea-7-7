@@ -1,27 +1,27 @@
 import './Banner.css';
-import p1 from "../../images/p1.png";
+import p1 from '../../images/p1.png';
 
 const Banner = () => {
     return (
-        <section className='banner-container-main'>
-            <div className="banner-container">
-                <div className="banner-wrapper">
-                    <img
-                        alt=""
-                        className="first-img mobile-banner"
-                        src="https://images.cdn.edx.org/attachment-18421Mobile-dark.jpg"
-                    />
-                    <img
-                        alt=""
-                        className="first-img tablet-banner"
-                        src="https://images.cdn.edx.org/attachment-18424Tablet-Dark.jpg"
-                    />
-                    <img
-                        alt=""
-                        className="first-img desktop-banner"
-                        src="https://images.cdn.edx.org/attachment-18420Desk-Dark.jpg"
-                    />
+        <section className="banner-container-main">
+            <div className="banner-wrapper">
+                <img
+                    alt=""
+                    className="first-img mobile-banner"
+                    src="https://images.cdn.edx.org/attachment-18421Mobile-dark.jpg"
+                />
+                <img
+                    alt=""
+                    className="first-img tablet-banner"
+                    src="https://images.cdn.edx.org/attachment-18424Tablet-Dark.jpg"
+                />
+                <img
+                    alt=""
+                    className="first-img desktop-banner"
+                    src="https://images.cdn.edx.org/attachment-18420Desk-Dark.jpg"
+                />
 
+                <div className="banner-container">
                     <div className="content-wrapper">
                         <div className="text-content">
                             <h1 className="title">Unlock your future - get 15% off!</h1>
@@ -51,32 +51,33 @@ const Banner = () => {
                         <div className="cards">
                             <a href="#" className="course-card">
                                 <div className="card">
-                                    <div className='card_img_container'>
-                                        <img className="course-img" src={p1} alt="img 1" />
+                                    <div className="card_img_container">
+                                        <img className="course-img" src={p1} alt="Course thumbnail" />
                                     </div>
                                     <div className="card-body">
-                                        <span>Exercising Leadership: Foundational Principles</span>
-                                        <div className='card_body_p'>
+                                        <h2>Exercising Leadership: Foundational Principles</h2>
+                                        <div className="card_body_p">
                                             <p className="institution">HarvardX</p>
                                         </div>
                                     </div>
-                                    <div className='badge-container'>
+                                    <div className="badge-container">
                                         <span className="badge-text">Course</span>
                                     </div>
                                 </div>
                             </a>
+
                             <a href="#" className="course-card">
                                 <div className="card">
-                                    <div className='card_img_container'>
-                                        <img className="course-img" src={p1} alt="img 1" />
+                                    <div className="card_img_container">
+                                        <img className="course-img" src={p1} alt="Course thumbnail" />
                                     </div>
                                     <div className="card-body">
-                                        <span>Exercising Leadership: Foundational Principles</span>
-                                        <div className='card_body_p'>
-                                            <p className="institution">HarvardX</p>
+                                        <h2>Introduction to Generative AI</h2>
+                                        <div className="card_body_p">
+                                            <p className="institution">IBM</p>
                                         </div>
                                     </div>
-                                    <div className='badge-container'>
+                                    <div className="badge-container">
                                         <span className="badge-text">Course</span>
                                     </div>
                                 </div>
