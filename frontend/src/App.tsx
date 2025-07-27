@@ -239,7 +239,7 @@ const App: React.FC = () => {
                 roles={["student"]}
                 userRole={userRole}
               >
-                <ExercicesPage />
+                <ExercicesPage token={localStorage.getItem("token") || ""} userId={userId} />
               </ProtectedRoute>
             }
           />

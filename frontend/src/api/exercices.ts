@@ -104,3 +104,15 @@ export const fetchStudentExerciceById = async (id: string, token?: string) => {
   });
   return await res.json();
 };
+
+// Fetch preview of paid exercices for students with a freeVersion pack (GET /api/exercices/student/preview-paid-exercices)
+export const fetchPreviewPaidExercices = async (token?: string) => {
+  const res = await fetchWithAuth('/api/exercices/student/preview-paid-exercices', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await res.json();
+};

@@ -3,6 +3,7 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth";
 import { sendSuccess, sendError } from "../utils/response";
 import { EXERCICE_RESPONSE_MESSAGES } from "../utils/responseMessages";
 import { checkPackAccess } from "../middleware/checkAccess"; // <-- Import the middleware
+import { Op } from "sequelize";
 
 const exerciceRoutes = (): Router => {
   const router = express.Router();
@@ -174,6 +175,72 @@ const exerciceRoutes = (): Router => {
         });
         if (!exercice) return sendError(res, EXERCICE_RESPONSE_MESSAGES.EXERCICE_NOT_FOUND, 404);
         sendSuccess(res, exercice, 200);
+      } catch (err: any) {
+        sendError(res, err.message, 400);
+      }
+    }
+  );
+
+  // Get preview of paid exercices for students with a freeVersion pack
+  router.get(
+    "/student/preview-paid-exercices",
+    authenticateToken,
+    async (req: any, res: any, next: NextFunction) => {
+      try {
+        const { Exercice, Pack, UserPack } = req.app.get("models");
+
+        // Fetch the user's pack from their user data
+        const userId = req.user.id;
+        const userPack = await UserPack.findOne({ where: { userId } });
+
+        if (!userPack) return sendError(res, "User pack not found", 404);
+
+        const packId = userPack.packId;
+
+        // Fetch the current pack
+        const pack = await Pack.findByPk(packId);
+        if (!pack || !pack.freeVersion) {
+          return sendError(res, "This route is only for freeVersion packs", 403);
+        }
+
+        // Fetch the paid version pack ID
+        const paidVersionId = pack.paidVersionId;
+        if (!paidVersionId) {
+          return sendError(res, "No paid version associated with this pack", 404);
+        }
+
+        // Fetch free exercises for the user's pack
+        const freeExercices = await Exercice.findAll({
+          attributes: ["id"],
+          include: [
+            {
+              model: Pack,
+              as: "packs",
+              where: { id: packId },
+            },
+          ],
+        });
+
+        const freeExerciceIds = freeExercices.map((ex: { id: string }) => ex.id);
+
+        // Fetch paid exercises excluding those already in the free list
+        const paidExercices = await Exercice.findAll({
+          attributes: ["title", "description"],
+          include: [
+            {
+              model: Pack,
+              as: "packs",
+              where: { id: paidVersionId },
+            },
+          ],
+          where: {
+            id: {
+              [Op.notIn]: freeExerciceIds,
+            },
+          },
+        });
+
+        sendSuccess(res, paidExercices, 200);
       } catch (err: any) {
         sendError(res, err.message, 400);
       }
