@@ -40,6 +40,8 @@ import ExercicesPage from "./pages/ExercicesPage";
 import ExercicesDetailPage from "./pages/ExercicesDetailPage";
 import AdminManageStudents from "./pages/AdminManageStudents";
 import AdminVerifyPayments from "./pages/AdminVerifyPayments";
+import Header from "./components/Header/Header";
+import "./styles/global.css";
 
 function Home() {
   return <h2>Welcome to the Platform!</h2>;
@@ -78,60 +80,34 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div>
+      <div className="app">
+        <Header />
         <nav>
-          {isAuthenticated && (userRole === "student") && (
+          {isAuthenticated && userRole === "student" && (
             <>
-              <Link to='/courses'>Cours</Link>| <Link to='/my-rank'>Mon Rang</Link>{" "}
+              <Link to='/courses'>Cours</Link> | <Link to='/my-rank'>Mon Rang</Link> | <Link to='/practical-exercices'>Exercices Pratiques</Link> | <Link to='/packs'>Tous les Packs</Link> | <Link to='/my-pack'>Mon Pack</Link> | <Link to='/credit'>Mon Crédit</Link> | <Link to='/exercices'>Exercices</Link> | {" "}
             </>
           )}
           {!isAuthenticated && (
             <>
-              <Link to='/login'>Connexion</Link> | <Link to='/register'>S'inscrire</Link> |{" "}
+              <Link to='/login'>Connexion</Link> | <Link to='/register'>S'inscrire</Link> | {" "}
             </>
           )}
-          <Link to='/contact'>Contact</Link> |{" "}
+          <Link to='/contact'>Contact</Link> | {" "}
           {isAuthenticated && (
             <>
-              <Link to='/profile'>Profil</Link> | <Link to='/live-sessions'>Sessions en Direct</Link> |{" "}
+              <Link to='/profile'>Profil</Link> | <Link to='/live-sessions'>Sessions en Direct</Link> | {" "}
               {(userRole === "admin" || userRole === "superadmin") && (
                 <>
-                  <Link to='/create-course'>Créer un Cours</Link> |{" "}
-                  <Link to='/admin/students'>Gérer les Étudiants</Link> |{" "}
+                  <Link to='/create-course'>Créer un Cours</Link> | <Link to='/admin/students'>Gérer les Étudiants</Link> | {" "}
                 </>
               )}
-              {/* Only students can see practical Exercices */}
-              {(userRole === "student") && (
-                <>
-                  <Link to='/practical-exercices'>Exercices Pratiques</Link> |{" "}
-                </>
-              )}
-              {userRole === "student" && (
-                <>
-                  <Link to='/packs'>Tous les Packs</Link> | <Link to='/my-pack'>Mon Pack</Link> |{" "}
-                  <Link to='/credit'>Mon Crédit</Link>
-                  <Link to='/exercices'>Exercices</Link> |{" "}
-                </>
-              )}
-              {(userRole === "admin" || userRole === "superadmin") && (
-                <>
-                  <Link to='/manage-courses'>Gérer les Cours</Link> |{" "}
-                  <Link to='/admin/exercices'>Gérer les Exercices</Link> |{" "}
-                </>
-              )}
-              <LogoutButton onLogout={() => setIsAuthenticated(false)} /> |{" "}
+              <LogoutButton onLogout={() => setIsAuthenticated(false)} /> | {" "}
             </>
           )}
           {isAuthenticated && (userRole === "admin" || userRole === "superadmin") && (
             <>
-              <Link to='/admin/packs/new'>Create Pack</Link> |{" "}
-              <Link to='/admin/packs'>Manage Packs</Link> |{" "}
-              <Link to='/admin/practical-exercices'>Gérer les Exercices Pratiques</Link> |{" "}
-              <Link to='/admin/credit'>Gestion des Crédits</Link> |{" "}
-              <Link to='/admin/manage-ranking'>Gérer le Classement</Link>|{" "}
-              <Link to='/admin/manage-themes'>Gérer les Thèmes</Link> |{" "}
-              <Link to='/admin/user-pack-reductions'>Gérer les Réductions</Link> |{" "}
-              <Link to='/admin/verify-payments'>Vérifier les Paiements</Link> |{" "}
+              <Link to='/admin/packs/new'>Create Pack</Link> | <Link to='/admin/packs'>Manage Packs</Link> | <Link to='/admin/practical-exercices'>Gérer les Exercices Pratiques</Link> | <Link to='/admin/credit'>Gestion des Crédits</Link> | <Link to='/admin/manage-ranking'>Gérer le Classement</Link> | <Link to='/admin/manage-themes'>Gérer les Thèmes</Link> | <Link to='/admin/user-pack-reductions'>Gérer les Réductions</Link> | <Link to='/admin/verify-payments'>Vérifier les Paiements</Link> | {" "}
             </>
           )}
           {!isAuthenticated && <Link to='/request-password-reset'>Mot de passe oublié ?</Link>}
