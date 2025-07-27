@@ -93,6 +93,11 @@ const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId 
     setLoading(false);
   };
 
+  // Fetch a random exercise when the page loads
+  useEffect(() => {
+    handleFetchRandom();
+  }, []);
+
   return (
     <div className='practical-exercises-page'>
       <h2>Exercises Pratiques</h2>

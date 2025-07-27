@@ -6,6 +6,8 @@ import {
   fetchMyDivisionRanking,
   fetchMyGlobalRanking,
 } from "../api/leaderboard";
+import { divisionRank, rankPoints } from "../utils/rankPoints";
+import { useNavigate } from "react-router-dom";
 
 const MyRankPage: React.FC = () => {
   const [solutions, setSolutions] = useState<any[]>([]);
@@ -18,6 +20,7 @@ const MyRankPage: React.FC = () => {
   const [showRankingInfo, setShowRankingInfo] = useState(false);
   const [myGlobalRanking, setMyGlobalRanking] = useState<any>(null);
   const [myDivisionRanking, setMyDivisionRanking] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
@@ -81,23 +84,23 @@ const MyRankPage: React.FC = () => {
           </span>{" "}
           <b>Divisions&nbsp;:</b>
           <br />
-          Junior Dev : 0–19 points
+          Junior Dev : {divisionRank["Junior Dev"]} points
           <br />
-          Mid Dev : 20–49 points
+          Mid Dev : {divisionRank["Mid Dev"]} points
           <br />
-          Senior Dev : 50–99 points
+          Senior Dev : {divisionRank["Senior Dev"]} points
           <br />
-          Hacker : 100+ points
+          Hacker : {divisionRank["Hacker"]} points
           <br />
           <b>Comment gagner des points&nbsp;?</b>
           <br />
-          +1 point à chaque fois qu'un étudiant soumet un exercice résolu facile.
+          +{rankPoints.codeSolvedEasy} point à chaque fois qu'un étudiant soumet un exercice résolu facile.
           <br />
-          +3 point à chaque fois qu'un étudiant soumet un exercice résolu moyen.
+          +{rankPoints.codeSolvedMedium} point à chaque fois qu'un étudiant soumet un exercice résolu moyen.
           <br />
-          +5 point à chaque fois qu'un étudiant soumet un exercice résolu difficile.
+          +{rankPoints.codeSolvedHard} point à chaque fois qu'un étudiant soumet un exercice résolu difficile.
           <br />
-          +5 points à chaque fois qu'un étudiant réussit un quizz.
+          +{rankPoints.QuizzQuestionPassed} points à chaque fois qu'un étudiant réussit un quizz.
         </div>
       )}
       <div style={{ marginBottom: 24 }}>
@@ -160,6 +163,20 @@ const MyRankPage: React.FC = () => {
           <div>
             <strong>Soumis le :</strong> {new Date(sol.createdAt).toLocaleString()}
           </div>
+          <button
+            style={{
+              marginTop: 8,
+              background: "#007bff",
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+            onClick={() => navigate(`/practical-exercises/${sol.exercise?.id}/solutions`)}
+          >
+            Voir les solutions des autres étudiants
+          </button>
         </div>
       ))}
     </div>
