@@ -41,7 +41,7 @@ import ExercicesDetailPage from "./pages/ExercicesDetailPage";
 import AdminManageStudents from "./pages/AdminManageStudents";
 import AdminVerifyPayments from "./pages/AdminVerifyPayments";
 import Header from "./components/Header/Header";
-import "./styles/global.css";
+import Banner from "./components/Banner/Banner";
 
 function Home() {
   return <h2>Welcome to the Platform!</h2>;
@@ -112,6 +112,7 @@ const App: React.FC = () => {
           )}
           {!isAuthenticated && <Link to='/request-password-reset'>Mot de passe oublié ?</Link>}
         </nav>
+        <Banner />
         <Routes>
           <Route path='/' element={<Home />} />
 

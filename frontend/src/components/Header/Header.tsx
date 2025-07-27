@@ -15,10 +15,10 @@ const Header = () => {
           <a href="/register" className="register-button">Register for free</a>
         </div>
       </div>
-      <div className="promo-banner">
+      {/* <div className="promo-banner">
         <p><strong>Level up your career — Get 15% off</strong> select programs until July 30. Use the code <strong>LEVELUPEDX25</strong>. <a href="https://www.edx.org/level-up-promo">Learn more</a>.</p>
         <button className="close-banner" aria-label="Close site banner">&times;</button>
-      </div>
+      </div> */}
     </header>
   );
 };
