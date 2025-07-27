@@ -4,18 +4,19 @@ import express, { Application } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import sequelize from "./utils/sequelizeInit";
 import {
   User,
   Pack,
   Course,
   Video,
   PasswordResetToken,
-  PracticalExercise,
-  PracticalExerciseLog,
+  Practicalexercice,
+  PracticalexerciceLog,
   LiveSession,
   LiveSessionLog,
   CreditTransaction,
-  PracticalExerciseSolution,
+  PracticalexerciceSolution,
   SolutionComment,
   SolutionLike,
   Ranking,
@@ -28,19 +29,18 @@ import {
   UserPackReduction,
   ReductionCode,
   PDF,
-  Exercise,
+  Exercice,
   UserQuizzProgress,
   RankingPointLog,
   UserCourseProgress,
   RefreshToken
 } from "./model";
-import sequelize from "./utils/sequelizeInit";
 
 // Import routes
 import authRoutes from "./routes/auth/auth";
 import courseRoutes from "./routes/course";
 import profileRoutes from "./routes/auth/profile";
-import rankedExerciseRoutes from "./routes/practicalExercise";
+import rankedExerciceRoutes from "./routes/practicalExercice";
 import pythonRunner from "./routes/pythonRunner";
 import javascriptRunner from "./routes/javascriptRunner";
 import videoRoutes from "./routes/video";
@@ -82,12 +82,12 @@ app.set("models", {
   Course,
   Video,
   PasswordResetToken,
-  PracticalExercise,
-  PracticalExerciseLog,
+  Practicalexercice,
+  PracticalexerciceLog,
   LiveSession,
   LiveSessionLog,
   CreditTransaction,
-  PracticalExerciseSolution,
+  PracticalexerciceSolution,
   SolutionComment,
   SolutionLike,
   Ranking,
@@ -100,7 +100,7 @@ app.set("models", {
   UserPackReduction,
   ReductionCode,
   PDF,
-  Exercise,
+  Exercice,
   UserQuizzProgress,
   RankingPointLog,
   UserCourseProgress,
@@ -113,7 +113,7 @@ app.use("/api/videos", videoRoutes());
 app.use("/api/courses", courseRoutes());
 app.use("/api/courses", quizzRoutes());
 app.use("/api/profile", profileRoutes());
-app.use("/api/practical-exercises", rankedExerciseRoutes());
+app.use("/api/practical-exercices", rankedExerciceRoutes());
 app.use("/api/python", pythonRunner);
 app.use("/api/javascript", javascriptRunner);
 app.use("/api/sql", sqlRunner);

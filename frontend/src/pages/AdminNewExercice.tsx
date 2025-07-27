@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCreateExercice } from "../api/exercices";
-import { addPdfToExercise } from "../api/pdf";
-import { addVideoToExercise } from "../api/videos";
+import { addPdfToexercice } from "../api/pdf";
+import { addVideoToexercice } from "../api/videos";
 import { fetchAllPacksAdmin } from "../api/packs";
 import { fetchAllThemes } from "../api/theme";
 
@@ -63,23 +63,23 @@ const AdminNewExercice: React.FC = () => {
     setLoading(true);
     setMessage("");
     const token = localStorage.getItem("token") || "";
-    // 1. Create the exercise
+    // 1. Create the exercice
     const res = await fetchCreateExercice({
       ...formData,
       themeIds: selectedThemeIds,
       packIds: selectedPackIds
     }, token);
     if (res.success && res.data && res.data.id) {
-      const exerciseId = res.data.id;
+      const exerciceId = res.data.id;
       for (const pdf of pdfInputs) {
-        await addPdfToExercise(exerciseId, {
+        await addPdfToexercice(exerciceId, {
           title: pdf.title,
           file: pdf.file,
           type: pdf.type
         }, token);
       }
       for (const video of videoInputs) {
-        if (video.url) await addVideoToExercise(exerciseId, {
+        if (video.url) await addVideoToexercice(exerciceId, {
           title: video.title,
           url: video.url,
           free: false

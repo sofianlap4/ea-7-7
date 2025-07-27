@@ -153,9 +153,9 @@ const MyRankPage: React.FC = () => {
       {solutions.map((sol) => (
         <div key={sol.id} style={{ border: "1px solid #ccc", margin: 12, padding: 12 }}>
           <div>
-            <strong>Exercice :</strong> {sol.exercise?.title}
+            <strong>Exercice :</strong> {sol.exercice?.title}
           </div>
-          <div>{sol.exercise?.description}</div>
+          <div>{sol.exercice?.description}</div>
           <pre style={{ background: "#f8f8f8", padding: 8 }}>{sol.code}</pre>
           <div>
             <strong>Likes :</strong> {sol.likes}
@@ -173,7 +173,7 @@ const MyRankPage: React.FC = () => {
               padding: "8px 12px",
               cursor: "pointer",
             }}
-            onClick={() => navigate(`/practical-exercises/${sol.exercise?.id}/solutions`)}
+            onClick={() => navigate(`/practical-exercices/${sol.exercice?.id}/solutions`)}
           >
             Voir les solutions des autres étudiants
           </button>

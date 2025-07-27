@@ -1,9 +1,9 @@
-// API functions for fetching associated theme and pack IDs for a practical exercise
+// API functions for fetching associated theme and pack IDs for a practical exercice
 import axios from "axios";
 
-export async function fetchPracticalExerciseThemeIds(exerciseId: string, token: string) {
+export async function fetchPracticalexerciceThemeIds(exerciceId: string, token: string) {
   try {
-    const res = await axios.get(`/api/practical-exercises/${exerciseId}/themes`, {
+    const res = await axios.get(`/api/practical-exercices/${exerciceId}/themes`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     // Expecting: { success: true, data: ["themeId1", "themeId2", ...] }
@@ -13,9 +13,9 @@ export async function fetchPracticalExerciseThemeIds(exerciseId: string, token: 
   }
 }
 
-export async function fetchPracticalExercisePackIds(exerciseId: string, token: string) {
+export async function fetchPracticalexercicePackIds(exerciceId: string, token: string) {
   try {
-    const res = await axios.get(`/api/practical-exercises/${exerciseId}/packs`, {
+    const res = await axios.get(`/api/practical-exercices/${exerciceId}/packs`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     // Expecting: { success: true, data: ["packId1", "packId2", ...] }

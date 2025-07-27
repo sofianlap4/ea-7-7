@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  fetchExerciseApi,
-  updatePracticalExercise,
+  fetchexerciceApi,
+  updatePracticalexercice,
 } from "../api/practicalExercices";
 import { fetchAllPacksAdmin } from "../api/packs";
 import { fetchAllThemes } from "../api/theme";
-import { fetchPracticalExercisePackIds, fetchPracticalExerciseThemeIds } from "../api/practicalExercicesAssociations";
+import { fetchPracticalexercicePackIds, fetchPracticalexerciceThemeIds } from "../api/practicalExercicesAssociations";
 
-interface PracticalExercise {
+interface Practicalexercice {
   id: number;
   title: string;
   description: string;
@@ -23,9 +23,9 @@ interface PracticalExercise {
 }
 
 const AdminEditPracticalExercice: React.FC = () => {
-  const { exerciseId } = useParams<{ exerciseId: string }>();
+  const { exerciceId } = useParams<{ exerciceId: string }>();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<PracticalExercise | null>(null);
+  const [formData, setFormData] = useState<Practicalexercice | null>(null);
   const [allPacks, setAllPacks] = useState<{ id: string; name: string }[]>([]);
   const [allThemes, setAllThemes] = useState<{ id: string; title: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,22 +37,22 @@ const AdminEditPracticalExercice: React.FC = () => {
     setError(null);
 
     Promise.all([
-      fetchExerciseApi(exerciseId!, token),
+      fetchexerciceApi(exerciceId!, token),
       fetchAllPacksAdmin(),
       fetchAllThemes(),
-      fetchPracticalExerciseThemeIds(exerciseId!, token), // new API call
-      fetchPracticalExercisePackIds(exerciseId!, token),  // new API call
+      fetchPracticalexerciceThemeIds(exerciceId!, token), // new API call
+      fetchPracticalexercicePackIds(exerciceId!, token),  // new API call
     ])
-      .then(([exerciseRes, packsRes, themesRes, themeIdsRes, packIdsRes]) => {
-        if (exerciseRes?.success && exerciseRes.data) {
+      .then(([exerciceRes, packsRes, themesRes, themeIdsRes, packIdsRes]) => {
+        if (exerciceRes?.success && exerciceRes.data) {
           setFormData({
-            ...exerciseRes.data,
+            ...exerciceRes.data,
             packIds: packIdsRes?.data || [],
             themeIds: themeIdsRes?.data || [],
-            hidden: !!exerciseRes.data.hidden,
+            hidden: !!exerciceRes.data.hidden,
           });
         } else {
-          setError("Failed to load exercise");
+          setError("Failed to load exercice");
         }
         if (packsRes?.success) {
           setAllPacks(Array.isArray(packsRes?.data) ? packsRes?.data : []);
@@ -66,22 +66,22 @@ const AdminEditPracticalExercice: React.FC = () => {
         setError("Failed to fetch data");
         setLoading(false);
       });
-  }, [exerciseId]);
+  }, [exerciceId]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
     try {
       const token = localStorage.getItem("token") || "";
-      const response = await updatePracticalExercise(exerciseId!, formData, token);
+      const response = await updatePracticalexercice(exerciceId!, formData, token);
       if (response?.success && response.data) {
-        alert("Exercise updated successfully");
-        navigate("/admin/practical-exercises");
+        alert("exercice updated successfully");
+        navigate("/admin/practical-exercices");
       } else {
-        alert(response?.error || "Failed to update exercise");
+        alert(response?.error || "Failed to update exercice");
       }
     } catch (err) {
-      alert("Failed to update exercise");
+      alert("Failed to update exercice");
     }
   };
 
@@ -91,8 +91,8 @@ const AdminEditPracticalExercice: React.FC = () => {
 
   return (
     <div className="admin-dashboard">
-      <h2>Edit Practical Exercise</h2>
-      <form onSubmit={handleUpdate} className="exercise-form">
+      <h2>Edit Practical exercice</h2>
+      <form onSubmit={handleUpdate} className="exercice-form">
         <div>
           <label>Title:</label>
           <input
@@ -251,8 +251,8 @@ const AdminEditPracticalExercice: React.FC = () => {
             Add Test Case
           </button>
         </div>
-        <button type="submit">Update Exercise</button>
-        <button type="button" onClick={() => navigate("/admin/practical-exercises")}>Cancel</button>
+        <button type="submit">Update exercice</button>
+        <button type="button" onClick={() => navigate("/admin/practical-exercices")}>Cancel</button>
       </form>
     </div>
   );

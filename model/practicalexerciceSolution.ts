@@ -1,16 +1,16 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
 export default (sequelize: Sequelize) => {
-  class PracticalExerciseSolution extends Model {}
+  class PracticalexerciceSolution extends Model {}
 
-  PracticalExerciseSolution.init(
+  PracticalexerciceSolution.init(
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      exerciseId: {
+      exerciceId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
@@ -34,11 +34,11 @@ export default (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: "PracticalExerciseSolution",
-      tableName: "PracticalExerciseSolutions",
+      modelName: "PracticalexerciceSolution",
+      tableName: "PracticalexerciceSolutions",
       timestamps: false,
     }
   );
 
-  return PracticalExerciseSolution;
+  return PracticalexerciceSolution;
 };

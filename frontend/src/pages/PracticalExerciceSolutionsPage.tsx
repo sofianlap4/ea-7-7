@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import {
-  fetchExerciseSolutions,
+  fetchexerciceSolutions,
   likeSolution,
   unlikeSolution,
   commentOnSolution,
@@ -14,8 +14,8 @@ import {
   fetchProfile,
 } from "../api/profile";
 
-const PracticalExerciseSolutionsPage: React.FC = () => {
-  const { exerciseId } = useParams();
+const PracticalexerciceSolutionsPage: React.FC = () => {
+  const { exerciceId } = useParams();
   const [solutions, setSolutions] = useState<any[]>([]);
   const [comment, setComment] = useState("");
   const [commentingId, setCommentingId] = useState<string | null>(null);
@@ -48,7 +48,7 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
   const loadSolutions = async () => {
     setError(null);
     try {
-      const response = await fetchExerciseSolutions(exerciseId as string);
+      const response = await fetchexerciceSolutions(exerciceId as string);
       if(response?.success) {
         setSolutions(Array.isArray(response?.data) ? response?.data.sort((a: any, b: any) => (b.likes || 0) - (a.likes || 0)) : []);
       } else {
@@ -62,7 +62,7 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
   useEffect(() => {
     if (currentUserId) loadSolutions();
     // eslint-disable-next-line
-  }, [exerciseId, currentUserId]);
+  }, [exerciceId, currentUserId]);
 
   // Like/unlike logic
   const handleLike = async (solutionId: string, alreadyLiked: boolean, isOwner: boolean) => {
@@ -272,4 +272,4 @@ const PracticalExerciseSolutionsPage: React.FC = () => {
   );
 };
 
-export default PracticalExerciseSolutionsPage;
+export default PracticalexerciceSolutionsPage;

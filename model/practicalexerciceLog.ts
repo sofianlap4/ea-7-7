@@ -1,9 +1,9 @@
 import { Sequelize, DataTypes, Model } from 'sequelize';
 
 export default (sequelize: Sequelize) => {
-  class PracticalExerciseLog extends Model {}
+  class PracticalexerciceLog extends Model {}
 
-  PracticalExerciseLog.init(
+  PracticalexerciceLog.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -14,7 +14,7 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      exerciseId: {
+      exerciceId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
@@ -26,11 +26,11 @@ export default (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'PracticalExerciseLog',
+      modelName: 'PracticalexerciceLog',
       timestamps: true, // enables createdAt and updatedAt
       updatedAt: false, // we only care about createdAt
     }
   );
 
-  return PracticalExerciseLog;
+  return PracticalexerciceLog;
 };

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  fetchAllPracticalExercises,
-  deletePracticalExercise,
-  updatePracticalExercise,
-  createPracticalExercise,
+  fetchAllPracticalexercices,
+  deletePracticalexercice,
+  updatePracticalexercice,
+  createPracticalexercice,
 } from "../api/practicalExercices";
 import { fetchAllPacksAdmin } from "../api/packs";
 import { fetchAllThemes } from "../api/theme";
 
-interface PracticalExercise {
+interface Practicalexercice {
   id: number;
   title: string;
   description: string;
@@ -23,10 +23,10 @@ interface PracticalExercise {
   hidden: boolean;
 }
 
-const AdminPracticalExercises: React.FC = () => {
+const AdminPracticalexercices: React.FC = () => {
   const [allPacks, setAllPacks] = useState<{ id: string; name: string }[]>([]);
   const [allThemes, setAllThemes] = useState<{ id: string; title: string }[]>([]);
-  const [exercises, setExercises] = useState<PracticalExercise[]>([]);
+  const [exercices, setExercices] = useState<Practicalexercice[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<{
     title: string;
@@ -54,16 +54,16 @@ const AdminPracticalExercises: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token") || "";
-    fetchAllPracticalExercises(token)
+    fetchAllPracticalexercices(token)
       .then((reponse) => {
         if (reponse?.success) {
-          setExercises(reponse?.data);
+          setExercices(reponse?.data);
         } else {
-          console.error("Failed to load exercises:", reponse?.error || "Unknown error");
-          setExercises([]);
+          console.error("Failed to load exercices:", reponse?.error || "Unknown error");
+          setExercices([]);
         }
       })
-      .catch(() => setExercises([]));
+      .catch(() => setExercices([]));
 
     fetchAllPacksAdmin()
       .then((response) => {
@@ -92,9 +92,9 @@ const AdminPracticalExercises: React.FC = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token") || "";
-      const response = await createPracticalExercise(formData, token);
+      const response = await createPracticalexercice(formData, token);
       if (response.data && (response.success || response?.data?.id)) {
-        setExercises([...exercises, response?.data]);
+        setExercices([...exercices, response?.data]);
         setFormData({
           title: "",
           description: "",
@@ -108,33 +108,33 @@ const AdminPracticalExercises: React.FC = () => {
           hidden: false,
         });
       } else {
-        alert(response?.error || "Failed to add exercise");
+        alert(response?.error || "Failed to add exercice");
       }
     } catch (error) {
-      console.error("Error adding exercise:", error);
-      alert("Failed to add exercise");
+      console.error("Error adding exercice:", error);
+      alert("Failed to add exercice");
     }
   };
 
   const navigate = useNavigate();
-  const handleEdit = (exercise: PracticalExercise) => {
-    navigate(`/admin/practical-exercises/edit/${exercise.id}`);
+  const handleEdit = (exercice: Practicalexercice) => {
+    navigate(`/admin/practical-exercices/edit/${exercice.id}`);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingId === null) return;
     try {
-      const updated = await updatePracticalExercise(
+      const updated = await updatePracticalexercice(
         editingId.toString(),
         formData,
         localStorage.getItem("token") || ""
       );
       if (!updated?.data || !(updated.success || updated?.data?.id)) {
-        console.error(updated?.error || "Failed to update exercise");
+        console.error(updated?.error || "Failed to update exercice");
         return;
       }
-      setExercises(exercises.map((e) => (e.id === editingId ? updated?.data : e)));
+      setExercices(exercices.map((e) => (e.id === editingId ? updated?.data : e)));
       setEditingId(null);
       setFormData({
         title: "",
@@ -149,24 +149,24 @@ const AdminPracticalExercises: React.FC = () => {
         hidden: false,
       });
     } catch (err) {
-      alert("Failed to update exercise");
+      alert("Failed to update exercice");
     }
   };
 
-  const handleToggleHide = async (exercise: PracticalExercise) => {
+  const handleToggleHide = async (exercice: Practicalexercice) => {
     try {
-      const updated = await updatePracticalExercise(
-        exercise.id.toString(),
-        { ...exercise, hidden: !exercise.hidden },
+      const updated = await updatePracticalexercice(
+        exercice.id.toString(),
+        { ...exercice, hidden: !exercice.hidden },
         localStorage.getItem("token") || ""
       );
       if (updated?.success && updated.data) {
-        setExercises(exercises.map((e) => (e.id === exercise.id ? updated.data : e)));
+        setExercices(exercices.map((e) => (e.id === exercice.id ? updated.data : e)));
       } else {
-        alert(updated?.error || "Failed to update exercise visibility");
+        alert(updated?.error || "Failed to update exercice visibility");
       }
     } catch (err) {
-      alert("Failed to update exercise visibility");
+      alert("Failed to update exercice visibility");
     }
   };
 
@@ -174,7 +174,7 @@ const AdminPracticalExercises: React.FC = () => {
     <div className='admin-dashboard'>
       <h2>Gestion des Exercices Pratiques</h2>
 
-      <form onSubmit={editingId ? handleUpdate : handleSubmit} className='exercise-form'>
+      <form onSubmit={editingId ? handleUpdate : handleSubmit} className='exercice-form'>
         <div>
           <label>Title:</label>
           <input
@@ -350,7 +350,7 @@ const AdminPracticalExercises: React.FC = () => {
           </button>
         </div>
 
-        <button type='submit'>{editingId ? "Update Exercise" : "Add Exercise"}</button>
+        <button type='submit'>{editingId ? "Update exercice" : "Add exercice"}</button>
         {editingId && (
           <button
             type='button'
@@ -375,8 +375,8 @@ const AdminPracticalExercises: React.FC = () => {
         )}
       </form>
 
-      <div className='exercises-list'>
-        <h3>Existing Exercises</h3>
+      <div className='exercices-list'>
+        <h3>Existing exercices</h3>
         <table>
           <thead>
             <tr>
@@ -387,15 +387,15 @@ const AdminPracticalExercises: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {exercises.map((exercise) => (
-              <tr key={exercise.id} style={exercise.hidden ? { opacity: 0.5 } : {}}>
-                <td>{exercise.title}</td>
-                <td>{exercise.difficulty}</td>
-                <td>{exercise.language}</td>
+            {exercices.map((exercice) => (
+              <tr key={exercice.id} style={exercice.hidden ? { opacity: 0.5 } : {}}>
+                <td>{exercice.title}</td>
+                <td>{exercice.difficulty}</td>
+                <td>{exercice.language}</td>
                 <td>
-                  <button onClick={() => handleEdit(exercise)}>Edit</button>
-                  <button onClick={() => handleToggleHide(exercise)}>
-                    {exercise.hidden ? "Unhide" : "Hide"}
+                  <button onClick={() => handleEdit(exercice)}>Edit</button>
+                  <button onClick={() => handleToggleHide(exercice)}>
+                    {exercice.hidden ? "Unhide" : "Hide"}
                   </button>
                 </td>
               </tr>
@@ -407,4 +407,4 @@ const AdminPracticalExercises: React.FC = () => {
   );
 };
 
-export default AdminPracticalExercises;
+export default AdminPracticalexercices;

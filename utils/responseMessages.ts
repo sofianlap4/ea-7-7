@@ -11,7 +11,7 @@ NOT_FOUND: "Exercice introuvable.",
 ALREADY_SUBMITTED: "Vous avez déjà soumis cet exercice.",
 CODE_REQUIRED: "Le code soumis est requis.",
 UNSUPPORTED_LANGUAGE: "Langage non pris en charge pour l'évaluation.",
-NO_EXERCISE_FOR_FILTERS: "Aucun exercice trouvé pour ces filtres.",
+NO_EXERCICE_FOR_FILTERS: "Aucun exercice trouvé pour ces filtres.",
 SUBMISSION_PASSED: "Soumission réussie",
 SUBMISSION_FAILED: "Soumission échouée",
 
@@ -152,7 +152,7 @@ export const PDF_RESPONSE_MESSAGES = {
 };
 
 export const EXERCICE_RESPONSE_MESSAGES = {
-  EXERCISE_NOT_FOUND: "Exercice introuvable.",
+  EXERCICE_NOT_FOUND: "Exercice introuvable.",
 };
 
 export const QUIZZ_RESPONSE_MESSAGES = {

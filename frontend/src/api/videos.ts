@@ -1,8 +1,8 @@
 import fetchWithAuth from '../utils/fetchWithAuth';
 
-// Add a video to an exercise
-export const addVideoToExercise = async (exerciseId: string | number, video: { title: string; url: string; free?: boolean }) => {
-  const res = await fetchWithAuth(`/api/videos/exercise/id/${exerciseId}`, {
+// Add a video to an exercice
+export const addVideoToexercice = async (exerciceId: string | number, video: { title: string; url: string; free?: boolean }) => {
+  const res = await fetchWithAuth(`/api/videos/exercice/id/${exerciceId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -12,16 +12,16 @@ export const addVideoToExercise = async (exerciseId: string | number, video: { t
   return await res.json();
 };
 
-// Get all videos for an exercise
-export const fetchVideosByExercise = async (exerciseId: string | number) => {
-  const res = await fetchWithAuth(`/api/videos/exercise/id/${exerciseId}`);
+// Get all videos for an exercice
+export const fetchVideosByexercice = async (exerciceId: string | number) => {
+  const res = await fetchWithAuth(`/api/videos/exercice/id/${exerciceId}`);
   if (res.status === 403) return { accessDenied: true, videos: [] };
   return await res.json();
 };
 
-// Edit a video of an exercise
-export const editVideoOfExercise = async (videoId: string | number, video: { title: string; url: string; free?: boolean }) => {
-  const res = await fetchWithAuth(`/api/videos/exercise/id/${videoId}`, {
+// Edit a video of an exercice
+export const editVideoOfexercice = async (videoId: string | number, video: { title: string; url: string; free?: boolean }) => {
+  const res = await fetchWithAuth(`/api/videos/exercice/id/${videoId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
@@ -31,9 +31,9 @@ export const editVideoOfExercise = async (videoId: string | number, video: { tit
   return await res.json();
 };
 
-// Delete a video from an exercise
-export const deleteVideoOfExercise = async (videoId: string | number, token?: string) => {
-  const res = await fetchWithAuth(`/api/videos/exercise/id/${videoId}`, {
+// Delete a video from an exercice
+export const deleteVideoOfexercice = async (videoId: string | number, token?: string) => {
+  const res = await fetchWithAuth(`/api/videos/exercice/id/${videoId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

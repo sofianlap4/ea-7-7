@@ -4,9 +4,9 @@ import { fetchStudentExerciceById } from "../api/exercices";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-const ExercisesDetailPage: React.FC = () => {
+const ExercicesDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [exercise, setExercise] = useState<any>(null);
+  const [exercice, setexercice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openPdfId, setOpenPdfId] = useState<string | null>(null);
@@ -17,33 +17,33 @@ const ExercisesDetailPage: React.FC = () => {
     fetchStudentExerciceById(id!, token)
       .then((response) => {
         if (response.success && response.data) {
-          setExercise(response.data);
+          setexercice(response.data);
         } else {
-          setError(response.error || "Failed to fetch exercise");
+          setError(response.error || "Failed to fetch exercice");
         }
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to fetch exercise");
+        setError("Failed to fetch exercice");
         setLoading(false);
       });
   }, [id]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
-  if (!exercise) return <div>No exercise found.</div>;
+  if (!exercice) return <div>No exercice found.</div>;
 
-  const pdfs = Array.isArray(exercise.pdfs) ? exercise.pdfs : [];
-  const videos = Array.isArray(exercise.videos) ? exercise.videos : [];
+  const pdfs = Array.isArray(exercice.pdfs) ? exercice.pdfs : [];
+  const videos = Array.isArray(exercice.videos) ? exercice.videos : [];
 
   return (
     <div>
-      <h2>Exercise Details</h2>
-      <h3>Title : {exercise.title}</h3>
-      <p>description: {exercise.description}</p>
+      <h2>exercice Details</h2>
+      <h3>Title : {exercice.title}</h3>
+      <p>description: {exercice.description}</p>
       {/* PDFs */}
       <h3>PDFs</h3>
-      {pdfs.length === 0 && <p>No PDFs for this exercise.</p>}
+      {pdfs.length === 0 && <p>No PDFs for this exercice.</p>}
       <ul>
         {pdfs.map((pdf: any) => (
           <li key={pdf.id}>
@@ -84,7 +84,7 @@ const ExercisesDetailPage: React.FC = () => {
       {/* Videos */}
       <h3>Videos</h3>
       <ul>
-        {videos.length === 0 && <li>No videos for this exercise.</li>}
+        {videos.length === 0 && <li>No videos for this exercice.</li>}
         {videos.map((video: any) => (
           <li key={video.id}>
             <div>
@@ -114,4 +114,4 @@ const ExercisesDetailPage: React.FC = () => {
   );
 };
 
-export default ExercisesDetailPage;
+export default ExercicesDetailPage;

@@ -6,7 +6,7 @@ interface TestCase {
 }
 
 export default (sequelize: Sequelize) => {
-  class PracticalExercise extends Model {
+  class Practicalexercice extends Model {
     declare id: string;
     declare title: string;
     declare description: string;
@@ -18,7 +18,7 @@ export default (sequelize: Sequelize) => {
     declare hidden: boolean;
   }
 
-  PracticalExercise.init(
+  Practicalexercice.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -62,9 +62,9 @@ export default (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'PracticalExercise'
+      modelName: 'Practicalexercice'
     }
   );
 
-  return PracticalExercise;
+  return Practicalexercice;
 };

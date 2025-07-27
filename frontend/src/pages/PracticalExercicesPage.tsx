@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/PracticalExercisesPage.css";
-import { fetchRandomPracticalExercise, fetchPracticalExerciseCountForUserPack } from "../api/practicalExercices";
+import "../styles/PracticalExercicesPage.css";
+import { fetchRandomPracticalexercice, fetchPracticalexerciceCountForUserPack } from "../api/practicalExercices";
 import { fetchUserActivePackStatus } from "../api/users";
 import { fetchThemesByPackId } from "../api/theme";
 import { fetchMyPack } from "../api/packs";
 
-interface PracticalExercise {
+interface Practicalexercice {
   id: number;
   title: string;
   description: string; // Problem statement/instructions
@@ -25,26 +25,26 @@ interface PracticalExercise {
 const LANGUAGES = ["python"];
 const DIFFICULTIES = ["easy", "medium", "hard"];
 
-interface PracticalExercisesPageProps {
+interface PracticalexercicesPageProps {
   userId?: string;
 }
 
-const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId }) => {
+const PracticalexercicesPage: React.FC<PracticalexercicesPageProps> = ({ userId }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("python");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
   const [selectedThemeId, setSelectedThemeId] = useState<string>("");
   const [themes, setThemes] = useState<any[]>([]);
-  const [randomExercise, setRandomExercise] = useState<PracticalExercise | null>(null);
+  const [randomexercice, setRandomexercice] = useState<Practicalexercice | null>(null);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [myPackId, setMyPackId] = useState<string>("");
   const [selectedThemeIds, setSelectedThemeIds] = useState<string[]>([]);
-  const [exerciseCounts, setExerciseCounts] = useState<{ total: number; paidVersionTotal: number }>({ total: 0, paidVersionTotal: 0 });
+  const [exerciceCounts, setexerciceCounts] = useState<{ total: number; paidVersionTotal: number }>({ total: 0, paidVersionTotal: 0 });
   const [isFreeVersion, setIsFreeVersion] = useState<boolean | null>(null);
 
   const navigate = useNavigate();
 
-  // Fetch user's packId, themes, exercise counts, and freeVersion status
+  // Fetch user's packId, themes, exercice counts, and freeVersion status
   useEffect(() => {
     const fetchPackAndThemes = async () => {
       const packRes = await fetchMyPack();
@@ -53,12 +53,12 @@ const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId 
         const themesRes = await fetchThemesByPackId(packRes.data.id);
         if (themesRes && themesRes.success) setThemes(themesRes.data);
 
-        // Fetch exercise counts
+        // Fetch exercice counts
         const token = localStorage.getItem("token") || "";
-        const countsRes = await fetchPracticalExerciseCountForUserPack(token);
+        const countsRes = await fetchPracticalexerciceCountForUserPack(token);
         console.log(countsRes)
         if (countsRes && countsRes.success && countsRes.data) {
-          setExerciseCounts(countsRes.data);
+          setexerciceCounts(countsRes.data);
         }
 
         // Fetch freeVersion status
@@ -76,37 +76,37 @@ const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId 
   const handleFetchRandom = async () => {
     setLoading(true);
     setError("");
-    setRandomExercise(null);
+    setRandomexercice(null);
     const token = localStorage.getItem("token") || "";
-    const ex = await fetchRandomPracticalExercise(
+    const ex = await fetchRandomPracticalexercice(
       selectedDifficulty,
       selectedLanguage,
       selectedThemeIds,
       token
     );
     if (ex && ex.success) {
-      setRandomExercise(ex?.data);
+      setRandomexercice(ex?.data);
     } else {
-      setRandomExercise(null);
-      setError(ex?.error || "No exercise found for these filters.");
+      setRandomexercice(null);
+      setError(ex?.error || "No exercice found for these filters.");
     }
     setLoading(false);
   };
 
-  // Fetch a random exercise when the page loads
+  // Fetch a random exercice when the page loads
   useEffect(() => {
     handleFetchRandom();
   }, []);
 
   return (
-    <div className='practical-exercises-page'>
-      <h2>Exercises Pratiques</h2>
+    <div className='practical-exercices-page'>
+      <h2>exercices Pratiques</h2>
 
-      {/* Show exercise counts and CTA for freeVersion users */}
+      {/* Show exercice counts and CTA for freeVersion users */}
       {isFreeVersion === true && (
         <div style={{ marginBottom: 16, background: '#f7f7f7', border: '1px solid #ddd', borderRadius: 6, padding: 16 }}>
-          <div><strong>Exercices disponibles avec votre pack gratuit :</strong> {exerciseCounts.total}</div>
-          <div><strong>Exercices disponibles avec la version payante :</strong> {exerciseCounts.paidVersionTotal}</div>
+          <div><strong>Exercices disponibles avec votre pack gratuit :</strong> {exerciceCounts.total}</div>
+          <div><strong>Exercices disponibles avec la version payante :</strong> {exerciceCounts.paidVersionTotal}</div>
           <button style={{ marginTop: 12, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 18px', cursor: 'pointer', fontWeight: 500 }} onClick={() => navigate('/packs')}>
             Découvrir les packs premium
           </button>
@@ -114,7 +114,7 @@ const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId 
       )}
       {isFreeVersion === false && (
         <div style={{ marginBottom: 16, background: '#f7f7f7', border: '1px solid #ddd', borderRadius: 6, padding: 16 }}>
-          <div><strong>Exercices disponibles :</strong> {exerciseCounts.total}</div>
+          <div><strong>Exercices disponibles :</strong> {exerciceCounts.total}</div>
         </div>
       )}
       <div style={{ marginBottom: 16 }}>
@@ -174,29 +174,29 @@ const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId 
 
       {loading && <div>Loading...</div>}
 
-      {randomExercise && (
+      {randomexercice && (
         <div
-          className='exercise-item'
+          className='exercice-item'
           style={{ border: "1px solid #ccc", padding: 16, marginBottom: 16 }}
         >
-          <strong>{randomExercise.title}</strong>
-          <p>{randomExercise.description}</p>
-          <span className='badge'>{randomExercise.difficulty}</span>
-          <span className='badge'>{randomExercise.language}</span>
+          <strong>{randomexercice.title}</strong>
+          <p>{randomexercice.description}</p>
+          <span className='badge'>{randomexercice.difficulty}</span>
+          <span className='badge'>{randomexercice.language}</span>
           <br />
           <button
             style={{ marginTop: 8 }}
-            onClick={() => navigate(`/practical-exercises/${randomExercise.id}`)}
+            onClick={() => navigate(`/practical-exercices/${randomexercice.id}`)}
           >
             Essayer
           </button>
         </div>
       )}
 
-      {!randomExercise && !loading && !error && (
+      {!randomexercice && !loading && !error && (
         <div style={{ marginBottom: 16 }}>
           <span>
-            Select language and difficulty, then click "Suivant" to get a random exercise.
+            Select language and difficulty, then click "Suivant" to get a random exercice.
           </span>
         </div>
       )}
@@ -204,4 +204,4 @@ const PracticalExercisesPage: React.FC<PracticalExercisesPageProps> = ({ userId 
   );
 };
 
-export default PracticalExercisesPage;
+export default PracticalexercicesPage;

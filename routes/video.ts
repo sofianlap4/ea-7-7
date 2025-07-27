@@ -7,9 +7,9 @@ import { VIDEO_RESPONSE_MESSAGES } from "../utils/responseMessages";
 const videoRoutes = (): Router => {
   const router = express.Router();
 
-  // Add a video to an exercise (admins only, Vimeo only)
+  // Add a video to an exercice (admins only, Vimeo only)
   router.post(
-    '/exercise/id/:exerciseId',
+    '/exercice/id/:exerciceId',
     authenticateToken,
     authorizeRoles('admin', 'superadmin'),
     async (req: any, res: any, next: NextFunction) => {
@@ -18,11 +18,11 @@ const videoRoutes = (): Router => {
         if (!url || !url.includes('vimeo.com')) {
           return sendError(res, VIDEO_RESPONSE_MESSAGES.ONLY_VIMEO);
         }
-        const exercise = await req.app.get("models").Exercise.findByPk(req.params.exerciseId);
-        if (!exercise) {
-          return sendError(res, "Exercise not found");
+        const exercice = await req.app.get("models").Exercice.findByPk(req.params.exerciceId);
+        if (!exercice) {
+          return sendError(res, "exercice not found");
         }
-        const video = await req.app.get("models").Video.create({ title, url, exerciseId: exercise.id, free: !!free });
+        const video = await req.app.get("models").Video.create({ title, url, exerciceId: exercice.id, free: !!free });
         sendSuccess(res, video, 201);
       } catch (err: any) {
         next(err);
@@ -30,13 +30,13 @@ const videoRoutes = (): Router => {
     }
   );
 
-  // Get all videos for an exercise
+  // Get all videos for an exercice
   router.get(
-    '/exercise/id/:exerciseId',
+    '/exercice/id/:exerciceId',
     authenticateToken,
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const videos = await req.app.get("models").Video.findAll({ where: { exerciseId: req.params.exerciseId } });
+        const videos = await req.app.get("models").Video.findAll({ where: { exerciceId: req.params.exerciceId } });
         sendSuccess(res, videos, 200);
       } catch (err: any) {
         next(err);
@@ -44,9 +44,9 @@ const videoRoutes = (): Router => {
     }
   );
 
-  // Edit a video of an exercise
+  // Edit a video of an exercice
   router.put(
-    '/exercise/id/:videoId',
+    '/exercice/id/:videoId',
     authenticateToken,
     authorizeRoles('admin', 'superadmin'),
     async (req: any, res: any, next: NextFunction) => {
@@ -67,7 +67,7 @@ const videoRoutes = (): Router => {
 
   // Delete a video by ID (admins only)
   router.delete(
-    '/exercise/id/:videoId',
+    '/exercice/id/:videoId',
     authenticateToken,
     authorizeRoles('admin', 'superadmin'),
     async (req: any, res: any, next: NextFunction) => {

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchExerciceById, fetchUpdateExercice } from "../api/exercices";
-import { fetchPdfsByExercise, addPdfToExercise, editPdfOfExercise, deletePdfOfExercise } from "../api/pdf";
-import { fetchVideosByExercise, addVideoToExercise, editVideoOfExercise, deleteVideoOfExercise } from "../api/videos";
+import { fetchPdfsByexercice, addPdfToexercice, editPdfOfexercice, deletePdfOfexercice } from "../api/pdf";
+import { fetchVideosByexercice, addVideoToexercice, editVideoOfexercice, deleteVideoOfexercice } from "../api/videos";
 import { fetchAllPacksAdmin } from "../api/packs";
 import { fetchAllThemes } from "../api/theme";
 
 const AdminEditExercice: React.FC = () => {
-  const { exerciseId } = useParams<{ exerciseId: string }>();
+  const { exerciceId } = useParams<{ exerciceId: string }>();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<{ title: string; description: string } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ const AdminEditExercice: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem("token") || "";
     setLoading(true);
-    fetchExerciceById(exerciseId!, token)
+    fetchExerciceById(exerciceId!, token)
       .then(res => {
         if (res.success && res.data) {
           setFormData({
@@ -54,18 +54,18 @@ const AdminEditExercice: React.FC = () => {
         setError("Failed to fetch exercice");
         setLoading(false);
       });
-  }, [exerciseId]);
+  }, [exerciceId]);
 
   useEffect(() => {
-    if (exerciseId) {
-      fetchPdfsByExercise(exerciseId).then(res => {
+    if (exerciceId) {
+      fetchPdfsByexercice(exerciceId).then(res => {
         if (res && Array.isArray(res.data)) setPdfs(res.data || []);
       });
-      fetchVideosByExercise(exerciseId).then(res => {
+      fetchVideosByexercice(exerciceId).then(res => {
         if (res && Array.isArray(res.data)) setVideos(res.data || []);
       });
     }
-  }, [exerciseId]);
+  }, [exerciceId]);
 
   const handleAddPdf = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -115,8 +115,8 @@ const AdminEditExercice: React.FC = () => {
     e.preventDefault();
     if (!formData) return;
     const token = localStorage.getItem("token") || "";
-    // Update exercise
-    const res = await fetchUpdateExercice(exerciseId!, {
+    // Update exercice
+    const res = await fetchUpdateExercice(exerciceId!, {
       ...formData,
       themeIds: selectedThemeIds,
       packIds: selectedPackIds
@@ -124,31 +124,31 @@ const AdminEditExercice: React.FC = () => {
     let success = res.success;
     // Delete marked PDFs
     for (const pdfId of pdfsToDelete) {
-      await deletePdfOfExercise(pdfId, token);
+      await deletePdfOfexercice(pdfId, token);
     }
     // Delete marked Videos
     for (const videoId of videosToDelete) {
-      await deleteVideoOfExercise(videoId, token);
+      await deleteVideoOfexercice(videoId, token);
     }
     // Edit PDFs
     for (const pdf of pdfs) {
       if (pdf.edited) {
-        await editPdfOfExercise(pdf.id, { title: pdf.title }, token);
+        await editPdfOfexercice(pdf.id, { title: pdf.title }, token);
       }
     }
     // Edit Videos
     for (const video of videos) {
       if (video.edited) {
-        await editVideoOfExercise(video.id, { title: video.title, url: video.url });
+        await editVideoOfexercice(video.id, { title: video.title, url: video.url });
       }
     }
     // Add new PDFs
     for (const pdf of newPdfFiles) {
-      await addPdfToExercise(exerciseId!, { title: pdf.name, file: pdf, type: "question" }, token);
+      await addPdfToexercice(exerciceId!, { title: pdf.name, file: pdf, type: "question" }, token);
     }
     // Add new Videos
     for (const link of newVideoLinks) {
-      if (link) await addVideoToExercise(exerciseId!, { title: link, url: link, free: false });
+      if (link) await addVideoToexercice(exerciceId!, { title: link, url: link, free: false });
     }
     if (success) {
       alert("Exercice updated successfully");

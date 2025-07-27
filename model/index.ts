@@ -6,12 +6,12 @@ import definePackModel from "./pack";
 import defineCourseModel from "./course";
 import defineVideoModel from "./video";
 import definePasswordResetToken from "./passwordResetToken";
-import definePracticalExerciseModel from "./practicalExercise";
-import definePracticalExerciseLogModel from "./practicalExerciseLog";
+import definePracticalexerciceModel from "./practicalexercice";
+import definePracticalexerciceLogModel from "./practicalexerciceLog";
 import defineLiveSessionModel from "./liveSession";
 import defineLiveSessionLogModel from "./LiveSessionLog";
 import defineCreditTransactionModel from "./creditTransaction";
-import definePracticalExerciseSolutionModel from "./practicalExerciseSolution";
+import definePracticalexerciceSolutionModel from "./practicalexerciceSolution";
 import defineSolutionCommentModel from "./solutionComment";
 import defineSolutionLikeModel from "./solutionLike";
 import defineRankingModel from "./ranking";
@@ -36,12 +36,12 @@ const Pack = definePackModel(sequelize);
 const Course = defineCourseModel(sequelize);
 const Video = defineVideoModel(sequelize);
 const PasswordResetToken = definePasswordResetToken(sequelize);
-const PracticalExercise = definePracticalExerciseModel(sequelize);
-const PracticalExerciseLog = definePracticalExerciseLogModel(sequelize);
+const Practicalexercice = definePracticalexerciceModel(sequelize);
+const PracticalexerciceLog = definePracticalexerciceLogModel(sequelize);
 const LiveSession = defineLiveSessionModel(sequelize);
 const LiveSessionLog = defineLiveSessionLogModel(sequelize);
 const CreditTransaction = defineCreditTransactionModel(sequelize);
-const PracticalExerciseSolution = definePracticalExerciseSolutionModel(sequelize);
+const PracticalexerciceSolution = definePracticalexerciceSolutionModel(sequelize);
 const SolutionComment = defineSolutionCommentModel(sequelize);
 const SolutionLike = defineSolutionLikeModel(sequelize);
 const Ranking = defineRankingModel(sequelize);
@@ -54,7 +54,7 @@ const PackOffer = definePackOfferModel(sequelize);
 const UserPackReduction = defineUserPackReductionModel(sequelize);
 const ReductionCode = defineReductionCodeModel(sequelize);
 const PDF = definePDFModel(sequelize);
-const Exercise = defineExerciceModel(sequelize);
+const Exercice = defineExerciceModel(sequelize);
 const UserQuizzProgress = defineUserQuizzProgressModel(sequelize);
 const RefreshToken = defineRefreshTokenModel(sequelize);
 // User <-> RefreshToken (One-to-Many)
@@ -96,13 +96,13 @@ Course.hasMany(PDF, { as: "pdfs", foreignKey: "courseId" });
 PDF.belongsTo(Course, { foreignKey: "courseId", as: "course" });
 
 
-// Exercise <-> PDF (One-to-Many)
-Exercise.hasMany(PDF, { as: "pdfs", foreignKey: "exerciseId" });
-PDF.belongsTo(Exercise, { foreignKey: "exerciseId", as: "exercise" });
+// exercice <-> PDF (One-to-Many)
+Exercice.hasMany(PDF, { as: "pdfs", foreignKey: "exerciceId" });
+PDF.belongsTo(Exercice, { foreignKey: "exerciceId", as: "exercice" });
 
-// Exercise <-> Video (One-to-Many)
-Exercise.hasMany(Video, { as: "videos", foreignKey: "exerciseId" });
-Video.belongsTo(Exercise, { foreignKey: "exerciseId", as: "exercise" });
+// exercice <-> Video (One-to-Many)
+Exercice.hasMany(Video, { as: "videos", foreignKey: "exerciceId" });
+Video.belongsTo(Exercice, { foreignKey: "exerciceId", as: "exercice" });
 
 // In your model/index.ts or wherever you define associations:
 User.hasMany(LiveSessionLog, { foreignKey: "userId" });
@@ -120,27 +120,27 @@ CreditTransaction.belongsTo(Pack, { as: "pack", foreignKey: "packId" });
 Pack.hasMany(CreditTransaction, { as: "transactions", foreignKey: "packId" });
 
 // Each solution belongs to a user
-PracticalExerciseSolution.belongsTo(User, { foreignKey: "userId", as: "user" });
-User.hasMany(PracticalExerciseSolution, { foreignKey: "userId", as: "solutions" });
+PracticalexerciceSolution.belongsTo(User, { foreignKey: "userId", as: "user" });
+User.hasMany(PracticalexerciceSolution, { foreignKey: "userId", as: "solutions" });
 
-// Each solution belongs to one PracticalExercise
-// Each PracticalExercise has many solutions
-PracticalExerciseSolution.belongsTo(PracticalExercise, {
-  foreignKey: "exerciseId",
-  as: "exercise",
+// Each solution belongs to one Practicalexercice
+// Each Practicalexercice has many solutions
+PracticalexerciceSolution.belongsTo(Practicalexercice, {
+  foreignKey: "exerciceId",
+  as: "exercice",
 });
-PracticalExercise.hasMany(PracticalExerciseSolution, { foreignKey: "exerciseId", as: "solutions" });
+Practicalexercice.hasMany(PracticalexerciceSolution, { foreignKey: "exerciceId", as: "solutions" });
 
 // Each Solution can have many likes
-PracticalExerciseSolution.hasMany(SolutionLike, { foreignKey: "solutionId", as: "likesList" });
-SolutionLike.belongsTo(PracticalExerciseSolution, { foreignKey: "solutionId", as: "solution" });
+PracticalexerciceSolution.hasMany(SolutionLike, { foreignKey: "solutionId", as: "likesList" });
+SolutionLike.belongsTo(PracticalexerciceSolution, { foreignKey: "solutionId", as: "solution" });
 
 // Each Like belongs to a User
 User.hasMany(SolutionLike, { foreignKey: "userId", as: "solutionLikes" });
 SolutionLike.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-PracticalExerciseSolution.hasMany(SolutionComment, { foreignKey: "solutionId", as: "comments" });
-SolutionComment.belongsTo(PracticalExerciseSolution, { foreignKey: "solutionId", as: "solution" });
+PracticalexerciceSolution.hasMany(SolutionComment, { foreignKey: "solutionId", as: "comments" });
+SolutionComment.belongsTo(PracticalexerciceSolution, { foreignKey: "solutionId", as: "solution" });
 
 // Each Comment belongs to a User
 User.hasMany(SolutionComment, { foreignKey: "userId", as: "solutionComments" });
@@ -167,32 +167,32 @@ User.hasMany(UserPack, { foreignKey: "userId", as: "userPacks" });
 UserPack.belongsTo(PackOffer, { foreignKey: "offerId", as: "offer" });
 PackOffer.hasMany(UserPack, { foreignKey: "offerId", as: "userPacks" });
 
-// PracticalExercise <-> Pack (Many-to-Many)
-PracticalExercise.belongsToMany(Pack, {
-  through: "PackPracticalExercise",
-  foreignKey: "practicalExerciseId",
+// Practicalexercice <-> Pack (Many-to-Many)
+Practicalexercice.belongsToMany(Pack, {
+  through: "PackPracticalexercice",
+  foreignKey: "practicalexerciceId",
   otherKey: "packId",
   as: "packs",
 });
-Pack.belongsToMany(PracticalExercise, {
-  through: "PackPracticalExercise",
+Pack.belongsToMany(Practicalexercice, {
+  through: "PackPracticalexercice",
   foreignKey: "packId",
-  otherKey: "practicalExerciseId",
-  as: "practicalExercises",
+  otherKey: "practicalexerciceId",
+  as: "practicalexercices",
 });
 
-// PracticalExercise <-> Theme (Many-to-Many)
-PracticalExercise.belongsToMany(Theme, {
-  through: "PracticalExerciseTheme",
-  foreignKey: "practicalExerciseId",
+// Practicalexercice <-> Theme (Many-to-Many)
+Practicalexercice.belongsToMany(Theme, {
+  through: "PracticalexerciceTheme",
+  foreignKey: "practicalexerciceId",
   otherKey: "themeId",
   as: "themes",
 });
-Theme.belongsToMany(PracticalExercise, {
-  through: "PracticalExerciseTheme",
+Theme.belongsToMany(Practicalexercice, {
+  through: "PracticalexerciceTheme",
   foreignKey: "themeId",
-  otherKey: "practicalExerciseId",
-  as: "practicalExercises",
+  otherKey: "practicalexerciceId",
+  as: "practicalexercices",
 });
 
 // Theme <-> Pack (Many-to-Many)
@@ -248,32 +248,32 @@ Course.hasMany(UserCourseProgress, { foreignKey: "courseId", as: "userProgress" 
 UserCourseProgress.belongsTo(User, { foreignKey: "userId", as: "user" });
 UserCourseProgress.belongsTo(Course, { foreignKey: "courseId", as: "course" });
 
-// Exercise <-> Pack (Many-to-Many)
-Exercise.belongsToMany(Pack, {
-  through: "PackExercise",
-  foreignKey: "exerciseId",
+// exercice <-> Pack (Many-to-Many)
+Exercice.belongsToMany(Pack, {
+  through: "Packexercice",
+  foreignKey: "exerciceId",
   otherKey: "packId",
   as: "packs",
 });
-Pack.belongsToMany(Exercise, {
-  through: "PackExercise",
+Pack.belongsToMany(Exercice, {
+  through: "Packexercice",
   foreignKey: "packId",
-  otherKey: "exerciseId",
-  as: "exercises",
+  otherKey: "exerciceId",
+  as: "exercices",
 });
 
-// Exercise <-> Theme (Many-to-Many)
-Exercise.belongsToMany(Theme, {
-  through: "ExerciseTheme",
-  foreignKey: "exerciseId",
+// exercice <-> Theme (Many-to-Many)
+Exercice.belongsToMany(Theme, {
+  through: "exerciceTheme",
+  foreignKey: "exerciceId",
   otherKey: "themeId",
   as: "themes",
 });
-Theme.belongsToMany(Exercise, {
-  through: "ExerciseTheme",
+Theme.belongsToMany(Exercice, {
+  through: "exerciceTheme",
   foreignKey: "themeId",
-  otherKey: "exerciseId",
-  as: "exercises",
+  otherKey: "exerciceId",
+  as: "exercices",
 });
 
 // Export all models
@@ -284,12 +284,12 @@ export {
   Course,
   Video,
   PasswordResetToken,
-  PracticalExercise,
-  PracticalExerciseLog,
+  Practicalexercice,
+  PracticalexerciceLog,
   LiveSession,
   LiveSessionLog,
   CreditTransaction,
-  PracticalExerciseSolution,
+  PracticalexerciceSolution,
   SolutionComment,
   SolutionLike,
   Ranking,
@@ -302,7 +302,7 @@ export {
   UserPackReduction,
   ReductionCode,
   PDF,
-  Exercise,
+  Exercice,
   UserQuizzProgress,
   RankingPointLog,
   UserCourseProgress,

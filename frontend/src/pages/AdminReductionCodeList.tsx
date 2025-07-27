@@ -6,7 +6,7 @@ import {
   deleteReductionCode,
 } from "../api/packReduction";
 import { fetchAllPacksAdmin } from "../api/packs";
-import UserPackReductionList from "./UserPackReduction";
+import UserPackReductionList from "../pages/UserPackReduction";
 
 const AdminReductionCodeList: React.FC = () => {
   const [codes, setCodes] = useState<any[]>([]);

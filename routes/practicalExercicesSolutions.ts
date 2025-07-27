@@ -4,20 +4,20 @@ import { sendError, sendSuccess } from '../utils/response';
 import { PRACTICAL_EXERCICE_SOLUTION_RESPONSE_MESSAGES } from "../utils/responseMessages";
 
 
-const practicalExerciseSolutionsRoutes = (): Router => {
+const practicalexerciceSolutionsRoutes = (): Router => {
   const router = express.Router();
 
   // Helper to get models
   const getModels = (req: any) => req.app.get("models");
 
-  // GET /practical-exercises/id/:exerciseId/solutions
-  router.get("/practical-exercises/id/:exerciseId/solutions", async (req: any, res: any, next: NextFunction) => {
+  // GET /practical-exercices/id/:exerciceId/solutions
+  router.get("/practical-exercices/id/:exerciceId/solutions", async (req: any, res: any, next: NextFunction) => {
     try {
-      const { exerciseId } = req.params;
-      const { PracticalExerciseSolution, SolutionComment, User, SolutionLike } = getModels(req);
+      const { exerciceId } = req.params;
+      const { PracticalexerciceSolution, SolutionComment, User, SolutionLike } = getModels(req);
 
-      const solutions = await PracticalExerciseSolution.findAll({
-        where: { exerciseId },
+      const solutions = await PracticalexerciceSolution.findAll({
+        where: { exerciceId },
         include: [
           {
             model: SolutionComment,
@@ -45,9 +45,9 @@ const practicalExerciseSolutionsRoutes = (): Router => {
     try {
       const { solutionId } = req.params;
       const userId = req.user.id;
-      const { SolutionLike, PracticalExerciseSolution } = getModels(req);
+      const { SolutionLike, PracticalexerciceSolution } = getModels(req);
 
-      const solution = await PracticalExerciseSolution.findByPk(solutionId);
+      const solution = await PracticalexerciceSolution.findByPk(solutionId);
       if (!solution) return sendError(res, PRACTICAL_EXERCICE_SOLUTION_RESPONSE_MESSAGES.SOLUTION_NOT_FOUND, 404);
 
       if (solution.userId === userId) {
@@ -58,7 +58,7 @@ const practicalExerciseSolutionsRoutes = (): Router => {
       if (alreadyLiked) return sendError(res, PRACTICAL_EXERCICE_SOLUTION_RESPONSE_MESSAGES.ALREADY_LIKED, 400);
 
       await SolutionLike.create({ solutionId, userId });
-      await PracticalExerciseSolution.increment("likes", { by: 1, where: { id: solutionId } });
+      await PracticalexerciceSolution.increment("likes", { by: 1, where: { id: solutionId } });
       sendSuccess(res, { success: true }, 200);
     } catch (err: any) {
       next(err);
@@ -70,13 +70,13 @@ const practicalExerciseSolutionsRoutes = (): Router => {
     try {
       const { solutionId } = req.params;
       const userId = req.user.id;
-      const { SolutionLike, PracticalExerciseSolution } = getModels(req);
+      const { SolutionLike, PracticalexerciceSolution } = getModels(req);
 
       const like = await SolutionLike.findOne({ where: { solutionId, userId } });
       if (!like) return sendError(res, PRACTICAL_EXERCICE_SOLUTION_RESPONSE_MESSAGES.LIKE_NOT_FOUND, 404);
 
       await like.destroy();
-      await PracticalExerciseSolution.decrement("likes", { by: 1, where: { id: solutionId } });
+      await PracticalexerciceSolution.decrement("likes", { by: 1, where: { id: solutionId } });
       sendSuccess(res, { success: true }, 200);
     } catch (err: any) {
       next(err);
@@ -127,12 +127,12 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   router.get("/users/id/:userId/solutions", async (req: any, res: any, next: NextFunction) => {
     try {
       const { userId } = req.params;
-      const { PracticalExerciseSolution, PracticalExercise } = getModels(req);
+      const { PracticalexerciceSolution, Practicalexercice } = getModels(req);
 
-      const solutions = await PracticalExerciseSolution.findAll({
+      const solutions = await PracticalexerciceSolution.findAll({
         where: { userId },
         include: [
-          { model: PracticalExercise, as: "exercise" }
+          { model: Practicalexercice, as: "exercice" }
         ],
         order: [["createdAt", "DESC"]],
       });
@@ -145,4 +145,4 @@ const practicalExerciseSolutionsRoutes = (): Router => {
   return router;
 };
 
-export default practicalExerciseSolutionsRoutes;
+export default practicalexerciceSolutionsRoutes;

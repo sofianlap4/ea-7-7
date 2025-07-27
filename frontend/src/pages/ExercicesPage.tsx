@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { fetchStudentPackExercices } from "../api/exercices";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 
-const ExercisesPage: React.FC = () => {
-  const [exercises, setExercises] = useState<any[]>([]);
+const ExercicesPage: React.FC = () => {
+  const [exercices, setExercices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -18,15 +18,16 @@ const ExercisesPage: React.FC = () => {
     setLoading(true);
     fetchStudentPackExercices(token)
       .then((response) => {
+        console.log("Exercices response:", response);
         if (response.success && Array.isArray(response.data)) {
-          setExercises(response.data);
+          setExercices(response.data);
         } else {
-          setError(response.error || "Failed to fetch exercises");
+          setError(response.error || "Failed to fetch exercices");
         }
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to fetch exercises");
+        setError("Failed to fetch exercices");
         setLoading(false);
       });
   }, []);
@@ -64,7 +65,7 @@ const ExercisesPage: React.FC = () => {
 
   return (
     <div>
-      <h2>My Exercises</h2>
+      <h2>My exercices</h2>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -72,7 +73,7 @@ const ExercisesPage: React.FC = () => {
       ) : (
         <div style={{ width: "100%", minHeight: 400, background: "#fff", marginTop: 16 }}>
           <DataGrid
-            rows={exercises}
+            rows={exercices}
             columns={columns}
             getRowId={(row) => row.id}
             loading={false}
@@ -88,4 +89,4 @@ const ExercisesPage: React.FC = () => {
   );
 };
 
-export default ExercisesPage;
+export default ExercicesPage;

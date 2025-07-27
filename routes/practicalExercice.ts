@@ -8,14 +8,14 @@ import { PRACTICAL_EXERCICE_RESPONSE_MESSAGES } from "../utils/responseMessages"
 import { Op } from "sequelize";
 import { rankingPoints } from "../utils/rankUtils";
 
-const practicalExerciseRoutes = (): Router => {
+const practicalexerciceRoutes = (): Router => {
   const router = express.Router();
-  // Get all theme IDs associated with an exercise
-  router.get("/:exerciseId/themes", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  // Get all theme IDs associated with an exercice
+  router.get("/:exerciceId/themes", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
-      const exercise = await req.app.get("models").PracticalExercise.findByPk(req.params.exerciseId);
-      if (!exercise) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
-      const themes = await exercise.getThemes({ attributes: ["id"] });
+      const exercice = await req.app.get("models").Practicalexercice.findByPk(req.params.exerciceId);
+      if (!exercice) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
+      const themes = await exercice.getThemes({ attributes: ["id"] });
       const themeIds = themes.map((t: any) => t.id);
       sendSuccess(res, themeIds, 200);
     } catch (err: any) {
@@ -23,12 +23,12 @@ const practicalExerciseRoutes = (): Router => {
     }
   });
 
-  // Get all pack IDs associated with an exercise
-  router.get("/:exerciseId/packs", authenticateToken, async (req: any, res: any, next: NextFunction) => {
+  // Get all pack IDs associated with an exercice
+  router.get("/:exerciceId/packs", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
-      const exercise = await req.app.get("models").PracticalExercise.findByPk(req.params.exerciseId);
-      if (!exercise) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
-      const packs = await exercise.getPacks({ attributes: ["id"] });
+      const exercice = await req.app.get("models").Practicalexercice.findByPk(req.params.exerciceId);
+      if (!exercice) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
+      const packs = await exercice.getPacks({ attributes: ["id"] });
       const packIds = packs.map((p: any) => p.id);
       sendSuccess(res, packIds, 200);
     } catch (err: any) {
@@ -37,7 +37,7 @@ const practicalExerciseRoutes = (): Router => {
   });
 
 
-  // Create new exercise
+  // Create new exercice
   router.post(
     "/",
     authenticateToken,
@@ -61,7 +61,7 @@ const practicalExerciseRoutes = (): Router => {
           return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.ONE_TEST_CASE);
         }
 
-        const exercise = await req.app.get("models").PracticalExercise.create({
+        const exercice = await req.app.get("models").Practicalexercice.create({
           title,
           description,
           difficulty,
@@ -73,37 +73,37 @@ const practicalExerciseRoutes = (): Router => {
 
         // Associate packs if provided
         if (Array.isArray(packIds) && packIds.length > 0) {
-          await exercise.setPacks(packIds);
+          await exercice.setPacks(packIds);
         }
 
         // Associate themes if provided
         if (Array.isArray(themeIds) && themeIds.length > 0) {
-          await exercise.setThemes(themeIds);
+          await exercice.setThemes(themeIds);
         }
 
-        sendSuccess(res, exercise, 201);
+        sendSuccess(res, exercice, 201);
       } catch (err: any) {
         next(err);
       }
     }
   );
 
-  // Get all exercises
+  // Get all exercices
   router.get("/", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const exercises = await req.app.get("models").PracticalExercise.findAll();
-      sendSuccess(res, exercises, 200);
+      const exercices = await req.app.get("models").Practicalexercice.findAll();
+      sendSuccess(res, exercices, 200);
     } catch (err: any) {
       next(err);
     }
   });
 
-  // Get a random exercise by difficulty and language, excluding those already submitted by the user
+  // Get a random exercice by difficulty and language, excluding those already submitted by the user
   router.get("/random", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const { difficulty, language, themeIds } = req.query;
       const userId = req.user.id;
-      const { PracticalExercise, PracticalExerciseSolution, UserPack, Pack } =
+      const { Practicalexercice, PracticalexerciceSolution, UserPack, Pack } =
         req.app.get("models");
 
       // 1. Get all active packs for the user
@@ -117,7 +117,7 @@ const practicalExerciseRoutes = (): Router => {
       });
       const userPackId = userPack?.packId;
 
-      // 2. Build query for exercises
+      // 2. Build query for exercices
       const where: any = { hidden: false };
       if (difficulty) where.difficulty = difficulty;
       if (language) where.language = language;
@@ -145,61 +145,61 @@ const practicalExerciseRoutes = (): Router => {
         });
       }
 
-      // 4. Fetch all matching exercises
-      const exercises = await PracticalExercise.findAll({ where, include });
+      // 4. Fetch all matching exercices
+      const exercices = await Practicalexercice.findAll({ where, include });
 
-      // 5. Fetch all exerciseIds the user has already submitted
-      const submitted = await PracticalExerciseSolution.findAll({
+      // 5. Fetch all exerciceIds the user has already submitted
+      const submitted = await PracticalexerciceSolution.findAll({
         where: { userId },
-        attributes: ["exerciseId"],
+        attributes: ["exerciceId"],
       });
-      const submittedIds = submitted.map((s: any) => s.exerciseId);
+      const submittedIds = submitted.map((s: any) => s.exerciceId);
 
-      // 6. Filter out already submitted exercises
-      const availableExercises = exercises.filter((ex: any) => !submittedIds.includes(ex.id));
+      // 6. Filter out already submitted exercices
+      const availableexercices = exercices.filter((ex: any) => !submittedIds.includes(ex.id));
 
-      if (!availableExercises.length) {
-        return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NO_EXERCISE_FOR_FILTERS, 404);
+      if (!availableexercices.length) {
+        return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NO_EXERCICE_FOR_FILTERS, 404);
       }
-      const randomIdx = Math.floor(Math.random() * availableExercises.length);
-      sendSuccess(res, availableExercises[randomIdx], 200);
+      const randomIdx = Math.floor(Math.random() * availableexercices.length);
+      sendSuccess(res, availableexercices[randomIdx], 200);
     } catch (err: any) {
       next(err);
     }
   });
 
-  // Get one ranked exercise
+  // Get one ranked exercice
   router.get("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
-      const exercise = await req.app.get("models").PracticalExercise.findByPk(req.params.id);
-      if (!exercise) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
-      sendSuccess(res, exercise, 200);
+      const exercice = await req.app.get("models").Practicalexercice.findByPk(req.params.id);
+      if (!exercice) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
+      sendSuccess(res, exercice, 200);
     } catch (err: any) {
       next(err);
     }
   });
 
-  // DELETE /ranked-exercises/id/:id
+  // DELETE /ranked-exercices/id/:id
   router.delete("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const id = req.params.id;
-      const exercise = await req.app.get("models").PracticalExercise.findByPk(id);
-      if (!exercise) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
+      const exercice = await req.app.get("models").Practicalexercice.findByPk(id);
+      if (!exercice) return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
 
-      await req.app.get("models").PracticalExercise.destroy({ where: { id } });
+      await req.app.get("models").Practicalexercice.destroy({ where: { id } });
       sendSuccess(res, { success: true }, 200);
     } catch (err) {
       next(err);
     }
   });
 
-  // PUT /ranked-exercises/:id
+  // PUT /ranked-exercices/:id
   router.put("/id/:id", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
       const id = req.params.id;
       const updated = await req.app
         .get("models")
-        .PracticalExercise.update(req.body, { where: { id }, returning: true });
+        .Practicalexercice.update(req.body, { where: { id }, returning: true });
       if (updated[0] === 0)
         return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
       sendSuccess(res, updated[1][0], 200);
@@ -208,42 +208,42 @@ const practicalExerciseRoutes = (): Router => {
     }
   });
 
-  // Attempt a ranked exercise (enforces pack usage limits and logs the attempt)
+  // Attempt a ranked exercice (enforces pack usage limits and logs the attempt)
   router.post(
-    "/id/:exerciseId/attempt",
+    "/id/:exerciceId/attempt",
     authenticateToken,
     checkPackAccess,
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const exercise = await req.app
+        const exercice = await req.app
           .get("models")
-          .PracticalExercise.findByPk(req.params.exerciseId);
-        if (!exercise) {
+          .Practicalexercice.findByPk(req.params.exerciceId);
+        if (!exercice) {
           return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
         }
-        await req.app.get("models").PracticalExerciseLog.create({
+        await req.app.get("models").PracticalexerciceLog.create({
           userId: req.user.id,
-          exerciseId: exercise.id,
+          exerciceId: exercice.id,
         });
 
-        sendSuccess(res, { message: "Attempt logged", exercise }, 200);
+        sendSuccess(res, { message: "Attempt logged", exercice }, 200);
       } catch (err: any) {
         next(err);
       }
     }
   );
 
-  // Submit a solution for a ranked exercise (enforces pack usage limits and logs the attempt)
+  // Submit a solution for a ranked exercice (enforces pack usage limits and logs the attempt)
   router.post(
-    "/id/:exerciseId/submit",
+    "/id/:exerciceId/submit",
     authenticateToken,
     checkPackAccess,
     async (req: any, res: any, next: NextFunction) => {
       try {
-        const exercise = await req.app
+        const exercice = await req.app
           .get("models")
-          .PracticalExercise.findByPk(req.params.exerciseId);
-        if (!exercise) {
+          .Practicalexercice.findByPk(req.params.exerciceId);
+        if (!exercice) {
           return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.NOT_FOUND, 404);
         }
 
@@ -252,10 +252,10 @@ const practicalExerciseRoutes = (): Router => {
           return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.CODE_REQUIRED, 400);
         }
 
-        // Prevent multiple submissions per user per exercise
-        const existingSolution = await req.app.get("models").PracticalExerciseSolution.findOne({
+        // Prevent multiple submissions per user per exercice
+        const existingSolution = await req.app.get("models").PracticalexerciceSolution.findOne({
           where: {
-            exerciseId: exercise.id,
+            exerciceId: exercice.id,
             userId: req.user.id,
           },
         });
@@ -263,18 +263,18 @@ const practicalExerciseRoutes = (): Router => {
           return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.ALREADY_SUBMITTED, 400);
         }
 
-        await req.app.get("models").PracticalExerciseLog.create({
+        await req.app.get("models").PracticalexerciceLog.create({
           userId: req.user.id,
-          exerciseId: exercise.id,
+          exerciceId: exercice.id,
         });
 
         let passed = false;
         let feedback = "Evaluation failed";
 
         let runEndpoint = "";
-        if (exercise.language === "python") {
+        if (exercice.language === "python") {
           runEndpoint = "api/python/run-code";
-        } else if (exercise.language === "javascript") {
+        } else if (exercice.language === "javascript") {
           runEndpoint = "api/javascript/run-code";
         } else {
           return sendError(res, PRACTICAL_EXERCICE_RESPONSE_MESSAGES.UNSUPPORTED_LANGUAGE, 400);
@@ -285,7 +285,7 @@ const practicalExerciseRoutes = (): Router => {
             `${process.env.BACKEND_URL}/${runEndpoint}`,
             {
               code,
-              testCases: exercise.testCases,
+              testCases: exercice.testCases,
             },
             {
               headers: {
@@ -301,8 +301,8 @@ const practicalExerciseRoutes = (): Router => {
         }
 
         if (passed) {
-          await req.app.get("models").PracticalExerciseSolution.create({
-            exerciseId: exercise.id,
+          await req.app.get("models").PracticalexerciceSolution.create({
+            exerciceId: exercice.id,
             userId: req.user.id,
             code,
             likes: 0,
@@ -312,8 +312,8 @@ const practicalExerciseRoutes = (): Router => {
           const { Ranking } = req.app.get("models");
 
           let points = rankingPoints.codeSolvedEasy;
-          if (exercise.difficulty === "medium") points = rankingPoints.codeSolvedMedium;
-          if (exercise.difficulty === "hard") points = rankingPoints.codeSolvedHard;
+          if (exercice.difficulty === "medium") points = rankingPoints.codeSolvedMedium;
+          if (exercice.difficulty === "hard") points = rankingPoints.codeSolvedHard;
 
           let ranking = await Ranking.findOne({ where: { userId: req.user.id } });
           if (!ranking) {
@@ -339,7 +339,7 @@ const practicalExerciseRoutes = (): Router => {
             message: passed
               ? PRACTICAL_EXERCICE_RESPONSE_MESSAGES.SUBMISSION_PASSED
               : PRACTICAL_EXERCICE_RESPONSE_MESSAGES.SUBMISSION_FAILED,
-            exerciseId: exercise.id,
+            exerciceId: exercice.id,
             passed,
             feedback,
           },
@@ -351,10 +351,10 @@ const practicalExerciseRoutes = (): Router => {
     }
   );
 
-  // Get the number of practical exercises for the user's active pack (and paidVersionId if freeVersion)
+  // Get the number of practical exercices for the user's active pack (and paidVersionId if freeVersion)
   router.get("/count/for-user-pack", authenticateToken, async (req: any, res: any, next: NextFunction) => {
     try {
-      const { UserPack, Pack, PracticalExercise } = req.app.get("models");
+      const { UserPack, Pack, Practicalexercice } = req.app.get("models");
       // Find user's active pack
       const userPack = await UserPack.findOne({
         where: {
@@ -365,21 +365,21 @@ const practicalExerciseRoutes = (): Router => {
         include: [{
           model: Pack,
           as: "pack",
-          include: [{ model: PracticalExercise, as: "practicalExercises", attributes: ["id"] }],
+          include: [{ model: Practicalexercice, as: "practicalexercices", attributes: ["id"] }],
         }],
       });
       if (!userPack || !userPack.pack) {
         return sendSuccess(res, { total: 0, paidVersionTotal: 0 }, 200);
       }
-      const total = (userPack.pack.practicalExercises || []).length;
+      const total = (userPack.pack.practicalexercices || []).length;
 
       let paidVersionTotal = 0;
       if (userPack.pack.freeVersion && userPack.pack.paidVersionId) {
-        // Find paid version pack and count its practical exercises
+        // Find paid version pack and count its practical exercices
         const paidPack = await Pack.findByPk(userPack.pack.paidVersionId, {
-          include: [{ model: PracticalExercise, as: "practicalExercises", attributes: ["id"] }],
+          include: [{ model: Practicalexercice, as: "practicalexercices", attributes: ["id"] }],
         });
-        paidVersionTotal = paidPack && paidPack.practicalExercises ? paidPack.practicalExercises.length : 0;
+        paidVersionTotal = paidPack && paidPack.practicalexercices ? paidPack.practicalexercices.length : 0;
       }
       return sendSuccess(res, { total, paidVersionTotal }, 200);
     } catch (err: any) {
@@ -390,4 +390,4 @@ const practicalExerciseRoutes = (): Router => {
   return router;
 };
 
-export default practicalExerciseRoutes;
+export default practicalexerciceRoutes;

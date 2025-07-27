@@ -1,7 +1,7 @@
 import fetchWithAuth from "../utils/fetchWithAuth";
 
-export async function submitPracticalExercise(exerciseId: string, code: string, token: string | null) {
-  const res = await fetchWithAuth(`/api/practical-exercises/id/${exerciseId}/submit`, {
+export async function submitPracticalexercice(exerciceId: string, code: string, token: string | null) {
+  const res = await fetchWithAuth(`/api/practical-exercices/id/${exerciceId}/submit`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -12,7 +12,7 @@ export async function submitPracticalExercise(exerciseId: string, code: string, 
   return await res.json();
 }
 
-export async function practicalExerciseRun(
+export async function practicalexerciceRun(
   code: string,
   language: string,
   testCases: any,
@@ -46,8 +46,8 @@ export async function practicalExerciseRun(
   return data;
 }
 
-export async function fetchExerciseApi(exerciseId: string, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/id/${exerciseId}`, {
+export async function fetchexerciceApi(exerciceId: string, token: string) {
+  const res = await fetchWithAuth(`/api/practical-exercices/id/${exerciceId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -57,8 +57,8 @@ export async function fetchExerciseApi(exerciseId: string, token: string) {
   return await res.json();
 }
 
-export async function updatePracticalExercise(editingId: string, formData: any, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/id/${editingId}`, {
+export async function updatePracticalexercice(editingId: string, formData: any, token: string) {
+  const res = await fetchWithAuth(`/api/practical-exercices/id/${editingId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -69,8 +69,8 @@ export async function updatePracticalExercise(editingId: string, formData: any, 
   return await res.json();
 }
 
-export async function deletePracticalExercise(id: string, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/id/${id}`, {
+export async function deletePracticalexercice(id: string, token: string) {
+  const res = await fetchWithAuth(`/api/practical-exercices/id/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -80,8 +80,8 @@ export async function deletePracticalExercise(id: string, token: string) {
   return await res.json();
 }
 
-export async function createPracticalExercise(formData: any, token: string) {
-  const response = await fetchWithAuth('/api/practical-exercises', {
+export async function createPracticalexercice(formData: any, token: string) {
+  const response = await fetchWithAuth('/api/practical-exercices', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -92,8 +92,8 @@ export async function createPracticalExercise(formData: any, token: string) {
   return await response.json();
 }
 
-export async function fetchAllPracticalExercises(token: string) {
-  const res = await fetchWithAuth('/api/practical-exercises', {
+export async function fetchAllPracticalexercices(token: string) {
+  const res = await fetchWithAuth('/api/practical-exercices', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -103,8 +103,8 @@ export async function fetchAllPracticalExercises(token: string) {
   return await res.json();
 }
 
-export async function createPracticalExerciseAttempt(exerciseId: string, token: string) {
-  const res = await fetchWithAuth(`/api/practical-exercises/id/${exerciseId}/attempt`, {
+export async function createPracticalexerciceAttempt(exerciceId: string, token: string) {
+  const res = await fetchWithAuth(`/api/practical-exercices/id/${exerciceId}/attempt`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -113,7 +113,7 @@ export async function createPracticalExerciseAttempt(exerciseId: string, token: 
   return await res.json();
 }
 
-export async function fetchRandomPracticalExercise(
+export async function fetchRandomPracticalexercice(
   difficulty: string,
   language: string,
   themeIds: string[],
@@ -126,7 +126,7 @@ export async function fetchRandomPracticalExercise(
     themeIds.forEach((id) => params.append("themeIds", id));
   }
 
-  const res = await fetchWithAuth(`/api/practical-exercises/random?${params.toString()}`, {
+  const res = await fetchWithAuth(`/api/practical-exercices/random?${params.toString()}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -136,9 +136,9 @@ export async function fetchRandomPracticalExercise(
   return await res.json();
 }
 
-// Fetch the count of practical exercises for the user's active pack and paidVersionId pack
-export async function fetchPracticalExerciseCountForUserPack(token: string) {
-  const res = await fetchWithAuth('/api/practical-exercises/count/for-user-pack', {
+// Fetch the count of practical exercices for the user's active pack and paidVersionId pack
+export async function fetchPracticalexerciceCountForUserPack(token: string) {
+  const res = await fetchWithAuth('/api/practical-exercices/count/for-user-pack', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

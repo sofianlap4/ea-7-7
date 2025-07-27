@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import AddVideoForm from "./AddVideoForm";
+import AddVideoForm from "../components/AddVideoForm";
 import { fetchCourseById } from "../api/courses";
 import { fetchProfile } from "../api/profile";
 import { fetchVideosByCourse } from "../api/videos";

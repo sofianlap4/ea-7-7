@@ -7,25 +7,25 @@ import { uploadPdf } from "../utils/multerUpload";
 const pdfRoutes = (): Router => {
   const router = express.Router();
 
-  // Add a PDF to an exercise (with file upload)
+  // Add a PDF to an exercice (with file upload)
   router.post(
-    "/exercise/id/:exerciseId",
+    "/exercice/id/:exerciceId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     uploadPdf,
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { title, type } = req.body;
-        const { PDF, Exercise } = req.app.get("models");
-        const exercise = await Exercise.findByPk(req.params.exerciseId);
-        if (!exercise) return sendError(res, "Exercise not found", 404);
+        const { PDF, Exercice } = req.app.get("models");
+        const exercice = await Exercice.findByPk(req.params.exerciceId);
+        if (!exercice) return sendError(res, "exercice not found", 404);
         if (!req.file) return sendError(res, "No PDF file uploaded", 400);
         const fileUrl = `${process.env.BACKEND_URL}/uploads/pdfs/${req.file.filename}`;
         const pdf = await PDF.create({
           title,
           fileUrl,
           type,
-          exerciseId: exercise.id,
+          exerciceId: exercice.id,
         });
         sendSuccess(res, pdf, 201);
       } catch (err: any) {
@@ -34,15 +34,15 @@ const pdfRoutes = (): Router => {
     }
   );
 
-  // Get all PDFs for an exercise
+  // Get all PDFs for an exercice
   router.get(
-    "/exercise/id/:exerciseId",
+    "/exercice/id/:exerciceId",
     authenticateToken,
     async (req: any, res: any, next: NextFunction) => {
       try {
         const { PDF } = req.app.get("models");
         const pdfs = await PDF.findAll({
-          where: { exerciseId: req.params.exerciseId },
+          where: { exerciceId: req.params.exerciceId },
           order: [["createdAt", "DESC"]],
         });
         sendSuccess(res, pdfs, 200);
@@ -52,9 +52,9 @@ const pdfRoutes = (): Router => {
     }
   );
 
-  // Edit a PDF of an exercise
+  // Edit a PDF of an exercice
   router.put(
-    "/exercise/id/:pdfId",
+    "/exercice/id/:pdfId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {
@@ -73,7 +73,7 @@ const pdfRoutes = (): Router => {
 
   // Delete a PDF by ID (admins only)
   router.delete(
-    "/exercise/id/:pdfId",
+    "/exercice/id/:pdfId",
     authenticateToken,
     authorizeRoles("admin", "superadmin"),
     async (req: any, res: any, next: NextFunction) => {

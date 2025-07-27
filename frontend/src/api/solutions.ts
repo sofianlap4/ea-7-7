@@ -1,8 +1,8 @@
 import fetchWithAuth from '../utils/fetchWithAuth';
 
-// Fetch all solutions for a ranked exercise, ordered by most liked
-export const fetchExerciseSolutions = async (exerciseId: string) => {
-  const res = await fetchWithAuth(`/api/solutions/practical-exercises/id/${exerciseId}/solutions`);
+// Fetch all solutions for a ranked exercice, ordered by most liked
+export const fetchexerciceSolutions = async (exerciceId: string) => {
+  const res = await fetchWithAuth(`/api/solutions/practical-exercices/id/${exerciceId}/solutions`);
   return await res.json();
 };
 

@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
 
-export interface ExerciseAttributes {
+export interface exerciceAttributes {
   id: string;
   title: string;
   description: string;
@@ -9,7 +9,7 @@ export interface ExerciseAttributes {
 }
 
 export default (sequelize: Sequelize) => {
-  class Exercise extends Model<ExerciseAttributes> implements ExerciseAttributes {
+  class Exercice extends Model<exerciceAttributes> implements exerciceAttributes {
     public id!: string;
     public title!: string;
     public description!: string;
@@ -17,7 +17,7 @@ export default (sequelize: Sequelize) => {
     public readonly updatedAt!: Date;
   }
 
-  Exercise.init(
+  Exercice.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -35,9 +35,9 @@ export default (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: "Exercise",
+      modelName: "Exercice",
     }
   );
 
-  return Exercise;
+  return Exercice;
 };

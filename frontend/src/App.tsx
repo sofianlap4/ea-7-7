@@ -1,43 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import PasswordResetForm from "./components/PasswordResetForm";
-import ResetPasswordForm from "./components/ResetPasswordForm";
-import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
-import UserProfile from "./components/UserProfile";
-import CreateCourseForm from "./components/CreateCourseForm";
-import CourseList from "./components/CourseList";
-import CourseDetail from "./components/CourseDetail";
+import PasswordResetForm from "./pages/PasswordResetForm";
+import ResetPasswordForm from "./pages/ResetPasswordForm";
+import LoginForm from "./pages/LoginForm";
+import RegisterForm from "./pages/RegisterForm";
+import UserProfile from "./pages/UserProfile";
+import CreateCourseForm from "./pages/CreateCourseForm";
+import CourseList from "./pages/CourseList";
+import CourseDetail from "./pages/CourseDetail";
 import LogoutButton from "./components/LogoutButton";
-import PracticalExercisesPage from "./pages/PracticalExercisesPage";
+import PracticalExercicesPage from "./pages/PracticalExercicesPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
-import AdminRankedExercises from "./pages/AdminPracticalExercises";
+import AdminRankedExercices from "./pages/AdminPracticalExercices";
 import { jwtDecode } from "jwt-decode";
-import PackList from "./components/PackList";
-import MyPacks from "./components/MyPack";
-import AdminPackForm from "./components/AdminPackForm";
-import AdminPackStudents from "./components/AdminPackStudents";
-import AdminPackList from "./components/AdminPackList";
-import AdminManageCourses from "./components/AdminManageCourses";
-import PracticalExerciseRunnerPage from "./pages/PracticalExerciseRunnerPage";
+import PackList from "./pages/PackList";
+import MyPacks from "./pages/MyPack";
+import AdminPackForm from "./pages/AdminPackForm";
+import AdminPackStudents from "./pages/AdminPackStudents";
+import AdminPackList from "./pages/AdminPackList";
+import AdminManageCourses from "./pages/AdminManageCourses";
+import PracticalExerciceRunnerPage from "./pages/PracticalExerciceRunnerPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import CreditPage from "./pages/CreditPage";
-import LiveSessionsCalendar from "./components/LiveSessionsCalendar";
+import LiveSessionsCalendar from "./pages/LiveSessionsCalendar";
 import AdminCreditPage from "./pages/AdminCreditPage";
 import LiveSessionDetail from "./pages/LiveSessionDetail";
 import ContactPage from "./pages/ContactPage";
-import PracticalExerciseSolutionsPage from "./pages/PracticalExerciseSolutionsPage";
+import PracticalExerciceSolutionsPage from "./pages/PracticalExerciceSolutionsPage";
 import MyRankPage from "./pages/MyRankPage";
 import ManageRankingPage from "./pages/ManageRankingPage";
 import AdminManageThemes from "./pages/AdminManageThemes";
-import AdminReductionCodeList from "./components/AdminReductionCodeList";
+import AdminReductionCodeList from "./pages/AdminReductionCodeList";
 import AdminEditPracticalExercice from "./pages/AdminEditPracticalExercice";
 import AdminExercice from "./pages/AdminExercice";
 import AdminEditExercice from "./pages/AdminEditExercice";
 import AdminNewExercice from "./pages/AdminNewExercice";
-import ExercisesPage from "./pages/ExercisesPage";
-import ExercisesDetailPage from "./pages/ExercisesDetailPage";
+import ExercicesPage from "./pages/ExercicesPage";
+import ExercicesDetailPage from "./pages/ExercicesDetailPage";
 import AdminManageStudents from "./pages/AdminManageStudents";
 import AdminVerifyPayments from "./pages/AdminVerifyPayments";
 
@@ -100,17 +100,17 @@ const App: React.FC = () => {
                   <Link to='/admin/students'>Gérer les Étudiants</Link> |{" "}
                 </>
               )}
-              {/* Only students can see practical Exercises */}
-              {(userRole === "student" || userRole === "admin" || userRole === "superadmin") && (
+              {/* Only students can see practical Exercices */}
+              {(userRole === "student") && (
                 <>
-                  <Link to='/practical-exercises'>Exercices Pratiques</Link> |{" "}
-                  <Link to='/exercises'>Exercices</Link> |{" "}
+                  <Link to='/practical-exercices'>Exercices Pratiques</Link> |{" "}
                 </>
               )}
               {userRole === "student" && (
                 <>
                   <Link to='/packs'>Tous les Packs</Link> | <Link to='/my-pack'>Mon Pack</Link> |{" "}
                   <Link to='/credit'>Mon Crédit</Link>
+                  <Link to='/exercices'>Exercices</Link> |{" "}
                 </>
               )}
               {(userRole === "admin" || userRole === "superadmin") && (
@@ -126,7 +126,7 @@ const App: React.FC = () => {
             <>
               <Link to='/admin/packs/new'>Create Pack</Link> |{" "}
               <Link to='/admin/packs'>Manage Packs</Link> |{" "}
-              <Link to='/admin/practical-exercises'>Gérer les Exercices Pratiques</Link> |{" "}
+              <Link to='/admin/practical-exercices'>Gérer les Exercices Pratiques</Link> |{" "}
               <Link to='/admin/credit'>Gestion des Crédits</Link> |{" "}
               <Link to='/admin/manage-ranking'>Gérer le Classement</Link>|{" "}
               <Link to='/admin/manage-themes'>Gérer les Thèmes</Link> |{" "}
@@ -220,26 +220,26 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path='/practical-exercises'
+            path='/practical-exercices'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
                 roles={["student", "admin", "superadmin"]}
                 userRole={userRole}
               >
-                <PracticalExercisesPage userId={userId} />
+                <PracticalExercicesPage userId={userId} />
               </ProtectedRoute>
             }
           />
           <Route
-            path='/exercises'
+            path='/exercices'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
                 roles={["student"]}
                 userRole={userRole}
               >
-                <ExercisesPage />
+                <ExercicesPage />
               </ProtectedRoute>
             }
           />
@@ -251,7 +251,7 @@ const App: React.FC = () => {
                 roles={["student"]}
                 userRole={userRole}
               >
-                <ExercisesDetailPage />
+                <ExercicesDetailPage />
               </ProtectedRoute>
             }
           />
@@ -342,14 +342,14 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path='/admin/practical-exercises'
+            path='/admin/practical-exercices'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
                 roles={["admin"]}
                 userRole={userRole}
               >
-                <AdminRankedExercises />
+                <AdminRankedExercices />
               </ProtectedRoute>
             }
           />
@@ -366,14 +366,14 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path='/practical-exercises/:exerciseId'
+            path='/practical-exercices/:exerciceId'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
                 roles={["student", "admin", "superadmin"]}
                 userRole={userRole}
               >
-                <PracticalExerciseRunnerPage />
+                <PracticalExerciceRunnerPage />
               </ProtectedRoute>
             }
           />
@@ -418,14 +418,14 @@ const App: React.FC = () => {
           />
 
           <Route
-            path='/practical-exercises/:exerciseId/solutions'
+            path='/practical-exercices/:exerciceId/solutions'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
                 roles={["student"]}
                 userRole={userRole}
               >
-                <PracticalExerciseSolutionsPage />
+                <PracticalExerciceSolutionsPage />
               </ProtectedRoute>
             }
           />
@@ -479,7 +479,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path='/admin/practical-exercises/edit/:exerciseId'
+            path='/admin/practical-exercices/edit/:exerciceId'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
@@ -505,7 +505,7 @@ const App: React.FC = () => {
           />
 
           <Route
-            path='/admin/exercices/edit/:exerciseId'
+            path='/admin/exercices/edit/:exerciceId'
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MonacoEditor from "@monaco-editor/react";
-import { createPracticalExerciseAttempt, submitPracticalExercise, practicalExerciseRun } from "../api/practicalExercices";
+import { createPracticalexerciceAttempt, submitPracticalexercice, practicalexerciceRun } from "../api/practicalExercices";
 import { PRACTICAL_RUNNER_RESPONSE_MESSAGES } from "../utils/responseMessages";
 
 interface TestCase {
@@ -15,9 +15,9 @@ interface Props {
   testCases?: TestCase[];
 }
 
-const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, testCases = [] }) => {
+const RankedexerciceRunner: React.FC<Props> = ({ starterCode = "", language, testCases = [] }) => {
   const navigate = useNavigate();
-  const { exerciseId } = useParams(); // Make sure your route provides this param
+  const { exerciceId } = useParams(); // Make sure your route provides this param
   const [code, setCode] = useState(starterCode);
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,7 +42,7 @@ const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, tes
         return;
       }
 
-      const response = await practicalExerciseRun(code, language, testCases, token);
+      const response = await practicalexerciceRun(code, language, testCases, token);
       if (response?.success && response?.data) {
         setOutput(response?.data?.message);
         setTestResults(response?.data?.results || []);
@@ -68,8 +68,8 @@ const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, tes
       }
 
       // Log the attempt (regardless of pass/fail)
-      if (exerciseId) {
-        await createPracticalExerciseAttempt(exerciseId, token);
+      if (exerciceId) {
+        await createPracticalexerciceAttempt(exerciceId, token);
       }
     } catch (error) {
       setOutput("Error running tests.");
@@ -80,15 +80,15 @@ const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, tes
 
   // Submit handler
   const handleSubmit = async () => {
-    if (!exerciseId) return;
+    if (!exerciceId) return;
     setSubmitLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await submitPracticalExercise(exerciseId, code, token);
+      const response = await submitPracticalexercice(exerciceId, code, token);
       if (response?.data.passed) {
         setOutput(`${response?.data.message || ""}`);
         // Redirect to the solutions page
-        navigate(`/practical-exercises/${exerciseId}/solutions`);
+        navigate(`/practical-exercices/${exerciceId}/solutions`);
       } else {
         setOutput(response.data.error || response?.data.message || "Submission failed.");
       }
@@ -102,7 +102,7 @@ const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, tes
   const allPassed = testResults.length > 0 && testResults.every(Boolean);
 
   return (
-    <div className='exercise-runner'>
+    <div className='exercice-runner'>
       <MonacoEditor
         height='400px'
         defaultLanguage={language}
@@ -150,4 +150,4 @@ const RankedExerciseRunner: React.FC<Props> = ({ starterCode = "", language, tes
   );
 };
 
-export default RankedExerciseRunner;
+export default RankedexerciceRunner;

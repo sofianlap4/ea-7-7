@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { fetchCredit } from "../api/profile";
 import { initCreditPurchase, uploadBankTransferProof } from "../api/payment";
-import StudentCreditHistory from "../components/StudentCreditHistory";
+import StudentCreditHistory from "./StudentCreditHistory";
 
 const CreditPage: React.FC = () => {
   const [credit, setCredit] = useState<number>(0);

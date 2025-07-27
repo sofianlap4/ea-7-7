@@ -39,11 +39,11 @@ export default (sequelize: Sequelize) => {
           key: "id",
         },
       },
-      exerciseId: {
+      exerciceId: {
         type: DataTypes.UUID,
         allowNull: true,
         references: {
-          model: "Exercises",
+          model: "Exercices",
           key: "id",
         },
       },

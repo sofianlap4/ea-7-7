@@ -1,8 +1,8 @@
 import fetchWithAuth from '../utils/fetchWithAuth';
 
-// Add a PDF to an exercise (POST /api/pdfs/exercise/id/:exerciseId)
-export const addPdfToExercise = async (
-  exerciseId: string,
+// Add a PDF to an exercice (POST /api/pdfs/exercice/id/:exerciceId)
+export const addPdfToexercice = async (
+  exerciceId: string,
   data: { title: string; file: File; type: string },
   token?: string
 ) => {
@@ -11,7 +11,7 @@ export const addPdfToExercise = async (
   formData.append('type', data.type);
   formData.append('file', data.file);
 
-  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${exerciseId}`, {
+  const res = await fetchWithAuth(`/api/pdfs/exercice/id/${exerciceId}`, {
     method: 'POST',
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -22,9 +22,9 @@ export const addPdfToExercise = async (
   return await res.json();
 };
 
-// Get all PDFs for an exercise (GET /api/pdfs/exercise/id/:exerciseId)
-export const fetchPdfsByExercise = async (exerciseId: string, token?: string) => {
-  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${exerciseId}`, {
+// Get all PDFs for an exercice (GET /api/pdfs/exercice/id/:exerciceId)
+export const fetchPdfsByexercice = async (exerciceId: string, token?: string) => {
+  const res = await fetchWithAuth(`/api/pdfs/exercice/id/${exerciceId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -34,13 +34,13 @@ export const fetchPdfsByExercise = async (exerciseId: string, token?: string) =>
   return await res.json();
 };
 
-// Edit a PDF of an exercise (PUT /api/pdfs/exercise/id/:pdfId)
-export const editPdfOfExercise = async (
+// Edit a PDF of an exercice (PUT /api/pdfs/exercice/id/:pdfId)
+export const editPdfOfexercice = async (
   pdfId: string,
   data: { title?: string; fileUrl?: string; type?: string },
   token?: string
 ) => {
-  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${pdfId}`, {
+  const res = await fetchWithAuth(`/api/pdfs/exercice/id/${pdfId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -51,9 +51,9 @@ export const editPdfOfExercise = async (
   return await res.json();
 };
 
-// Delete a PDF by ID (DELETE /api/pdfs/exercise/id/:pdfId)
-export const deletePdfOfExercise = async (pdfId: string, token?: string) => {
-  const res = await fetchWithAuth(`/api/pdfs/exercise/id/${pdfId}`, {
+// Delete a PDF by ID (DELETE /api/pdfs/exercice/id/:pdfId)
+export const deletePdfOfexercice = async (pdfId: string, token?: string) => {
+  const res = await fetchWithAuth(`/api/pdfs/exercice/id/${pdfId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
