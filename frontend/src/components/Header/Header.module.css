@@ -1,5 +1,3 @@
-/* Header.css */
-
 .header {
   width: 100%;
   position: relative;
@@ -9,7 +7,7 @@
   z-index: 1000;
 }
 
-.header-container {
+.headerContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,7 +17,9 @@
   flex-wrap: wrap;
 }
 
-.logo-container .logo {
+.logoContainer {}
+
+.logo {
   height: 40px;
   width: auto;
 }
@@ -30,8 +30,8 @@
   flex-wrap: wrap;
 }
 
-.signin-button,
-.register-button {
+.signinButton,
+.registerButton {
   padding: 0.5rem 1rem;
   border-radius: 6px;
   text-decoration: none;
@@ -40,28 +40,28 @@
   font-size: 0.9rem;
 }
 
-.signin-button {
+.signinButton {
   color: #333;
   border: 1px solid transparent;
 }
 
-.signin-button:hover {
+.signinButton:hover {
   background-color: #f0f0f0;
   color: #000;
 }
 
-.register-button {
+.registerButton {
   background-color: #e04e1f;
   color: white;
   border: 2px solid #e04e1f;
 }
 
-.register-button:hover {
+.registerButton:hover {
   background-color: white;
   color: #e04e1f;
 }
 
-.promo-banner {
+.promoBanner {
   background-color: #d7ebf9;
   color: #003b5c;
   text-align: center;
@@ -70,12 +70,12 @@
   position: relative;
 }
 
-.promo-banner a {
+.promoBanner a {
   color: #003b5c;
   text-decoration: underline;
 }
 
-.close-banner {
+.closeBanner {
   position: absolute;
   right: 1rem;
   top: 0.5rem;
@@ -87,7 +87,7 @@
 }
 
 @media (max-width: 768px) {
-  .header-container {
+  .headerContainer {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
@@ -97,19 +97,19 @@
     align-self: flex-end;
   }
 
-  .promo-banner {
+  .promoBanner {
     font-size: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
-  .register-button,
-  .signin-button {
+  .registerButton,
+  .signinButton {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
   }
 
-  .promo-banner {
+  .promoBanner {
     padding: 0.5rem;
   }
 }

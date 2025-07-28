@@ -1,9 +1,9 @@
-.banner-container-main {
+.bannerContainerMain {
     max-width: 100%;
     overflow-x: clip;
 }
 
-.banner-wrapper {
+.bannerWrapper {
     position: relative;
     background-color: #003b3b;
     overflow: hidden;
@@ -12,26 +12,26 @@
 }
 
 @media (min-width: 640px) {
-    .banner-wrapper {
+    .bannerWrapper {
         padding: 2.5rem 1rem;
     }
 }
 
 @media (min-width: 1024px) {
-    .banner-wrapper {
+    .bannerWrapper {
         padding-left: 5rem;
         padding-right: 5rem;
     }
 }
 
 @media (min-width: 1280px) {
-    .banner-wrapper {
+    .bannerWrapper {
         padding-top: 5rem;
         padding-bottom: 5rem;
     }
 }
 
-.first-img {
+.firstImg {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -42,62 +42,62 @@
     background-image: linear-gradient(to bottom, #00504f, #002c2c, #001818);
 }
 
-.mobile-banner {
+.mobileBanner {
     display: block;
 }
 
-.tablet-banner,
-.desktop-banner {
+.tabletBanner,
+.desktopBanner {
     display: none;
 }
 
 @media (min-width: 640px) {
-    .mobile-banner {
+    .mobileBanner {
         display: none;
     }
 
-    .tablet-banner {
+    .tabletBanner {
         display: block;
     }
 }
 
 @media (min-width: 1280px) {
-    .tablet-banner {
+    .tabletBanner {
         display: none;
     }
 
-    .desktop-banner {
+    .desktopBanner {
         display: block;
     }
 }
 
-.banner-container {
+.bannerContainer {
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 1rem;
     color: white;
 }
 
-.content-wrapper {
+.contentWrapper {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
 @media (min-width: 768px) {
-    .content-wrapper {
+    .contentWrapper {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
     }
 }
 
-.text-content {
+.textContent {
     max-width: 600px;
 }
 
 @media (min-width: 1280px) {
-    .text-content {
+    .textContent {
         flex-basis: 60%;
     }
 }
@@ -153,24 +153,24 @@
     }
 }
 
-.btn.primary {
+.primary {
     background-color: #d74000;
     color: white;
     border: 2px solid #d74000;
 }
 
-.btn.primary:hover {
+.primary:hover {
     background-color: white;
     color: #d74000;
 }
 
-.btn.secondary {
+.secondary {
     background-color: white;
     color: #d74000;
     border: 2px solid #d74000;
 }
 
-.btn.secondary:hover {
+.secondary:hover {
     background-color: #d74000;
     color: white;
 }
@@ -182,7 +182,7 @@
     justify-content: center;
 }
 
-.course-card {
+.courseCard {
     flex: 1 1 260px;
     max-width: 260px;
     text-decoration: none;
@@ -200,13 +200,13 @@
     min-height: 332px;
 }
 
-.card_img_container {
+.cardImgContainer {
     width: 100%;
     height: 104px;
     overflow: hidden;
 }
 
-.course-img {
+.courseImg {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -214,17 +214,21 @@
     border-top-right-radius: 0.75rem;
 }
 
-.card-body {
+.cardBody {
     padding: 1.5rem;
     color: black;
     flex-grow: 1;
 }
 
-.card-body h2 {
+.cardBody h2 {
     font-size: 1rem;
     font-weight: bold;
     line-height: 1.4;
     margin-bottom: 0.25rem;
+}
+
+.cardBodyP {
+    margin-top: 0.25rem;
 }
 
 .institution {
@@ -235,13 +239,13 @@
     text-overflow: ellipsis;
 }
 
-.badge-container {
+.badgeContainer {
     padding: 1.25rem;
     display: flex;
     align-items: flex-start;
 }
 
-.badge-text {
+.badgeText {
     font-size: 0.75rem;
     font-weight: 600;
     padding: 0.125rem 0.625rem;
@@ -263,7 +267,7 @@
 }
 
 @media (min-width: 1280px) {
-    .content-wrapper {
+    .contentWrapper {
         max-width: 1536px;
     }
 }
