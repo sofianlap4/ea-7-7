@@ -160,18 +160,18 @@
 
 .primary {
     background-color: var(--primary);
-    color: white;
+    color: var(--secondary);
     border: 2px solid var(--primary);
 }
 
 .primary:hover {
-    background-color: white;
+    background-color: var(--secondary);
     color: var(--primary);
 }
 
 .secondary {
-    background-color: white;
-    color: var(--primary);
+    background-color: var(--secondary);
+    color: var(--blue);
     border: 2px solid var(--primary);
 }
 
