@@ -9,7 +9,7 @@ const Footer = () => {
       <div className={styles.container}>
         <img src={logo} alt="Logo" className={styles.logo} />
 
-          <Link to='/contact'>Contact</Link> | {" "}
+          <Link to='/contact'>Contact</Link>
 
         <div className={styles.socialLinks}>
           <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
