@@ -22,8 +22,9 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className={styles.container}>
-      <h2 className={styles.subheading}>The reviews are in:</h2>
+    <section className={styles.wrapper}>
+      <div className={styles.container}>
+        <h2 className={styles.subheading}>The reviews are in:</h2>
       <h3 className={styles.heading}>What learners are saying</h3>
 
       <div className={styles.grid}>
@@ -39,6 +40,7 @@ const Testimonials = () => {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </section>
   );

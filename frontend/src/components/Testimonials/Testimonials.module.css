@@ -1,13 +1,19 @@
+.wrapper {
+    background-color: var(--background);
+}
+
 .container {
   padding: 4rem 1rem;
   max-width: 1200px;
   margin: auto;
+  background-color: var(--background);
+  color: var(--text);
 }
 
 .subheading {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111;
+  color: var(--secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -15,7 +21,7 @@
   font-size: 2.5rem;
   font-style: italic;
   font-weight: 900;
-  color: #003c3c;
+  color: var(--secondary);
   margin-bottom: 2rem;
 }
 
@@ -38,8 +44,8 @@
 }
 
 .card {
-  background-color: #f8f8f8;
-  border: 1px solid #e3e3e3;
+  background-color: var(--secondary);
+  border: 1px solid var(--primary);
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
@@ -51,7 +57,7 @@
   font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 1rem;
-  color: #111;
+  color: var(--accent-dark);
 }
 
 .user {
@@ -71,10 +77,11 @@
 .name {
   font-weight: 600;
   margin: 0;
+  color: var(--accent-dark);
 }
 
 .program {
   margin: 0;
   font-size: 0.85rem;
-  color: #444;
+  color: var(--color-text);
 }

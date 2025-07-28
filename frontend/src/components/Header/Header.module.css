@@ -1,7 +1,6 @@
 .header {
   width: 100%;
   position: relative;
-  font-family: Arial, sans-serif;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   background-color: white;
   z-index: 1000;
@@ -17,8 +16,6 @@
   flex-wrap: wrap;
 }
 
-.logoContainer {}
-
 .logo {
   height: 40px;
   width: auto;
@@ -33,11 +30,14 @@
 .signinButton,
 .registerButton {
   padding: 0.5rem 1rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-  font-size: 0.9rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(.4,0,.2,1);
+    transition-duration: .15s;
+      box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 .signinButton {
@@ -51,14 +51,15 @@
 }
 
 .registerButton {
-  background-color: #e04e1f;
-  color: white;
-  border: 2px solid #e04e1f;
+background-color: var(--accent);
+    color: white;
+    border: 2px solid var(--accent);
+    border-radius: calc(6rem - 2px);
 }
 
 .registerButton:hover {
   background-color: white;
-  color: #e04e1f;
+  color: var(--accent);
 }
 
 .promoBanner {

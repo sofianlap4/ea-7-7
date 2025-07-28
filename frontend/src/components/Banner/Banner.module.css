@@ -1,11 +1,13 @@
 .bannerContainerMain {
     max-width: 100%;
     overflow-x: clip;
+    background-color: var(--background);
+    color: var(--text);
 }
 
 .bannerWrapper {
     position: relative;
-    background-color: #003b3b;
+    background-color: var(--background);
     overflow: hidden;
     margin: 0 -1rem;
     padding: 1.5rem 1rem;
@@ -39,7 +41,7 @@
     object-fit: cover;
     z-index: -1;
     object-position: right;
-    background-image: linear-gradient(to bottom, #00504f, #002c2c, #001818);
+    background-image: linear-gradient(to bottom, var(--primary-dark), var(--primary-light));
 }
 
 .mobileBanner {
@@ -75,7 +77,7 @@
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 1rem;
-    color: white;
+    color: var(--secondary);
 }
 
 .contentWrapper {
@@ -94,6 +96,7 @@
 
 .textContent {
     max-width: 600px;
+    color: var(--text);
 }
 
 @media (min-width: 1280px) {
@@ -145,6 +148,8 @@
     transition: all 0.3s ease;
     width: 100%;
     text-align: center;
+    background-color: var(--accent);
+    color: var(--accent-foreground);
 }
 
 @media (min-width: 640px) {
@@ -154,24 +159,24 @@
 }
 
 .primary {
-    background-color: #d74000;
+    background-color: var(--primary);
     color: white;
-    border: 2px solid #d74000;
+    border: 2px solid var(--primary);
 }
 
 .primary:hover {
     background-color: white;
-    color: #d74000;
+    color: var(--primary);
 }
 
 .secondary {
     background-color: white;
-    color: #d74000;
-    border: 2px solid #d74000;
+    color: var(--primary);
+    border: 2px solid var(--primary);
 }
 
 .secondary:hover {
-    background-color: #d74000;
+    background-color: var(--primary);
     color: white;
 }
 

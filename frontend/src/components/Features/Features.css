@@ -1,15 +1,14 @@
 .features-section {
   padding: 4rem 2rem;
-  background-color: #fff;
-  font-family: 'Segoe UI', sans-serif;
-  color: #2a2b3f;
+  background-color: var(--accent-foreground);
+  color: var(--text);
 }
 
 .features-heading {
   text-align: center;
   font-size: clamp(1.6rem, 2vw + 1rem, 2.4rem);
   margin-bottom: 2.5rem;
-  color: #595c73;
+  color: var(--accent-light);
 }
 
 /* Desktop/Tablet Layout */
@@ -28,8 +27,8 @@
 }
 
 .features-tab {
-  background-color: #fff;
-  border: 1px solid #d1d2e0;
+  background-color: var(--secondary);
+  border: 1px solid var(--accent-dark);
   border-radius: 8px;
   padding: 1.5rem;
   cursor: pointer;
@@ -37,18 +36,19 @@
 }
 
 .features-tab.active {
-  border-color: #5624d0;
+  border-color: var(--accent);
 }
 
 .features-tab h3 {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  color: var(--color-text);
 }
 
 .features-tab p {
   font-size: 1rem;
-  color: #595c73;
+  color: var(--color-text);
 }
 
 .features-image {
@@ -65,11 +65,16 @@
 
 /* Mobile: Swiper style */
 .feature-card {
-  background: #f9f9fc;
+  background-color: var(--secondary);
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.06);
+  color: var(--color-text);
+}
+
+.feature-card:hover {
+  background-color: var(--primary-light);
 }
 
 .feature-card img {
@@ -86,7 +91,7 @@
 
 .feature-card p {
   font-size: 1rem;
-  color: #595c73;
+  color: var(--color-text);
 }
 
 /* Responsive */

@@ -1,4 +1,53 @@
-@import './variables.css';
+:root {
+  /* Primary Colors */
+  --primary: #D4AF37;
+  --primary-light: #e6c76b;
+  --primary-dark: #b08e2d;
+  --primary-foreground: #322e2c;
+
+  /* Secondary Colors */
+  --secondary: #F5F5F5;
+  --secondary-dark: #e0e0e0;
+  --secondary-light: #ffffff;
+  --secondary-foreground: #322e2c;
+
+  /* Accent Colors */
+  --accent: #322e2c;
+  --accent-light: #4a4543;
+  --accent-dark: #1f1d1c;
+  --accent-foreground: #F5F5F5;
+
+  /* Background and Text */
+  --background: #322e2c;
+  --text: #F5F5F5;
+
+  /* Additional Colors */
+  --blue: #306998;
+  --green: #2E8B57;
+
+  --color-primary: #306998;
+  --color-dark: #322e2c;
+  --color-accent: #D4AF37;
+  --color-bg: #ffffff;
+  --color-text: #111111;
+  --color-link: var(--color-primary);
+  --color-border: #ccc;
+
+
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1a1a1a;
+    --color-text: #f5f5f5;
+    --color-link: #63b3ed;
+    --color-border: #333;
+  }
+}
+
 
 /* === 1. Base Reset === */
 *,
@@ -7,62 +56,11 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-      -webkit-text-size-adjust: 100%;
-    tab-size: 4;
-    font-feature-settings: normal;
-    font-variation-settings: normal;
-    -webkit-font-smoothing: antialiased;
-  --tw-border-spacing-x: 0;
-  --tw-border-spacing-y: 0;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  --tw-pan-x: ;
-  --tw-pan-y: ;
-  --tw-pinch-zoom: ;
-  --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position: ;
-  --tw-gradient-via-position: ;
-  --tw-gradient-to-position: ;
-  --tw-ordinal: ;
-  --tw-slashed-zero: ;
-  --tw-numeric-figure: ;
-  --tw-numeric-spacing: ;
-  --tw-numeric-fraction: ;
-  --tw-ring-inset: ;
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
-  --tw-ring-offset-shadow: 0 0 #0000;
-  --tw-ring-shadow: 0 0 #0000;
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  --tw-blur: ;
-  --tw-brightness: ;
-  --tw-contrast: ;
-  --tw-grayscale: ;
-  --tw-hue-rotate: ;
-  --tw-invert: ;
-  --tw-saturate: ;
-  --tw-sepia: ;
-  --tw-drop-shadow: ;
-  --tw-backdrop-blur: ;
-  --tw-backdrop-brightness: ;
-  --tw-backdrop-contrast: ;
-  --tw-backdrop-grayscale: ;
-  --tw-backdrop-hue-rotate: ;
-  --tw-backdrop-invert: ;
-  --tw-backdrop-opacity: ;
-  --tw-backdrop-saturate: ;
-  --tw-backdrop-sepia: ;
-  --tw-contain-size: ;
-  --tw-contain-layout: ;
-  --tw-contain-paint: ;
-  --tw-contain-style: ;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  -webkit-font-smoothing: antialiased;
 }
 
 html,
@@ -75,25 +73,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* === 2. CSS Variables and Themes === */
-:root {
-  --color-primary: #306998;
-  --color-dark: #322e2c;
-  --color-accent: #D4AF37;
-  --color-bg: #ffffff;
-  --color-text: #111111;
-  --color-link: var(--color-primary);
-  --color-border: #ccc;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #1a1a1a;
-    --color-text: #f5f5f5;
-    --color-link: #63b3ed;
-    --color-border: #333;
-  }
-}
 
 /* === 3. Base Elements === */
 body {
