@@ -6,7 +6,6 @@ import HowItWorks from "../components/HowItWorks/HowItWorks";
 import Access from "../components/Access/Access";
 import Footer from "../components/Footer/Footer";
 import PacksOffers from "../components/PacksOffers/PacksOffers";
-import WhyChooseUs from "../components/WhyChooseUs/WhyChooseUs";
 import Testimonials from "../components/Testimonials/Testimonials";
 import RegisterNow from "../components/RegisterNow/RegisterNow";
 
@@ -20,7 +19,6 @@ const HomePage: React.FC = ({  }) => {
         <Features />
         <HowItWorks />
         <PacksOffers />
-        <WhyChooseUs />
         <Access />
         <Testimonials />
         <RegisterNow />

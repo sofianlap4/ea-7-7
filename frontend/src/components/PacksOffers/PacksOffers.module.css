@@ -17,8 +17,8 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   justify-content: center;
-      max-width: 1200px;
-    margin: auto;
+  max-width: 1200px;
+  margin: auto;
 }
 
 .mobileSwiper {
