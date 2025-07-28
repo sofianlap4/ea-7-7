@@ -1,0 +1,133 @@
+.features-section {
+    font-family: var(--font-stack-text);
+    font-weight: 400;
+    line-height: 1.4;
+    font-size: 1.6rem;
+    color: #2a2b3f;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.viewport-container {
+    font-family: var(--font-stack-text);
+    font-weight: 400;
+    line-height: 1.4;
+    font-size: 1.6rem;
+    color: #2a2b3f;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 6.4rem;
+}
+
+.container-with-padding {
+    font-family: var(--font-stack-text);
+    font-weight: 400;
+    line-height: 1.4;
+    font-size: 1.6rem;
+    color: #2a2b3f;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    container-type: inline-size;
+}
+
+.container_with_content {
+    font-family: var(--font-stack-text);
+    font-weight: 400;
+    line-height: 1.4;
+    font-size: 1.6rem;
+    color: #2a2b3f;
+    text-align: center;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.heading-xl {
+    max-inline-size: 60rem;
+    color: #595c73;
+    font-weight: 400;
+    margin-bottom: 2.4rem;
+    font-size: clamp(1.7rem, calc(1.7rem + (1.8 - 1.7) * calc((100vw - 36rem) / (144 - 36))), 1.8rem);
+    max-width: 100%;
+}
+
+.features-tablist {
+    width: 53rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    grid-row-gap: 1.6rem;
+    container-type: inline-size;
+}
+
+.features-tab {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline-start: 0;
+}
+
+.features-icon {
+    max-inline-size: 100%;
+    block-size: auto;
+    vertical-align: middle;
+}
+
+.features-content {
+    margin-top: 3.2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2.4rem;
+}
+
+.features-panels {
+    width: 61rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.features-tab.selected {
+    border-color: var(--color-purple-300);
+    border-left-width: .8rem;
+    padding-left: 1.7rem;
+}
+
+.features-tab {
+    background-color: var(--color-white);
+    display: flex;
+    border-radius: 8px;
+    border: 1px solid #d1d2e0;
+    padding-left: 2.4rem;
+    flex-direction: row;
+    height: 100%;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.features-tab-content {
+    padding: .8rem 1.6rem 0;
+}
+
+.features-title {
+    display: flex;
+    margin-bottom: .8rem;
+}
+
+.features-description {
+    color: #595c73;
+    font-family: var(--font-stack-text);
+    font-weight: 400;
+    line-height: 1.4;
+    font-size: 1.6rem;
+}
