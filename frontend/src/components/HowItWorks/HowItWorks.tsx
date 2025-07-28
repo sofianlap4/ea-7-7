@@ -1,11 +1,14 @@
-import howworks from "../../images/how-it-works.png"
+import howworks from "../../images/how-it-works.png";
+import styles from "./HowItWorks.module.css";
 
 const HowItWorks = () => {
-    return (
-        <section>
-            <img src={howworks} alt="how-works" />
-        </section>
-    );
+  return (
+    <section className={styles.section}>
+      <div className={styles.imageWrapper}>
+        <img src={howworks} alt="Comment ça marche" className={styles.image} />
+      </div>
+    </section>
+  );
 };
 
 export default HowItWorks;

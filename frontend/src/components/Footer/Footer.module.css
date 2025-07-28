@@ -1,7 +1,8 @@
 .footer {
-  background-color: rgb(50,46,44);
+  background-color: #322e2c;
   color: white;
   padding: 2rem 1rem;
+  border-top: 1px solid #444;
 }
 
 .container {
@@ -18,6 +19,17 @@
   width: auto;
 }
 
+.contact {
+  color: #00b3ff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact:hover {
+  color: #66d6ff;
+}
+
 .socialLinks {
   display: flex;
   gap: 1.5rem;
@@ -28,16 +40,17 @@
   align-items: center;
   justify-content: center;
   color: white;
-  transition: color 0.3s ease;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .socialLinks a:hover {
-  color: #00b3ff;
+  color: #ffd700;
+  transform: scale(1.15);
 }
 
 .socialLinks svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   fill: currentColor;
 }
 
@@ -45,5 +58,6 @@
   .container {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
   }
 }
