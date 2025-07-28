@@ -6,33 +6,33 @@ import 'swiper/css/pagination';
 import './Features.css';
 
 const featuresData = [
-  {
-    title: 'Formation pratique',
+      {
+    title: 'Des cours en videos et des cours en direct',
     description:
-      "Perfectionnez vos compétences de manière efficace grâce à des exercices de codage, des exercices pratiques et des quiz alimentés par l'IA.",
+      "Des cours adaptés à vos besoins, avec des vidéos de haute qualité",
+    image:
+      'https://cms-images.udemycdn.com/96883mtakkm8/385IhnON960Wvz50ooWIN3/db60552ea0c7bfb9c41b57fefb39af04/French.png',
+  },
+  {
+    title: 'Des exercices pratique avec Live Code Practice Environment',
+    description:
+      "Python/JavaScript/SQL support with Instant feedback",
     image:
       'https://cms-images.udemycdn.com/96883mtakkm8/4kbyXne3Slx9Sfz4nTBqdf/dcee8645ac7a78bbebc8e2ef1d3993f2/French.png',
   },
   {
-    title: 'Préparation aux certifications',
+    title: 'PDF Exercises + Video Solutionss',
     description:
-      'Préparez-vous à obtenir des certifications reconnues par le secteur en relevant des défis concrets et décrochez des badges au passage.',
+      'Each exercise comes with a step-by-step video explanation',
     image:
       'https://cms-images.udemycdn.com/96883mtakkm8/GUVYFTj0uwEQuJha5j7TZ/6993e5e5d59d1cf7ebad512f1b91275f/French.png',
   },
-  {
-    title: 'Informations et analyses',
+    {
+    title: 'Leaderboard',
     description:
-      'Atteignez rapidement vos objectifs grâce à des informations avancées et à une équipe dédiée à la réussite des clients.',
+      'Know your actual level compared to other students and compete with them',
     image:
       'https://cms-images.udemycdn.com/96883mtakkm8/6q4N9BvIQusFoheoALJhGj/e1e44d506d3b6b6d38cfd6893b131603/French.png',
-  },
-  {
-    title: 'Contenu personnalisable',
-    description:
-      "Créez des parcours d'apprentissage personnalisés selon les objectifs de votre organisation, et hébergez votre propre contenu.",
-    image:
-      'https://cms-images.udemycdn.com/96883mtakkm8/385IhnON960Wvz50ooWIN3/db60552ea0c7bfb9c41b57fefb39af04/French.png',
   },
 ];
 

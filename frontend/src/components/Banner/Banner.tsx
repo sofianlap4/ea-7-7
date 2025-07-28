@@ -24,10 +24,10 @@ const Banner = () => {
                 <div className="banner-container">
                     <div className="content-wrapper">
                         <div className="text-content">
-                            <h1 className="title">Unlock your future - get 15% off!</h1>
+                            <h1 className="title">Learn to Code. Practice. Compete. Succeed.</h1>
                             <p className="description">
-                                Level up your skills and save up to 15% off on select courses and certificates. Apply code{' '}
-                                <span className="highlight">LEVELUPEDX25</span>, offer expires July 30, 2025.
+                                Video courses {' '}
+                                <span className="highlight">real-time code practice </span>, and challenges
                             </p>
                             <div className="actions">
                                 <a
@@ -36,7 +36,7 @@ const Banner = () => {
                                     target="_self"
                                     rel="noopener noreferrer"
                                 >
-                                    Learn more
+                                    How it works
                                 </a>
                                 <a
                                     href="https://www.edx.org/search?learning_type=Course&learning_type=MicroBachelors&learning_type=MicroMasters&learning_type=Professional+Certificate&learning_type=XSeries"
@@ -44,7 +44,7 @@ const Banner = () => {
                                     target="_self"
                                     rel="noopener noreferrer"
                                 >
-                                    Explore offerings
+                                    Start Learning
                                 </a>
                             </div>
                         </div>
