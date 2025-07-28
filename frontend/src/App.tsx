@@ -84,12 +84,7 @@ const App: React.FC = () => {
               <Link to='/courses'>Cours</Link> | <Link to='/my-rank'>Mon Rang</Link> | <Link to='/practical-exercices'>Exercices Pratiques</Link> | <Link to='/packs'>Tous les Packs</Link> | <Link to='/my-pack'>Mon Pack</Link> | <Link to='/credit'>Mon Crédit</Link> | <Link to='/exercices'>Exercices</Link> | {" "}
             </>
           )}
-          {!isAuthenticated && (
-            <>
-              <Link to='/login'>Connexion</Link> | <Link to='/register'>S'inscrire</Link> | {" "}
-            </>
-          )}
-          <Link to='/contact'>Contact</Link> | {" "}
+
           {isAuthenticated && (
             <>
               <Link to='/profile'>Profil</Link> | <Link to='/live-sessions'>Sessions en Direct</Link> | {" "}
@@ -106,7 +101,6 @@ const App: React.FC = () => {
               <Link to='/admin/packs/new'>Create Pack</Link> | <Link to='/admin/packs'>Manage Packs</Link> | <Link to='/admin/practical-exercices'>Gérer les Exercices Pratiques</Link> | <Link to='/admin/credit'>Gestion des Crédits</Link> | <Link to='/admin/manage-ranking'>Gérer le Classement</Link> | <Link to='/admin/manage-themes'>Gérer les Thèmes</Link> | <Link to='/admin/user-pack-reductions'>Gérer les Réductions</Link> | <Link to='/admin/verify-payments'>Vérifier les Paiements</Link> | {" "}
             </>
           )}
-          {!isAuthenticated && <Link to='/request-password-reset'>Mot de passe oublié ?</Link>}
         </nav>
         <Routes>
           <Route path='/' element={<HomePage />} />

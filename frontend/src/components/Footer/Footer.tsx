@@ -1,12 +1,15 @@
 import React from 'react';
 import styles from './Footer.module.css';
 import logo from '../../images/logo-ea-dark-300-150.png'; // Your logo path
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
         <img src={logo} alt="Logo" className={styles.logo} />
+
+          <Link to='/contact'>Contact</Link> | {" "}
 
         <div className={styles.socialLinks}>
           <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">

@@ -1,6 +1,7 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 import { loginRequest } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface LoginFormProps {
   onLogin?: () => void;
@@ -53,7 +54,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
         required
       />
+
       <button type="submit">Se connecter</button>
+      <Link to='/request-password-reset'>Mot de passe oublié ?</Link>
       {message && <p>{message}</p>}
     </form>
   );

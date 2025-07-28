@@ -1,5 +1,6 @@
 import styles from './Header.module.css';
 import logo from "../../images/logo-ea-white-300-150.png";
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -11,8 +12,8 @@ const Header = () => {
           </a>
         </div>
         <div className={styles.actions}>
-          <a href="/login" className={styles.signinButton}>Sign In</a>
-          <a href="/register" className={styles.registerButton}>Register for free</a>
+          <Link to='/login' className={styles.signinButton}>Connexion</Link>
+          <Link to='/register' className={styles.registerButton}>S'inscrire gratuitement</Link>
         </div>
       </div>
 
