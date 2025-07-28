@@ -1,0 +1,62 @@
+.section {
+  background-color: #f4f8ff;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #111827;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.card {
+  background-color: transparent;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.icon {
+  font-size: 2rem;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.cardDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* Responsive layout for larger screens */
+@media (min-width: 768px) {
+  .cards {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .card {
+    flex: 1;
+    padding: 1rem 1.5rem;
+  }
+
+  .icon {
+    margin-bottom: 0.75rem;
+  }
+}
