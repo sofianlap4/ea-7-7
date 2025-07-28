@@ -1,20 +1,20 @@
 .container {
-  background-color: var(--background);
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
   width: 100%;
   padding: 64px 20px;
 }
 
 .heading {
   text-align: center;
-  font-size: 24px;
+  font-size: 26px;
   margin-bottom: 48px;
   color: var(--accent-foreground);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .desktopGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   justify-content: center;
   max-width: 1200px;
@@ -32,6 +32,32 @@
   padding: 32px 16px 16px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--color-accent);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.highlighted {
+  border: 2px solid var(--primary);
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .topCard {
@@ -76,12 +102,26 @@
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+  animation: pulse 2s infinite;
+  transition: all 0.3s ease;
 }
 
 .ctaButton:hover {
   background-color: var(--secondary);
   color: var(--blue);
   border: 1px solid var(--blue);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--blue);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(48, 105, 152, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(48, 105, 152, 0);
+  }
 }
 
 .features {
@@ -96,15 +136,15 @@
   padding: 16px 0;
   display: flex;
   align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--color-dark);
 }
 
-.bullet {
-  width: 6px;
-  height: 6px;
-  background: #0f1114;
-  border-radius: 50%;
-  margin-right: 12px;
-  margin-top: 8px;
+.icon {
+  font-size: 16px;
+  color: var(--primary);
+  margin-top: 2px;
 }
 
 /* Responsive Layout */

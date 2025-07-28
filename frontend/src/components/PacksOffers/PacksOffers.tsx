@@ -10,8 +10,7 @@ const offers = [
     title: "Apprentissage unitaire",
     subtitle: "Obtenir une qualification sur un sujet ou une compétence",
     price: "49 $US – 79 $US / Mois",
-    note:
-      "Rendez-vous sur une page d'un cours ou d'une Spécialisation pour acheter.",
+    note: "Rendez-vous sur une page d'un cours ou d'une Spécialisation pour acheter.",
     features: [
       "Accéder à tous les cours du programme d'apprentissage",
       "Obtenez un certificat à l’issue de votre période d’essai",
@@ -26,20 +25,9 @@ const offers = [
     features: [
       "Accédez à 10,000+ cours et Spécialisations de plus de 170 entreprises et universités de premier plan",
     ],
+    highlight: true,
   },
   {
-    title: "Coursera Plus Annuel",
-    subtitle:
-      "Associer flexibilité et économies avec des objectifs d'apprentissage à long terme",
-    price: "399 $US / Année",
-    note: "Garantie de remboursement de 14 jours",
-    button: "Essayer Coursera Plus Annuel",
-    features: [
-      "Économisez en payant à l'avance pour l'année",
-      "Tout ce qui est inclus dans le plan mensuel",
-    ],
-  },
-    {
     title: "Coursera Plus Annuel",
     subtitle:
       "Associer flexibilité et économies avec des objectifs d'apprentissage à long terme",
@@ -56,16 +44,22 @@ const offers = [
 const PacksOffers = () => {
   return (
     <section className={styles.container}>
-      <h2 className={styles.heading}>Formules pour vous ou votre équipe</h2>
+      <h2 className={styles.heading}>Trouvez la formule idéale pour votre avenir</h2>
 
       {/* Desktop layout */}
       <div className={styles.desktopGrid}>
         {offers.map((offer, idx) => (
-          <div className={styles.card} key={idx}>
+          <div
+            className={`${styles.card} ${offer.highlight ? styles.highlighted : ""}`}
+            key={idx}
+          >
+            {/* {offer.highlight && <span className={styles.badge}>⭐ Meilleure option</span>} */}
+
             <div className={styles.topCard}>
               <h3 className={styles.title}>{offer.title}</h3>
               <p className={styles.subtitle}>{offer.subtitle}</p>
             </div>
+
             <div className={styles.midCard}>
               <p className={styles.price}>{offer.price}</p>
               {offer.note && <p className={styles.note}>{offer.note}</p>}
@@ -73,10 +67,11 @@ const PacksOffers = () => {
                 <button className={styles.ctaButton}>{offer.button}</button>
               )}
             </div>
+
             <ul className={styles.features}>
               {offer.features.map((feature, i) => (
                 <li key={i}>
-                  <span className={styles.bullet}></span>
+                  <span className={styles.icon}>✔</span>
                   <p>{feature}</p>
                 </li>
               ))}
@@ -85,7 +80,7 @@ const PacksOffers = () => {
         ))}
       </div>
 
-      {/* Mobile layout with Swiper */}
+      {/* Mobile Swiper */}
       <div className={styles.mobileSwiper}>
         <Swiper
           modules={[Navigation, Pagination]}
@@ -95,11 +90,16 @@ const PacksOffers = () => {
         >
           {offers.map((offer, idx) => (
             <SwiperSlide key={idx}>
-              <div className={styles.card}>
+              <div
+                className={`${styles.card} ${offer.highlight ? styles.highlighted : ""}`}
+              >
+                {offer.highlight && <span className={styles.badge}>⭐ Meilleure option</span>}
+
                 <div className={styles.topCard}>
                   <h3 className={styles.title}>{offer.title}</h3>
                   <p className={styles.subtitle}>{offer.subtitle}</p>
                 </div>
+
                 <div className={styles.midCard}>
                   <p className={styles.price}>{offer.price}</p>
                   {offer.note && <p className={styles.note}>{offer.note}</p>}
@@ -107,10 +107,11 @@ const PacksOffers = () => {
                     <button className={styles.ctaButton}>{offer.button}</button>
                   )}
                 </div>
+
                 <ul className={styles.features}>
                   {offer.features.map((feature, i) => (
                     <li key={i}>
-                      <span className={styles.bullet}></span>
+                      <span className={styles.icon}>✔</span>
                       <p>{feature}</p>
                     </li>
                   ))}

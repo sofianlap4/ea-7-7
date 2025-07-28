@@ -1,91 +1,95 @@
 .wrapper {
   background-color: var(--secondary);
-  color: var(--color-dark);
-  padding: 3rem 1rem;
+  padding: 4rem 1rem;
   text-align: center;
+  position: relative;
   overflow: hidden;
 }
 
 .container {
-  max-width: 1280px;
+  max-width: 960px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--text);
   padding: 0 1rem;
 }
 
 .heading {
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 800;
   font-style: italic;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  color: var(--color-dark);
+  color: var(--blue);
   letter-spacing: -0.025em;
+  margin-bottom: 1rem;
 }
 
 .description {
-  font-size: 1.125rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
+  font-size: 1.25rem;
   color: var(--color-dark);
-  max-width: 600px;
+  margin-bottom: 2rem;
+  max-width: 640px;
+  line-height: 1.6;
 }
 
 .buttonWrapper {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 1rem;
 }
 
 .ctaButton {
-  background-color: var(--accent);
-  color: var(--accent-foreground);
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid var(--accent);
-  border-radius: 3rem;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 700;
+  font-size: 1.125rem;
+  padding: 0.85rem 2rem;
+  border: none;
+  border-radius: 9999px;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
 }
 
 .ctaButton:hover {
-  background-color: var(--accent-foreground);
-  color: var(--color-dark);
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .ctaText {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 1rem;
 }
 
-/* Responsive typography and layout */
 @media (min-width: 640px) {
   .heading {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
   }
 
   .description {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
   }
 }
 
 @media (min-width: 1024px) {
   .heading {
-    font-size: 3rem;
+    font-size: 3.5rem;
   }
 
   .description {
-    font-size: 1.375rem;
+    font-size: 1.5rem;
+  }
+
+  .ctaButton {
+    font-size: 1.25rem;
+    padding: 1rem 2.5rem;
   }
 }
