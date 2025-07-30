@@ -1,0 +1,17 @@
+.container {
+min-width: 464px !important;
+padding-top: calc(1rem * 1.5) !important
+}
+
+@media (max-width: 464px) {
+    .container {
+        min-width: 100vw !important;
+        padding: 1.5rem !important;
+    }
+}
+
+.formContainer {
+    max-width: var(--pgn-size-container-max-width-xs) !important;
+        margin-top: var(--pgn-spacing-spacer-base) !important;
+        
+}
